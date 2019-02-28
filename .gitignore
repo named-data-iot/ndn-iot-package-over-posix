@@ -17,4 +17,4 @@ build/
 .LSOverride
 ._*
 Thumbs.db
-
+xcode/

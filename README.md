@@ -29,3 +29,10 @@ This package uses CMake. A way to build is:
 ### Unit Test ###
 Run `./unittest` in the `build` folder.
 
+### Generate XCode Project ###
+ ```
+ mkdir xcode
+ cd xcode
+ cmake -G "Xcode" ..
+ open ndn-lite.xcodeproj
+ ```
