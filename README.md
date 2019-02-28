@@ -14,6 +14,9 @@ NDN-IoT Package over POSIX
 NDN-IoT Package over POSIX is a integrated IoT package based on NDN-Lite for POSIX compatible OS, such as
 Raspberry Pi, Mac OS and Ubuntu.
 
+### Prerequisites ###
+CMake >= 3.13
+
 ### Build ###
 This package uses CMake. A way to build is:
  ```
@@ -22,4 +25,7 @@ This package uses CMake. A way to build is:
  cmake -DCMAKE_BUILD_TYPE=Release ..
  make -j2
  ```
- 
+
+### Unit Test ###
+Run `./unittest` in the `build` folder.
+
