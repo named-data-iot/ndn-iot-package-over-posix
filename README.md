@@ -20,6 +20,6 @@ This package uses CMake. A way to build is:
  mkdir build
  cd build
  cmake -DCMAKE_BUILD_TYPE=Release ..
- make
+ make -j2
  ```
  

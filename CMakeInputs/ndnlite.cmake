@@ -1,5 +1,3 @@
-set(DIR_NDN_LITE "${PROJECT_SOURCE_DIR}/ndn-lite")
-set(DIR_CMAKEFILES "${PROJECT_SOURCE_DIR}/CMakeFiles")
 target_sources(ndn-lite PUBLIC
   ${DIR_NDN_LITE}/ndn-constants.h
   ${DIR_NDN_LITE}/ndn-enums.h

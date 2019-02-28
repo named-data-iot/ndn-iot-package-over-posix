@@ -1,0 +1,68 @@
+set(DIR_UNITTESTS "${PROJECT_SOURCE_DIR}/ndn-riot-tests")
+
+# Main files
+target_sources(unittest PRIVATE
+  "${DIR_UNITTESTS}/print-helpers.h"
+  "${DIR_UNITTESTS}/print-helpers.c"
+  "${DIR_UNITTESTS}/test-helpers.h"
+  "${DIR_UNITTESTS}/test-helpers.c"
+  "${DIR_UNITTESTS}/main.c"
+)
+
+# Well-named tests
+set(LIST_TESTS
+  "access-control"
+  "aes"
+  "data"
+  "encoder-decoder"
+  "forwarder"
+  "fragmentation-support"
+  "interest"
+  "metainfo"
+  "name-encode-decode"
+  "random"
+  "service-discovery"
+  "signature"
+)
+foreach(TESTNAME IN LISTS LIST_TESTS)
+  target_sources(unittest PRIVATE
+    "${DIR_UNITTESTS}/${TESTNAME}/${TESTNAME}-tests-def.h"
+    "${DIR_UNITTESTS}/${TESTNAME}/${TESTNAME}-tests-def.c"
+    "${DIR_UNITTESTS}/${TESTNAME}/${TESTNAME}-tests.h"
+    "${DIR_UNITTESTS}/${TESTNAME}/${TESTNAME}-tests.c"
+  )
+endforeach()
+unset(LIST_TESTS)
+
+# Irregularly named tests
+target_sources(unittest PRIVATE
+  "${DIR_UNITTESTS}/sign-verify/sign-verify-tests.h"
+  "${DIR_UNITTESTS}/sign-verify/sign-verify-tests.c"
+)
+set(LIST_SIGN_VERIFY_TESTS
+  "asn-encode-decode-tests"
+  "ecdsa-sign-verify-tests"
+  "hmac-sign-verify-tests"
+  "sha256-sign-verify-tests"
+)
+foreach(TESTNAME IN LISTS LIST_SIGN_VERIFY_TESTS)
+  target_sources(unittest PRIVATE
+    "${DIR_UNITTESTS}/sign-verify/${TESTNAME}/${TESTNAME}-def.h"
+    "${DIR_UNITTESTS}/sign-verify/${TESTNAME}/${TESTNAME}-def.c"
+    "${DIR_UNITTESTS}/sign-verify/${TESTNAME}/${TESTNAME}.h"
+    "${DIR_UNITTESTS}/sign-verify/${TESTNAME}/${TESTNAME}.c"
+  )
+endforeach()
+unset(LIST_SIGN_VERIFY_TESTS)
+target_sources(unittest PRIVATE
+  "${DIR_UNITTESTS}/sign-verify/ecdsa-sign-verify-tests/test-secp160r1-def.h"
+  "${DIR_UNITTESTS}/sign-verify/ecdsa-sign-verify-tests/test-secp160r1-def.c"
+  "${DIR_UNITTESTS}/sign-verify/ecdsa-sign-verify-tests/test-secp192r1-def.h"
+  "${DIR_UNITTESTS}/sign-verify/ecdsa-sign-verify-tests/test-secp192r1-def.c"
+  "${DIR_UNITTESTS}/sign-verify/ecdsa-sign-verify-tests/test-secp224r1-def.h"
+  "${DIR_UNITTESTS}/sign-verify/ecdsa-sign-verify-tests/test-secp224r1-def.c"
+  "${DIR_UNITTESTS}/sign-verify/ecdsa-sign-verify-tests/test-secp256r1-def.h"
+  "${DIR_UNITTESTS}/sign-verify/ecdsa-sign-verify-tests/test-secp256r1-def.c"
+  "${DIR_UNITTESTS}/sign-verify/ecdsa-sign-verify-tests/test-secp256k1-def.h"
+  "${DIR_UNITTESTS}/sign-verify/ecdsa-sign-verify-tests/test-secp256k1-def.c"
+)
