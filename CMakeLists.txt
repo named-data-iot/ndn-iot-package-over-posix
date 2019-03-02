@@ -9,12 +9,10 @@ set(CMAKE_C_FLAGS_RELEASE "-O3")
 set(DIR_CMAKEFILES "${PROJECT_SOURCE_DIR}/CMakeInputs")
 set(DIR_NDN_LITE "${PROJECT_SOURCE_DIR}/ndn-lite")
 include_directories(${PROJECT_SOURCE_DIR})
-set(FAKE_RIOT_HEADER "${PROJECT_SOURCE_DIR}/fake-riot-header")
 
 add_library(ndn-lite STATIC)
 include(${DIR_CMAKEFILES}/ndnlite.cmake)
 
 add_executable(unittest)
 target_link_libraries(unittest ndn-lite)
-target_include_directories(unittest PRIVATE ${FAKE_RIOT_HEADER})
 include(${DIR_CMAKEFILES}/unittest.cmake)
