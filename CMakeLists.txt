@@ -1,5 +1,5 @@
 # Root CMake file for NDN-Lite over POSIX
-cmake_minimum_required (VERSION 3.13)
+cmake_minimum_required (VERSION 3.11)
 project(ndn-lite)
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c11 -Wall -O0 -ggdb")
