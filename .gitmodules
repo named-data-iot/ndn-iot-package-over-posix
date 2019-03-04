@@ -3,4 +3,4 @@
 	url = https://github.com/named-data-iot/ndn-lite.git
 [submodule "ndn-riot-tests"]
   path = ndn-riot-tests
-  url = https://github.com/Zhiyi-Zhang/ndn-riot-tests.git
+  url = https://github.com/named-data-iot/ndn-riot-tests.git

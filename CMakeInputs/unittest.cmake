@@ -23,6 +23,7 @@ set(LIST_TESTS
   "random"
   "service-discovery"
   "signature"
+  "util"
 )
 foreach(TESTNAME IN LISTS LIST_TESTS)
   target_sources(unittest PRIVATE
