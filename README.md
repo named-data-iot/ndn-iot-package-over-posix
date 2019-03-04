@@ -20,6 +20,7 @@ CMake >= 3.11
 ### Build ###
 This package uses CMake. A way to build is:
  ```
+ cd ndn-iot-package-over-posix
  mkdir build
  cd build
  cmake -DCMAKE_BUILD_TYPE=Release ..
