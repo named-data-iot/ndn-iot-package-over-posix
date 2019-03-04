@@ -37,3 +37,13 @@ Run `./unittest` in the `build` folder.
  cmake -G "Xcode" ..
  open ndn-lite.xcodeproj
  ```
+
+### Generate Doxygen Documentation ###
+ ```
+ mkdir build
+ cd build
+ cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_DOCS=ON ..
+ make docs
+ open docs/html/index.html
+ ```
+ 
