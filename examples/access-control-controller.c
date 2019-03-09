@@ -7,7 +7,10 @@
  */
 
 #include "ndn-lite/app-support/access-control.h"
+#include "ndn-lite/encode/signed-interest.h"
+#include "ndn-lite/encode/key-storage.h"
 #include "../ndn-riot-tests/print-helpers.h"
+#include <stdio.h>
 
 const uint8_t prv[] = {
   0x5D, 0xC7, 0x6B, 0xAB, 0xEE, 0xD4, 0xEB, 0xB7, 0xBA, 0xFC,
@@ -28,39 +31,45 @@ const uint8_t pub[] = {
 
 ndn_ecc_pub_t* pub_key = NULL;
 ndn_ecc_prv_t* prv_key = NULL;
-
+ndn_name_t controller_identity;
 ndn_interest_t ek_interest;
+
+void
+print_error(const char *test_name, const char *fnct_name, const char *funct_failed, int err_code) {
+  printf("In %s test, within call to %s, call to %s failed, error code: %d\n",
+         test_name, fnct_name, funct_failed, err_code);
+}
 
 int
 on_interest(const uint8_t* interest, uint32_t interest_size)
 {
   // parse incoming Interest
-  printf("Get KE Interest\n");
+  printf("Get EK/DK Interest\n");
   int ret_val = ndn_interest_from_block(&ek_interest, interest, interest_size);
   if (ret_val != 0) {
     print_error("controller", "on_EKInterest", "ndn_interest_from_block", ret_val);
   }
-  // ret_val = ndn_signed_interest_ecdsa_verify(&interest, pub_key);
+  ret_val = ndn_signed_interest_ecdsa_verify(&ek_interest, pub_key);
+  if (ret_val != 0) {
+    print_error("controller", "on_EKInterest", "ndn_signed_interest_ecdsa_verify", ret_val);
+  }
 
   // react on the Interest
-  ndn_encoder_t encoder;
-  ret_val = ndn_ac_on_interest_process(&response, &interest);
+  ndn_data_t response;
+  ret_val = ndn_ac_on_interest_process(&response, &ek_interest);
   if (ret_val != 0) {
     print_error("controller", "on_EKInterest", "ndn_ac_on_interest_process", ret_val);
   }
 
-  // prepare reply
-  ndn_data_t response;
-  ret_val = ndn_ac_on_ek_response_process(&response);
-  if (ret_val != 0) {
-    print_error("controller", "on_EKInterest", "ndn_ac_on_ek_response", ret_val);
-  }
-
   // reply the Data packet
+  ndn_encoder_t encoder;
+  ret_val = ndn_data_tlv_encode_ecdsa_sign(&encoder, &response, &controller_identity,
+                                           prv_key);
 
+  return 0;
 }
 
-void
+int
 main(void)
 {
   // init security
@@ -72,7 +81,7 @@ main(void)
   int ret_val = ndn_name_from_string(&home_prefix, home_prefix_str, sizeof(home_prefix_str));
   if (ret_val != 0) {
     print_error("controller", "set home prefix", "ndn_name_from_string", ret_val);
-    return;
+    return -1;
   }
 
   // set identity name
@@ -81,29 +90,35 @@ main(void)
   ret_val = name_component_from_string(&component_controller, comp_controller, sizeof(comp_controller));
   if (ret_val != 0) {
     print_error("controller", "set identity name", "name_component_from_string", ret_val);
+    return -1;
   }
-  ndn_name_t controller_identity = home_prefix;
+  controller_identity = home_prefix;
   ret_val = ndn_name_append_component(&controller_identity, &component_controller);
   if (ret_val != 0) {
     print_error("controller", "set identity name", "ndn_name_append_component", ret_val);
+    return -1;
   }
 
   // generate controller keys
   ndn_key_storage_init();
   ndn_key_storage_get_empty_ecc_key(&pub_key, &prv_key);
-  ret_val = ndn_ecc_prv_init(&prv_key, prv, sizeof(prv),
+  ret_val = ndn_ecc_prv_init(prv_key, prv, sizeof(prv),
                              NDN_ECDSA_CURVE_SECP256R1, 123);
   if (ret_val != 0) {
     print_error("controller", "init keys", "ndn_ecc_prv_init", ret_val);
+    return -1;
   }
-  ret_val = ndn_ecc_pub_init(&pub_key, pub, sizeof(pub),
+  ret_val = ndn_ecc_pub_init(pub_key, pub, sizeof(pub),
                              NDN_ECDSA_CURVE_SECP256R1, 123);
   if (ret_val != 0) {
     print_error("controller", "init keys", "ndn_ecc_pub_init", ret_val);
+    return -1;
   }
 
   // init ac state
   ndn_ac_state_init(&controller_identity, pub_key, prv_key);
 
   // set up face and connection
+
+  return 0;
 }

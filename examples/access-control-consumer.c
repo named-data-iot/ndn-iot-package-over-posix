@@ -7,7 +7,10 @@
  */
 
 #include "ndn-lite/app-support/access-control.h"
+#include "ndn-lite/encode/signed-interest.h"
+#include "ndn-lite/encode/key-storage.h"
 #include "../ndn-riot-tests/print-helpers.h"
+#include <stdio.h>
 
 const uint8_t prv[] = {
   0x5D, 0xC7, 0x6B, 0xAB, 0xEE, 0xD4, 0xEB, 0xB7, 0xBA, 0xFC,
@@ -30,21 +33,45 @@ ndn_ecc_pub_t* pub_key = NULL;
 ndn_ecc_prv_t* prv_key = NULL;
 
 void
+print_error(const char *test_name, const char *fnct_name, const char *funct_failed, int err_code) {
+  printf("In %s test, within call to %s, call to %s failed, error code: %d\n",
+         test_name, fnct_name, funct_failed, err_code);
+}
+
+int
+on_data(const uint8_t* data, uint32_t data_size)
+{
+  printf("Get DK Data\n");
+
+  // parse response Data
+  ndn_data_t response;
+  int ret_val = ndn_data_tlv_decode_ecdsa_verify(&response, data, data_size, pub_key);
+  if (ret_val != 0) {
+    print_error("producer", "on_data", "ndn_data_tlv_decode_ecdsa_verify", ret_val);
+  }
+
+  // update ac state
+  ret_val = ndn_ac_on_ek_response_process(&response);
+  if (ret_val != 0) {
+    print_error("producer", "on_data", "ndn_ac_on_ek_response", ret_val);
+  }
+
+  return 0;
+}
+
+int
 main(void)
 {
-  // some vars
-  int ret_val = -1;
-
   // init security
   ndn_security_init();
 
   // set home prefix
   ndn_name_t home_prefix;
   char* home_prefix_str = "/ndn";
-  ret_val = ndn_name_from_string(&home_prefix, home_prefix_str, sizeof(home_prefix_str));
+  int ret_val = ndn_name_from_string(&home_prefix, home_prefix_str, sizeof(home_prefix_str));
   if (ret_val != 0) {
     print_error("consumer", "set home prefix", "ndn_name_from_string", ret_val);
-    return;
+    return -1;
   }
 
   // set identity name
@@ -53,40 +80,46 @@ main(void)
   ret_val = name_component_from_string(&component_consumer, comp_consumer, sizeof(comp_consumer));
   if (ret_val != 0) {
     print_error("consumer", "set identity name", "name_component_from_string", ret_val);
+    return -1;
   }
   ndn_name_t consumer_identity = home_prefix;
   ret_val = ndn_name_append_component(&consumer_identity, &component_consumer);
   if (ret_val != 0) {
     print_error("consumer", "set identity name", "ndn_name_append_component", ret_val);
+    return -1;
   }
 
-   // init keys
+  // init keys
   ndn_key_storage_init();
   ndn_key_storage_get_empty_ecc_key(&pub_key, &prv_key);
-  ret_val = ndn_ecc_prv_init(&prv_key, prv, sizeof(prv),
+  ret_val = ndn_ecc_prv_init(prv_key, prv, sizeof(prv),
                              NDN_ECDSA_CURVE_SECP256R1, 123);
   if (ret_val != 0) {
     print_error("consumer", "init keys", "ndn_ecc_prv_init", ret_val);
+    return -1;
   }
-  ret_val = ndn_ecc_pub_init(&pub_key, pub, sizeof(pub),
+  ret_val = ndn_ecc_pub_init(pub_key, pub, sizeof(pub),
                              NDN_ECDSA_CURVE_SECP256R1, 123);
   if (ret_val != 0) {
     print_error("consumer", "init keys", "ndn_ecc_pub_init", ret_val);
+    return -1;
   }
 
   // init ac state
   ndn_ac_state_init(&consumer_identity, pub_key, prv_key);
 
   // prepare DK Interest
-  ndn_interest_t interest;
   uint8_t buffer[1024];
-  ndn_encoder_t encoder;
-  encoder_init(&encoder, buffer, sizeof(buffer));
-  ret_val = ndn_ac_prepare_key_request_interest(&encoder, &home_prefix,
-                                                &component_consumer, key_id, prv_key, 0);
+  ndn_encoder_t interest_encoder;
+  encoder_init(&interest_encoder, buffer, sizeof(buffer));
+  ret_val = ndn_ac_prepare_key_request_interest(&interest_encoder, &home_prefix,
+                                                &component_consumer, 100, prv_key, 0);
   if (ret_val != 0) {
     print_error("consumer", "prepare DK Interest", "ndn_ac_prepare_key_request", ret_val);
+    return -1;
   }
 
   // set up face and connection
+
+  return 0;
 }
