@@ -3,6 +3,7 @@ set(DIR_EXAMPLES_OUTPUT "${PROJECT_BINARY_DIR}/examples")
 # Single-file examples
 set(LIST_EXAMPLES
   "udp-basic-producer"
+  "udp-basic-consumer"
   "access-control-producer"
   "access-control-consumer"
   "access-control-controller"

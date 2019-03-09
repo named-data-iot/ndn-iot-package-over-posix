@@ -14,13 +14,13 @@
 #include "adaptation/udp-unicast/ndn-udp-unicast-face.h"
 #include "ndn-lite/forwarder/forwarder.h"
 #include "ndn-lite/face/direct-face.h"
+#include "ndn-lite/encode/encoder.h"
 #include "ndn-lite/encode/data.h"
 
 in_port_t port1, port2;
 in_addr_t server_ip;
 ndn_name_t name_prefix;
 uint8_t buf[4096];
-ndn_udp_unicast_face_t *face;
 bool running;
 
 int parseArgs(int argc, char *argv[]){
@@ -80,28 +80,23 @@ int parseArgs(int argc, char *argv[]){
   return 0;
 }
 
-int on_interest(const uint8_t* interest, uint32_t interest_size){
+int on_data(const uint8_t* rawdata, uint32_t data_size){
   ndn_data_t data;
-  ndn_encoder_t encoder;
-  char * str = "I'm a Data packet.";
+  printf("On data\n");
+  if(ndn_data_tlv_decode_digest_verify(&data, rawdata, data_size)){
+    printf("Decoding failed.\n");
+    return -1;
+  }
 
-  printf("On interest\n");
-  data.name = name_prefix;
-  ndn_data_set_content(&data, str, strlen(str));
-  ndn_metainfo_init(&data.metainfo);
-  ndn_metainfo_set_content_type(&data.metainfo, NDN_CONTENT_TYPE_BLOB);
-  encoder_init(&encoder, buf, 4096);
-  ndn_data_tlv_encode_digest_sign(&encoder, &data);
-  ndn_forwarder_on_incoming_data(ndn_forwarder_get_instance(),
-                                 &face->intf,
-                                 &name_prefix,
-                                 encoder.output_value,
-                                 encoder.offset);
+  printf("It says: %s\n", data.content_value);
 
   return NDN_SUCCESS;
 }
 
 int main(int argc, char *argv[]){
+  ndn_udp_unicast_face_t *face;
+  ndn_interest_t interest;
+  ndn_encoder_t encoder;
   int ret;
 
   if((ret = parseArgs(argc, argv)) != 0){
@@ -114,7 +109,14 @@ int main(int argc, char *argv[]){
   ndn_direct_face_construct(2);
 
   running = true;
-  ndn_direct_face_register_prefix(&name_prefix, on_interest);
+  ndn_forwarder_fib_insert(&name_prefix, &face->intf, 0);
+
+  ndn_interest_from_name(&interest, &name_prefix);
+  encoder_init(&encoder, buf, 4096);
+  ndn_interest_tlv_encode(&encoder, &interest);
+
+  ndn_direct_face_express_interest(&name_prefix, encoder.output_value, encoder.offset, on_data, NULL);
+
   while(running){
     ndn_udp_unicast_face_recv(face);
     usleep(10);
