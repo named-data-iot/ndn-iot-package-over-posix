@@ -11,7 +11,10 @@
 #include "ndn-lite/encode/key-storage.h"
 #include "ndn-lite/forwarder/forwarder.h"
 #include "ndn-lite/face/direct-face.h"
-#include "../ndn-riot-tests/print-helpers.h"
+#include "adaptation/udp-multicast/ndn-udp-multicast-face.h"
+#include <netdb.h>
+#include <unistd.h>
+#include <stdlib.h>
 #include <stdio.h>
 
 const uint8_t prv[] = {
@@ -45,11 +48,12 @@ parseArgs(int argc, char *argv[]) {
   struct in_addr **paddrs;
 
   if (argc < 1) {
-    fprintf(stderr, "ERROR: wrong arguments.\n");
-    printf("Usage: <multicast ip>\n");
+    char defaultaddr[] = "225.0.0.37";
+    sz_addr = defaultaddr;
     return 1;
   }
-  sz_addr = argv[1];
+  else
+    sz_addr = argv[1];
 
   if (strlen(sz_addr) <= 0) {
     fprintf(stderr, "ERROR: wrong arguments.\n");
@@ -162,11 +166,8 @@ main(int argc, char *argv[])
   // set up direct face and forwarder
   ndn_forwarder_init();
   ndn_direct_face_construct(666);
-  ndn_udp_unicast_face_t* consumer_udp_face;
-  consumer_udp_face = ndn_udp_unicast_face_construct(667, INADDR_ANY, self_port, consumer_ip, consumer_port);
-
-  ndn_udp_unicast_face_t* producer_udp_face;
-  producer_udp_face = ndn_udp_unicast_face_construct(667, INADDR_ANY, self_port, producer_ip, producer_port);
+  ndn_udp_muticast_face_t* udp_face;
+  udp_face = ndn_udp_muticast_face_construct(667, INADDR_ANY, 6363, multicast_ip);
 
   // register prefix
   char prefix_string[] = "/ndn/AC";

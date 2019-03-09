@@ -11,7 +11,10 @@
 #include "ndn-lite/encode/key-storage.h"
 #include "ndn-lite/forwarder/forwarder.h"
 #include "ndn-lite/face/direct-face.h"
-#include "../ndn-riot-tests/print-helpers.h"
+#include "adaptation/udp-multicast/ndn-udp-multicast-face.h"
+#include <netdb.h>
+#include <unistd.h>
+#include <stdlib.h>
 #include <stdio.h>
 
 const uint8_t prv[] = {
@@ -42,11 +45,12 @@ parseArgs(int argc, char *argv[]) {
   struct in_addr **paddrs;
 
   if (argc < 1) {
-    fprintf(stderr, "ERROR: wrong arguments.\n");
-    printf("Usage: <multicast ip>\n");
+    char defaultaddr[] = "225.0.0.37";
+    sz_addr = defaultaddr;
     return 1;
   }
-  sz_addr = argv[1];
+  else
+    sz_addr = argv[1];
 
   if (strlen(sz_addr) <= 0) {
     fprintf(stderr, "ERROR: wrong arguments.\n");
@@ -161,26 +165,20 @@ main(int argc, char *argv[])
   // set up direct face and forwarder
   ndn_forwarder_init();
   ndn_direct_face_construct(666);
-  ndn_udp_unicast_face_t* controller_udp_face;
-  controller_udp_face = ndn_udp_unicast_face_construct(667, INADDR_ANY, self_port, controller_ip, controller_port);
+  ndn_udp_muticast_face_t* udp_face;
+  udp_face = ndn_udp_muticast_face_construct(667, INADDR_ANY, 6363, multicast_ip);
 
-  ndn_udp_unicast_face_t* consumer_udp_face;
-  produconsumercer_udp_face = ndn_udp_unicast_face_construct(667, INADDR_ANY, self_port, consumer_ip, consumer_port);
-
-  // register route
-  ndn_udp_unicast_face_t* udp_face;
-  face = ndn_udp_unicast_face_construct(667, INADDR_ANY, self_port, controller_ip, controller_port);
+  // add route
   char prefix_string[] = "/ndn/AC";
   ndn_name_t controller_prefix;
   ret_val = ndn_name_from_string(&controller_prefix, prefix_string, sizeof(prefix_string));
   if (ret_val != 0) {
-    print_error("consumer", "register route", "ndn_name_from_string", ret_val);
+    print_error("consumer", "add route", "ndn_name_from_string", ret_val);
   }
   ndn_forwarder_fib_insert(&controller_prefix, udp_face, 0);
 
   while (running) {
-    ndn_udp_unicast_face_recv(consumer_udp_face);
-    ndn_udp_unicast_face_recv(producer_udp_face);
+    ndn_udp_multicast_face_recv(consumer_udp_face);
     usleep(10);
   }
 

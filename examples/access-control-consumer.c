@@ -11,7 +11,7 @@
 #include "ndn-lite/encode/key-storage.h"
 #include "ndn-lite/forwarder/forwarder.h"
 #include "ndn-lite/face/direct-face.h"
-#include "adaptation/udp-unicast/ndn-udp-unicast-face.h"
+#include "adaptation/udp-multicast/ndn-udp-multicast-face.h"
 #include <netdb.h>
 #include <unistd.h>
 #include <stdlib.h>
@@ -45,11 +45,12 @@ parseArgs(int argc, char *argv[]) {
   struct in_addr **paddrs;
 
   if (argc < 1) {
-    fprintf(stderr, "ERROR: wrong arguments.\n");
-    printf("Usage: <multicast ip>\n");
+    char defaultaddr[] = "225.0.0.37";
+    sz_addr = defaultaddr;
     return 1;
   }
-  sz_addr = argv[1];
+  else
+    sz_addr = argv[1];
 
   if (strlen(sz_addr) <= 0) {
     fprintf(stderr, "ERROR: wrong arguments.\n");
@@ -167,25 +168,24 @@ main(int argc, char *argv[])
   ndn_direct_face_construct(666);
 
   // add routes
-  ndn_udp_unicast_face_t* controller_udp_face;
-  controller_udp_face = ndn_udp_unicast_face_construct(667, INADDR_ANY, self_port, controller_ip, controller_port);
+  ndn_udp_muticast_face_t* udp_face;
+  udp_face = ndn_udp_muticast_face_construct(667, INADDR_ANY, 6363, multicast_ip);
+
   char controller_prefix_string[] = "/ndn/AC";
   ndn_name_t controller_prefix;
   ret_val = ndn_name_from_string(&controller_prefix, controller_prefix_string, sizeof(controller_prefix_string));
   if (ret_val != 0) {
     print_error("consumer", "add routes", "ndn_name_from_string", ret_val);
   }
-  ndn_forwarder_fib_insert(&controller_prefix, controller_udp_face, 0);
+  ndn_forwarder_fib_insert(&controller_prefix, udp_face, 0);
 
-  ndn_udp_unicast_face_t* producer_udp_face;
-  producer_udp_face = ndn_udp_unicast_face_construct(667, INADDR_ANY, self_port, producer_ip, producer_port);
   char producer_prefix_string[] = "/ndn/producer";
   ndn_name_t producer_prefix;
   ret_val = ndn_name_from_string(&producer_prefix, producer_prefix_string, sizeof(producer_prefix_string));
   if (ret_val != 0) {
     print_error("consumer", "add routes", "ndn_name_from_string", ret_val);
   }
-  ndn_forwarder_fib_insert(&producer_prefix, producer_udp_face, 0);
+  ndn_forwarder_fib_insert(&producer_prefix, udp_face, 0);
 
   return 0;
 }
