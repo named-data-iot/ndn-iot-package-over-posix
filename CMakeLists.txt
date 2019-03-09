@@ -8,11 +8,15 @@ set(CMAKE_C_FLAGS_RELEASE "-O3")
 
 set(DIR_CMAKEFILES "${PROJECT_SOURCE_DIR}/CMakeInputs")
 set(DIR_NDN_LITE "${PROJECT_SOURCE_DIR}/ndn-lite")
+set(DIR_ADAPTATION "${PROJECT_SOURCE_DIR}/adaptation")
 include_directories(${PROJECT_SOURCE_DIR})
 
 # NDN-Lite static library
 add_library(ndn-lite STATIC)
 include(${DIR_CMAKEFILES}/ndnlite.cmake)
+
+# Adaptation
+include(${DIR_CMAKEFILES}/adaptation.cmake)
 
 # Unit test program
 add_executable(unittest)
