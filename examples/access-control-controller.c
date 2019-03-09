@@ -33,8 +33,42 @@ const uint8_t pub[] = {
 
 ndn_ecc_pub_t* pub_key = NULL;
 ndn_ecc_prv_t* prv_key = NULL;
+in_addr_t multicast_ip;
+
 ndn_name_t controller_identity;
 ndn_interest_t ek_interest;
+
+int
+parseArgs(int argc, char *argv[]) {
+  char *sz_addr;
+  struct hostent *host_addr;
+  struct in_addr **paddrs;
+
+  if (argc < 1) {
+    fprintf(stderr, "ERROR: wrong arguments.\n");
+    printf("Usage: <multicast ip>\n");
+    return 1;
+  }
+  sz_addr = argv[1];
+
+  if (strlen(sz_addr) <= 0) {
+    fprintf(stderr, "ERROR: wrong arguments.\n");
+    return 1;
+  }
+
+  host_addr = gethostbyname(sz_addr);
+  if(host_addr == NULL){
+    fprintf(stderr, "ERROR: wrong hostname.\n");
+    return 2;
+  }
+  paddrs = (struct in_addr **)host_addr->h_addr_list;
+  if(paddrs[0] == NULL){
+    fprintf(stderr, "ERROR: wrong hostname.\n");
+    return 2;
+  }
+  multicast_ip = paddrs[0]->s_addr;
+  return 0;
+}
 
 void
 print_error(const char *test_name, const char *fnct_name, const char *funct_failed, int err_code) {
@@ -68,20 +102,24 @@ on_interest(const uint8_t* interest, uint32_t interest_size)
   ret_val = ndn_data_tlv_encode_ecdsa_sign(&encoder, &response, &controller_identity,
                                            prv_key);
 
-
   return 0;
 }
 
 int
-main(void)
+main(int argc, char *argv[])
 {
+  int ret_val = -1;
+  if ((ret_val = parseArgs(argc, argv)) != 0) {
+    return ret_val;
+  }
+
   // init security
   ndn_security_init();
 
   // set home prefix
   ndn_name_t home_prefix;
   char* home_prefix_str = "/ndn";
-  int ret_val = ndn_name_from_string(&home_prefix, home_prefix_str, sizeof(home_prefix_str));
+  ret_val = ndn_name_from_string(&home_prefix, home_prefix_str, sizeof(home_prefix_str));
   if (ret_val != 0) {
     print_error("controller", "set home prefix", "ndn_name_from_string", ret_val);
     return -1;
@@ -122,8 +160,13 @@ main(void)
   ndn_ac_state_init(&controller_identity, pub_key, prv_key);
 
   // set up direct face and forwarder
-  ndn_forwarder_t* forwarder = ndn_forwarder_init();
-  ndn_direct_face_t* direct_face = ndn_direct_face_construct(666);
+  ndn_forwarder_init();
+  ndn_direct_face_construct(666);
+  ndn_udp_unicast_face_t* consumer_udp_face;
+  consumer_udp_face = ndn_udp_unicast_face_construct(667, INADDR_ANY, self_port, consumer_ip, consumer_port);
+
+  ndn_udp_unicast_face_t* producer_udp_face;
+  producer_udp_face = ndn_udp_unicast_face_construct(667, INADDR_ANY, self_port, producer_ip, producer_port);
 
   // register prefix
   char prefix_string[] = "/ndn/AC";
@@ -135,6 +178,12 @@ main(void)
   ret_val = ndn_direct_face_register_prefix(&prefix, on_interest);
   if (ret_val != 0) {
     print_error("controller", "register prefix", "ndn_direct_face_register_prefix", ret_val);
+  }
+
+  while (running) {
+    ndn_udp_unicast_face_recv(consumer_udp_face);
+    ndn_udp_unicast_face_recv(producer_udp_face);
+    usleep(10);
   }
 
   return 0;
