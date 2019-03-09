@@ -4,6 +4,8 @@ set(DIR_EXAMPLES_OUTPUT "${PROJECT_BINARY_DIR}/examples")
 set(LIST_EXAMPLES
   "udp-basic-producer"
   "udp-basic-consumer"
+  "udp-group-producer"
+  "udp-group-consumer"
   "access-control-producer"
   "access-control-consumer"
   "access-control-controller"

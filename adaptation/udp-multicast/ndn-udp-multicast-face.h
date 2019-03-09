@@ -46,7 +46,7 @@ ndn_udp_multicast_face_construct(
 
 // TODO: Exploit msg-queue to do it.
 int
-ndn_udp_unicast_face_recv(ndn_udp_multicast_face_t* self);
+ndn_udp_multicast_face_recv(ndn_udp_multicast_face_t* self);
 
 #ifdef __cplusplus
 }
