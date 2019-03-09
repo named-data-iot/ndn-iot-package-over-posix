@@ -9,6 +9,7 @@
  */
 #include <stdio.h>
 #include <netdb.h>
+#include <unistd.h>
 #include "adaptation/udp-unicast/ndn-udp-unicast-face.h"
 #include "ndn-lite/forwarder/forwarder.h"
 #include "ndn-lite/face/direct-face.h"
@@ -91,6 +92,7 @@ int main(int argc, char *argv[]){
   ndn_direct_face_register_prefix(&name_prefix, on_interest);
   while(running){
     ndn_udp_unicast_face_recv(face);
+    usleep(10);
   }
 
   ndn_face_destroy(&face->intf);
