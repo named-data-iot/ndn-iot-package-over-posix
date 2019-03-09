@@ -9,6 +9,8 @@
 #include "ndn-lite/app-support/access-control.h"
 #include "ndn-lite/encode/signed-interest.h"
 #include "ndn-lite/encode/key-storage.h"
+#include "ndn-lite/forwarder/forwarder.h"
+#include "ndn-lite/face/direct-face.h"
 #include "../ndn-riot-tests/print-helpers.h"
 #include <stdio.h>
 
@@ -119,7 +121,9 @@ main(void)
     return -1;
   }
 
-  // set up face and connection
+  // set up direct face and forwarder
+  ndn_forwarder_t* forwarder = ndn_forwarder_init();
+  ndn_direct_face_t* direct_face = ndn_direct_face_construct(666);
 
   return 0;
 }

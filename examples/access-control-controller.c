@@ -9,6 +9,8 @@
 #include "ndn-lite/app-support/access-control.h"
 #include "ndn-lite/encode/signed-interest.h"
 #include "ndn-lite/encode/key-storage.h"
+#include "ndn-lite/forwarder/forwarder.h"
+#include "ndn-lite/face/direct-face.h"
 #include "../ndn-riot-tests/print-helpers.h"
 #include <stdio.h>
 
@@ -66,6 +68,7 @@ on_interest(const uint8_t* interest, uint32_t interest_size)
   ret_val = ndn_data_tlv_encode_ecdsa_sign(&encoder, &response, &controller_identity,
                                            prv_key);
 
+
   return 0;
 }
 
@@ -118,7 +121,21 @@ main(void)
   // init ac state
   ndn_ac_state_init(&controller_identity, pub_key, prv_key);
 
-  // set up face and connection
+  // set up direct face and forwarder
+  ndn_forwarder_t* forwarder = ndn_forwarder_init();
+  ndn_direct_face_t* direct_face = ndn_direct_face_construct(666);
+
+  // register prefix
+  char prefix_string[] = "/ndn/AC";
+  ndn_name_t prefix;
+  ret_val = ndn_name_from_string(&prefix, prefix_string, sizeof(prefix_string));
+  if (ret_val != 0) {
+    print_error("controller", "register prefix", "ndn_name_from_string", ret_val);
+  }
+  ret_val = ndn_direct_face_register_prefix(&prefix, on_interest);
+  if (ret_val != 0) {
+    print_error("controller", "register prefix", "ndn_direct_face_register_prefix", ret_val);
+  }
 
   return 0;
 }
