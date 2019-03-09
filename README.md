@@ -20,6 +20,7 @@ CMake >= 3.11
 ### Build ###
 This package uses CMake. A way to build is:
  ```
+ git clone --recursive https://github.com/named-data-iot/ndn-iot-package-over-posix.git
  cd ndn-iot-package-over-posix
  mkdir build
  cd build
