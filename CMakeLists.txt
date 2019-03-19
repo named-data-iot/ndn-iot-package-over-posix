@@ -2,6 +2,7 @@
 cmake_minimum_required (VERSION 3.11)
 project(ndn-lite)
 
+add_definitions(-D_GNU_SOURCE)
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c11 -Wall -O0 -ggdb")
 set(CMAKE_C_FLAGS_DEBUG "-O0 -g")
 set(CMAKE_C_FLAGS_RELEASE "-O3")
