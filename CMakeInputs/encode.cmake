@@ -1,4 +1,5 @@
 set(DIR_ENCODE "${DIR_NDN_LITE}/encode")
+set(DIR_TRUST_SCHEMA "${DIR_ENCODE}/trust-schema")
 target_sources(ndn-lite PUBLIC
   ${DIR_ENCODE}/data.h
   ${DIR_ENCODE}/decoder.h
@@ -13,6 +14,11 @@ target_sources(ndn-lite PUBLIC
   ${DIR_ENCODE}/signed-interest.h
   ${DIR_ENCODE}/tlv.h
   ${DIR_ENCODE}/new-interest.h
+  ${DIR_ENCODE}/ndn-rule-storage.h
+  ${DIR_TRUST_SCHEMA}/ndn-trust-schema-common.h
+  ${DIR_TRUST_SCHEMA}/ndn-trust-schema-pattern-component.h
+  ${DIR_TRUST_SCHEMA}/ndn-trust-schema-pattern.h
+  ${DIR_TRUST_SCHEMA}/ndn-trust-schema-rule.h
 )
 target_sources(ndn-lite PRIVATE
   ${DIR_ENCODE}/data.c
@@ -24,5 +30,10 @@ target_sources(ndn-lite PRIVATE
   ${DIR_ENCODE}/signature.c
   ${DIR_ENCODE}/signed-interest.c
   ${DIR_ENCODE}/new-interest.c
+  ${DIR_ENCODE}/ndn-rule-storage.c
+  ${DIR_TRUST_SCHEMA}/ndn-trust-schema-pattern-component.c
+  ${DIR_TRUST_SCHEMA}/ndn-trust-schema-pattern.c
+  ${DIR_TRUST_SCHEMA}/ndn-trust-schema-rule.c
 )
+unset(DIR_TRUST_SCHEMA)
 unset(DIR_ENCODE)

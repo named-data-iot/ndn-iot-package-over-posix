@@ -68,9 +68,9 @@ target_sources(unittest PRIVATE
   "${DIR_UNITTESTS}/sign-verify/ecdsa-sign-verify-tests/test-secp256k1-def.c"
 )
 
-#target_sources(unittest PRIVATE
-#  "${DIR_UNITTESTS}/schematized-trust/trust-schema-tests.h"
-#  "${DIR_UNITTESTS}/schematized-trust/trust-schema-tests.c"
-#  "${DIR_UNITTESTS}/schematized-trust/trust-schema-tests-def.h"
-#  "${DIR_UNITTESTS}/schematized-trust/trust-schema-tests-def.c"
-#)
+target_sources(unittest PRIVATE
+  "${DIR_UNITTESTS}/schematized-trust/trust-schema-tests.h"
+  "${DIR_UNITTESTS}/schematized-trust/trust-schema-tests.c"
+  "${DIR_UNITTESTS}/schematized-trust/trust-schema-tests-def.h"
+  "${DIR_UNITTESTS}/schematized-trust/trust-schema-tests-def.c"
+)
