@@ -12,6 +12,7 @@ target_sources(ndn-lite PUBLIC
   ${DIR_ENCODE}/signature.h
   ${DIR_ENCODE}/signed-interest.h
   ${DIR_ENCODE}/tlv.h
+  ${DIR_ENCODE}/new-interest.h
 )
 target_sources(ndn-lite PRIVATE
   ${DIR_ENCODE}/data.c
@@ -22,5 +23,6 @@ target_sources(ndn-lite PRIVATE
   ${DIR_ENCODE}/name.c
   ${DIR_ENCODE}/signature.c
   ${DIR_ENCODE}/signed-interest.c
+  ${DIR_ENCODE}/new-interest.c
 )
 unset(DIR_ENCODE)

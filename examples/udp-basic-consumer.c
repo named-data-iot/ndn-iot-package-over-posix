@@ -11,11 +11,11 @@
 #include <netdb.h>
 #include <unistd.h>
 #include <stdlib.h>
-#include "adaptation/udp-unicast/ndn-udp-unicast-face.h"
-#include "ndn-lite/forwarder/forwarder.h"
-#include "ndn-lite/face/direct-face.h"
-#include "ndn-lite/encode/encoder.h"
+#include <ndn-lite.h>
+#include "ndn-lite/encode/name.h"
 #include "ndn-lite/encode/data.h"
+#undef NDN_ENCODING_INTEREST_H
+#include "ndn-lite/encode/interest.h"
 
 in_port_t port1, port2;
 in_addr_t server_ip;
@@ -80,21 +80,24 @@ int parseArgs(int argc, char *argv[]){
   return 0;
 }
 
-int on_data(const uint8_t* rawdata, uint32_t data_size){
+void on_data(const uint8_t* rawdata, uint32_t data_size, void* userdata){
   ndn_data_t data;
   printf("On data\n");
   if(ndn_data_tlv_decode_digest_verify(&data, rawdata, data_size)){
     printf("Decoding failed.\n");
-    return -1;
   }
 
   printf("It says: %s\n", data.content_value);
+  running = false;
+}
 
-  return NDN_SUCCESS;
+void on_timeout(void* userdata){
+  printf("On timeout\n");
+  running = false;
 }
 
 int main(int argc, char *argv[]){
-  ndn_udp_unicast_face_t *face;
+  ndn_udp_face_t *face;
   ndn_interest_t interest;
   ndn_encoder_t encoder;
   int ret;
@@ -103,23 +106,23 @@ int main(int argc, char *argv[]){
     return ret;
   }
 
-  ndn_forwarder_init();
-  ndn_security_init();
-  face = ndn_udp_unicast_face_construct(1, INADDR_ANY, port1, server_ip, port2);
-  ndn_direct_face_construct(2);
+  ndn_lite_startup();
+  face = ndn_udp_unicast_face_construct(INADDR_ANY, port1, server_ip, port2);
 
   running = true;
-  ndn_forwarder_fib_insert(&name_prefix, &face->intf, 0);
+  encoder_init(&encoder, buf, 4096);
+  ndn_name_tlv_encode(&encoder, &name_prefix);
+  ndn_forwarder_add_route(&face->intf, buf, encoder.offset);
 
   ndn_interest_from_name(&interest, &name_prefix);
   encoder_init(&encoder, buf, 4096);
   ndn_interest_tlv_encode(&encoder, &interest);
 
-  ndn_direct_face_express_interest(&name_prefix, encoder.output_value, encoder.offset, on_data, NULL);
+  ndn_forwarder_express_interest(encoder.output_value, encoder.offset, on_data, on_timeout, NULL);
 
   while(running){
-    ndn_udp_unicast_face_recv(face);
-    usleep(10);
+    ndn_forwarder_process();
+    usleep(10000);
   }
 
   ndn_face_destroy(&face->intf);

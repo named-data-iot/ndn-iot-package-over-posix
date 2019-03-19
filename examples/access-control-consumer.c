@@ -168,7 +168,7 @@ main(int argc, char *argv[])
   ndn_direct_face_construct(666);
 
   // add routes
-  ndn_udp_muticast_face_t* udp_face;
+  ndn_udp_multicast_face_t* udp_face;
   udp_face = ndn_udp_muticast_face_construct(667, INADDR_ANY, 6363, multicast_ip);
 
   char controller_prefix_string[] = "/ndn/AC";

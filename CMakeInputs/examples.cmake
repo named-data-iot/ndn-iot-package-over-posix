@@ -4,11 +4,12 @@ set(DIR_EXAMPLES_OUTPUT "${PROJECT_BINARY_DIR}/examples")
 set(LIST_EXAMPLES
   "udp-basic-producer"
   "udp-basic-consumer"
-  "udp-group-producer"
-  "udp-group-consumer"
-  "access-control-producer"
-  "access-control-consumer"
-  "access-control-controller"
+#  "udp-group-producer"
+#  "udp-group-consumer"
+#  "access-control-producer"
+#  "access-control-consumer"
+#  "access-control-controller"
+  "name-tree-test"
 )
 foreach(EXAM_NAME IN LISTS LIST_EXAMPLES)
   add_executable(${EXAM_NAME} "${DIR_EXAMPLES}/${EXAM_NAME}.c")

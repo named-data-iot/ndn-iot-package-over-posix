@@ -1,17 +1,8 @@
-set(DIR_UDP_UNICAST "${DIR_ADAPTATION}/udp-unicast")
 target_sources(ndn-lite PUBLIC
-  ${DIR_UDP_UNICAST}/ndn-udp-unicast-face.h
+  ${DIR_ADAPTATION}/adapt-consts.h
+  ${DIR_ADAPTATION}/udp/udp-face.h
 )
 target_sources(ndn-lite PRIVATE
-  ${DIR_UDP_UNICAST}/ndn-udp-unicast-face.c
+  ${DIR_ADAPTATION}/uniform-time.c
+  ${DIR_ADAPTATION}/udp/udp-face.c
 )
-unset(DIR_UDP_UNICAST)
-
-set(DIR_UDP_MULTICAST "${DIR_ADAPTATION}/udp-multicast")
-target_sources(ndn-lite PUBLIC
-  ${DIR_UDP_MULTICAST}/ndn-udp-multicast-face.h
-)
-target_sources(ndn-lite PRIVATE
-  ${DIR_UDP_MULTICAST}/ndn-udp-multicast-face.c
-)
-unset(DIR_UDP_MULTICAST)
