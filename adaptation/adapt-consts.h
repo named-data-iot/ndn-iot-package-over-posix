@@ -5,18 +5,9 @@
  * General Public License v3.0. See the file LICENSE in the top level
  * directory for more details.
  */
+#ifndef NDN_ADAPT_CONSTS_H
+#define NDN_ADAPT_CONSTS_H
 
-#ifndef NDN_UDP_UNICAST_FACE_H_
-#define NDN_UDP_UNICAST_FACE_H_
+#define NDN_UDP_FACE_SOCKET_ERROR 1
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-
-
-#ifdef __cplusplus
-}
-#endif
-
-#endif
+#endif // NDN_ADAPT_CONSTS_H

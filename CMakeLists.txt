@@ -2,22 +2,31 @@
 cmake_minimum_required (VERSION 3.11)
 project(ndn-lite)
 
+add_definitions(-D_GNU_SOURCE)
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c11 -Wall -O0 -ggdb")
 set(CMAKE_C_FLAGS_DEBUG "-O0 -g")
 set(CMAKE_C_FLAGS_RELEASE "-O3")
 
 set(DIR_CMAKEFILES "${PROJECT_SOURCE_DIR}/CMakeInputs")
 set(DIR_NDN_LITE "${PROJECT_SOURCE_DIR}/ndn-lite")
+set(DIR_ADAPTATION "${PROJECT_SOURCE_DIR}/adaptation")
+set(DIR_EXAMPLES "${PROJECT_SOURCE_DIR}/examples")
 include_directories(${PROJECT_SOURCE_DIR})
 
 # NDN-Lite static library
 add_library(ndn-lite STATIC)
 include(${DIR_CMAKEFILES}/ndnlite.cmake)
 
+# Adaptation
+include(${DIR_CMAKEFILES}/adaptation.cmake)
+
 # Unit test program
 add_executable(unittest)
 target_link_libraries(unittest ndn-lite)
 include(${DIR_CMAKEFILES}/unittest.cmake)
+
+# Examples
+include(${DIR_CMAKEFILES}/examples.cmake)
 
 # Doxygen
 # first we can indicate the documentation build as an option and set it to ON by default
