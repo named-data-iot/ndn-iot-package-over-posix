@@ -14,7 +14,6 @@
 #include <ndn-lite.h>
 #include "ndn-lite/encode/name.h"
 #include "ndn-lite/encode/data.h"
-#undef NDN_ENCODING_INTEREST_H
 #include "ndn-lite/encode/interest.h"
 
 in_port_t port1, port2;

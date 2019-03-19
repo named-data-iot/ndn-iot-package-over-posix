@@ -13,7 +13,7 @@ target_sources(ndn-lite PUBLIC
   ${DIR_ENCODE}/signature.h
   ${DIR_ENCODE}/signed-interest.h
   ${DIR_ENCODE}/tlv.h
-  ${DIR_ENCODE}/new-interest.h
+  ${DIR_ENCODE}/forwarder-helper.h
   ${DIR_ENCODE}/ndn-rule-storage.h
   ${DIR_TRUST_SCHEMA}/ndn-trust-schema-common.h
   ${DIR_TRUST_SCHEMA}/ndn-trust-schema-pattern-component.h
@@ -29,7 +29,7 @@ target_sources(ndn-lite PRIVATE
   ${DIR_ENCODE}/name.c
   ${DIR_ENCODE}/signature.c
   ${DIR_ENCODE}/signed-interest.c
-  ${DIR_ENCODE}/new-interest.c
+  ${DIR_ENCODE}/forwarder-helper.c
   ${DIR_ENCODE}/ndn-rule-storage.c
   ${DIR_TRUST_SCHEMA}/ndn-trust-schema-pattern-component.c
   ${DIR_TRUST_SCHEMA}/ndn-trust-schema-pattern.c

@@ -9,7 +9,6 @@ set(LIST_EXAMPLES
 #  "access-control-producer"
 #  "access-control-consumer"
 #  "access-control-controller"
-  "name-tree-test"
 )
 foreach(EXAM_NAME IN LISTS LIST_EXAMPLES)
   add_executable(${EXAM_NAME} "${DIR_EXAMPLES}/${EXAM_NAME}.c")

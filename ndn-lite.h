@@ -16,9 +16,7 @@
 #include "adaptation/adapt-consts.h"
 #include "adaptation/udp/udp-face.h"
 #include "ndn-lite/security/ndn-lite-sec-config.h"
-
-// TODO
-#include "ndn-lite/encode/new-interest.h"
+//#include "ndn-lite/encode/forwarder-helper.h"
 
 static void
 ndn_lite_startup(){
