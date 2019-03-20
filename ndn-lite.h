@@ -18,10 +18,15 @@
 #include "ndn-lite/security/ndn-lite-sec-config.h"
 //#include "ndn-lite/encode/forwarder-helper.h"
 
-static void
-ndn_lite_startup(){
-  ndn_security_init();
-  ndn_forwarder_init();
-}
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+extern void
+ndn_lite_startup(void);
+
+#ifdef __cplusplus
+};
+#endif
 
 #endif // NDN_LITE_H

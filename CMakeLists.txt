@@ -35,20 +35,33 @@ if(BUILD_PYTHON)
   include(UseSWIG)
 
   set (UseSWIG_TARGET_NAME_PREFERENCE STANDARD)
+  set(PYTHON_WRAPPER "${PROJECT_SOURCE_DIR}/wrapper/ndnlite-wrapper.i")
   set_property(
-    SOURCE "${PROJECT_SOURCE_DIR}/ndn-lite-binding.i"
-    PROPERTY GENERATED_INCLUDE_DIRECTORIES "${Python3_INCLUDE_DIRS}"
+    SOURCE "${PYTHON_WRAPPER}" PROPERTY
+    GENERATED_INCLUDE_DIRECTORIES "${Python3_INCLUDE_DIRS}"
+  )
+  set_property(
+    SOURCE "${PYTHON_WRAPPER}" PROPERTY
+    CPLUSPLUS ON
   )
   swig_add_library(pyndnlite
     TYPE SHARED
     LANGUAGE python
     OUTPUT_DIR "${PROJECT_BINARY_DIR}/pyndnlite"
-    SOURCES "${PROJECT_SOURCE_DIR}/ndn-lite-binding.i"
+    OUTFILE_DIR "${PROJECT_BINARY_DIR}/pyndnlite-tmp"
+    SOURCES "${PYTHON_WRAPPER}"
+  )
+  set_target_properties(pyndnlite PROPERTIES
+    SUFFIX ".so"
+    LIBRARY_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/pyndnlite"
+    ARCHIVE_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/pyndnlite"
+    RUNTIME_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/pyndnlite"
   )
   target_link_libraries(pyndnlite
     ndn-lite
     ${Python3_LIBRARIES}
   )
+  unset(PYTHON_WRAPPER)
 endif()
 
 # Adaptation
