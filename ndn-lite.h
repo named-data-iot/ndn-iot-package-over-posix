@@ -15,6 +15,7 @@
 #include "ndn-lite/forwarder/forwarder.h"
 #include "adaptation/adapt-consts.h"
 #include "adaptation/udp/udp-face.h"
+#include "adaptation/unix-socket/unix-face.h"
 #include "ndn-lite/security/ndn-lite-sec-config.h"
 //#include "ndn-lite/encode/forwarder-helper.h"
 
