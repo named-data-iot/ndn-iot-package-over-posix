@@ -56,3 +56,19 @@ let `COMPONENT_LEN=5`. The tree will be:
 ```
 The last two nodes in the graph are what we want.\
 This also accelerate string comparing.
+
+Content Store Draft
+-------------------
+Though the entries in current NameTree is hard-coded, we can make it flexable:
+```C++
+struct nametree_entry{
+  // NDN_NAMETREE_ENTRY_TYPE_CNT is the last entry in NDN_NAMETREE_ENTRY_TYPE.
+  ndn_table_id_t entries[NDN_NAMETREE_ENTRY_TYPE_CNT];
+};
+```
+We can use compiler flags to control `NDN_NAMETREE_ENTRY_TYPE`.
+I don't have a very clear idea on how to implement the content store.
+Maybe we can only implement it on platforms that support malloc().
+Or do it only in FIFO, since a queue can support variable emelent sizes.
+CS is important when we want to extend NDN-Lite to mobile scenarios, though
+currently we only focus on Home IoT.
