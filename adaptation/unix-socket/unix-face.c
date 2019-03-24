@@ -119,7 +119,7 @@ ndn_unix_face_construct(const char* addr){
     return NULL;
   }
 
-  ret->intf.type = NDN_FACE_TYPE_NET;
+  ret->intf.type = NDN_FACE_TYPE_APP;
   ret->intf.state = NDN_FACE_STATE_DOWN;
   ret->intf.up = ndn_unix_face_up;
   ret->intf.down = ndn_unix_face_down;

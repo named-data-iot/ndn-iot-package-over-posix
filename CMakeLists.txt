@@ -100,3 +100,18 @@ if (DOXYGEN_FOUND AND BUILD_DOCS)
 else ()
   message("Documentation skipped")
 endif ()
+
+# Copy headers
+install(DIRECTORY "${PROJECT_SOURCE_DIR}/ndn-lite"
+        DESTINATION "include/ndn-lite/ndn-lite"
+        FILES_MATCHING
+        PATTERN "*.h"
+)
+install(DIRECTORY "${PROJECT_SOURCE_DIR}/adaptation"
+        DESTINATION "include/ndn-lite/adaptation"
+        FILES_MATCHING
+        PATTERN "*.h"
+)
+install(FILES "${PROJECT_SOURCE_DIR}/ndn-lite.h"
+        DESTINATION "include/ndn-lite/"
+)
