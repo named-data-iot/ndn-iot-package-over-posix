@@ -102,16 +102,18 @@ else ()
 endif ()
 
 # Copy headers
+include(GNUInstallDirs)
 install(DIRECTORY "${PROJECT_SOURCE_DIR}/ndn-lite"
-        DESTINATION "include/ndn-lite/ndn-lite"
+        DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
         FILES_MATCHING
         PATTERN "*.h"
 )
 install(DIRECTORY "${PROJECT_SOURCE_DIR}/adaptation"
-        DESTINATION "include/ndn-lite/adaptation"
+        DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
         FILES_MATCHING
         PATTERN "*.h"
 )
 install(FILES "${PROJECT_SOURCE_DIR}/ndn-lite.h"
-        DESTINATION "include/ndn-lite/"
+        DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
 )
+install(TARGETS ndn-lite)
