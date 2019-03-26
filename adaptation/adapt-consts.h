@@ -9,6 +9,7 @@
 #define NDN_ADAPT_CONSTS_H
 
 #define NDN_UDP_FACE_SOCKET_ERROR 1
+#define NDN_UNIX_FACE_SOCKET_ERROR 2
 
 #define NDN_NFD_DEFAULT_ADDR "/var/run/nfd.sock"
 

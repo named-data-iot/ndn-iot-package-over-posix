@@ -55,14 +55,14 @@ ndn_unix_face_up(struct ndn_face_intf* self){
 
   ptr->sock = socket(AF_UNIX, SOCK_STREAM, 0);
   if(ptr->sock == -1){
-    return NDN_UDP_FACE_SOCKET_ERROR;
+    return NDN_UNIX_FACE_SOCKET_ERROR;
   }
 
   setsockopt(ptr->sock, SOL_SOCKET, SO_SNDBUF, &sendbuff, sizeof(sendbuff));
 
   if(ioctl(ptr->sock, FIONBIO, (char *)&iyes) == -1){
     ndn_face_down(self);
-    return NDN_UDP_FACE_SOCKET_ERROR;
+    return NDN_UNIX_FACE_SOCKET_ERROR;
   }
 
   return NDN_SUCCESS;
@@ -83,7 +83,7 @@ ndn_unix_client_face_up(struct ndn_face_intf* self){
 
   if(connect(ptr->sock, (struct sockaddr*)&ptr->addr, sizeof(ptr->addr)) == -1){
     ndn_face_down(self);
-    return NDN_UDP_FACE_SOCKET_ERROR;
+    return NDN_UNIX_FACE_SOCKET_ERROR;
   }
 
   ptr->process_event = ndn_msgqueue_post(ptr, ndn_unix_face_recv, 0, NULL);
@@ -114,12 +114,12 @@ ndn_unix_server_face_up(struct ndn_face_intf* self){
   }
   if(bind(ptr->sock, (struct sockaddr*)&ptr->addr, sizeof(ptr->addr)) == -1){
     ndn_face_down(self);
-    return NDN_UDP_FACE_SOCKET_ERROR;
+    return NDN_UNIX_FACE_SOCKET_ERROR;
   }
 
   if(listen(ptr->sock, 0) == -1){
     ndn_face_down(self);
-    return NDN_UDP_FACE_SOCKET_ERROR;
+    return NDN_UNIX_FACE_SOCKET_ERROR;
   }
 
   ptr->process_event = ndn_msgqueue_post(ptr, ndn_unix_face_accept, 0, NULL);
@@ -164,7 +164,7 @@ ndn_unix_face_send(ndn_face_intf_t* self, const uint8_t* packet, uint32_t size){
   ret = send(ptr->sock, packet, size, 0);
   if(ret != size){
     //printf("ERROR: Send error %d\n", errno);
-    return NDN_UDP_FACE_SOCKET_ERROR;
+    return NDN_UNIX_FACE_SOCKET_ERROR;
   }else{
     return NDN_SUCCESS;
   }
