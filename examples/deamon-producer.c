@@ -12,6 +12,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <ndn-lite.h>
+#include <errno.h>
 #include "ndn-lite/encode/name.h"
 #include "ndn-lite/encode/data.h"
 #include "ndn-lite/encode/interest.h"
@@ -61,7 +62,11 @@ int main(int argc, char *argv[]){
   }
 
   ndn_lite_startup();
-  face = ndn_unix_face_construct(NDN_NFD_DEFAULT_ADDR, true);
+  face = ndn_unix_face_construct(NDN_NFD_DEFAULT_ADDR, false);
+  if(!face || face->intf.state == NDN_FACE_STATE_DOWN){
+    printf("ERROR: %d\n", errno);
+    return -1;
+  }
 
   running = true;
   encoder_init(&encoder, buf, sizeof(buf));

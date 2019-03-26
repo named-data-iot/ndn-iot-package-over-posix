@@ -20,7 +20,16 @@ static int
 ndn_unix_face_up(struct ndn_face_intf* self);
 
 static int
+ndn_unix_client_face_up(struct ndn_face_intf* self);
+
+static int
+ndn_unix_server_face_up(struct ndn_face_intf* self);
+
+static int
 ndn_unix_face_down(struct ndn_face_intf* self);
+
+static int
+ndn_unix_slave_face_down(struct ndn_face_intf* self);
 
 static void
 ndn_unix_face_destroy(ndn_face_intf_t* self);
@@ -31,6 +40,12 @@ ndn_unix_face_send(ndn_face_intf_t* self, const uint8_t* packet, uint32_t size);
 static void
 ndn_unix_face_recv(void *self, size_t param_len, void *param);
 
+static void
+ndn_unix_face_accept(void *self, size_t param_len, void *param);
+
+static ndn_unix_face_t*
+ndn_unix_slave_face_construct(int sock);
+
 /////////////////////////// /////////////////////////// ///////////////////////////
 
 static int
@@ -38,9 +53,6 @@ ndn_unix_face_up(struct ndn_face_intf* self){
   ndn_unix_face_t* ptr = container_of(self, ndn_unix_face_t, intf);
   int iyes = 1;
 
-  if(self->state == NDN_FACE_STATE_UP){
-    return NDN_SUCCESS;
-  }
   ptr->sock = socket(AF_UNIX, SOCK_STREAM, 0);
   if(ptr->sock == -1){
     return NDN_UDP_FACE_SOCKET_ERROR;
@@ -50,12 +62,64 @@ ndn_unix_face_up(struct ndn_face_intf* self){
     return NDN_UDP_FACE_SOCKET_ERROR;
   }
 
+  return NDN_SUCCESS;
+}
+
+static int
+ndn_unix_client_face_up(struct ndn_face_intf* self){
+  ndn_unix_face_t* ptr = container_of(self, ndn_unix_face_t, intf);
+  int ret = 0;
+
+  if(self->state == NDN_FACE_STATE_UP){
+    return NDN_SUCCESS;
+  }
+  ret = ndn_unix_face_up(self);
+  if(ret != NDN_SUCCESS){
+    return ret;
+  }
+
   if(connect(ptr->sock, (struct sockaddr*)&ptr->addr, sizeof(ptr->addr)) == -1){
     ndn_face_down(self);
     return NDN_UDP_FACE_SOCKET_ERROR;
   }
 
   ptr->process_event = ndn_msgqueue_post(ptr, ndn_unix_face_recv, 0, NULL);
+  if(ptr->process_event == NULL){
+    ndn_face_down(self);
+    return NDN_FWD_MSGQUEUE_FULL;
+  }
+
+  self->state = NDN_FACE_STATE_UP;
+  return NDN_SUCCESS;
+}
+
+static int
+ndn_unix_server_face_up(struct ndn_face_intf* self){
+  ndn_unix_face_t* ptr = container_of(self, ndn_unix_face_t, intf);
+  int ret = 0;
+
+  if(self->state == NDN_FACE_STATE_UP){
+    return NDN_SUCCESS;
+  }
+  ret = ndn_unix_face_up(self);
+  if(ret != NDN_SUCCESS){
+    return ret;
+  }
+
+  if(ptr->addr.sun_path[0] != 0){
+    unlink(ptr->addr.sun_path);
+  }
+  if(bind(ptr->sock, (struct sockaddr*)&ptr->addr, sizeof(ptr->addr)) == -1){
+    ndn_face_down(self);
+    return NDN_UDP_FACE_SOCKET_ERROR;
+  }
+
+  if(listen(ptr->sock, 0) == -1){
+    ndn_face_down(self);
+    return NDN_UDP_FACE_SOCKET_ERROR;
+  }
+
+  ptr->process_event = ndn_msgqueue_post(ptr, ndn_unix_face_accept, 0, NULL);
   if(ptr->process_event == NULL){
     ndn_face_down(self);
     return NDN_FWD_MSGQUEUE_FULL;
@@ -92,10 +156,11 @@ ndn_unix_face_destroy(ndn_face_intf_t* self){
 
 static int
 ndn_unix_face_send(ndn_face_intf_t* self, const uint8_t* packet, uint32_t size){
-  ndn_unix_face_t* ptr = (ndn_unix_face_t*)self;
+  ndn_unix_face_t* ptr = container_of(self, ndn_unix_face_t, intf);
   ssize_t ret;
   ret = send(ptr->sock, packet, size, 0);
   if(ret != size){
+    //printf("ERROR: Send error %d\n", errno);
     return NDN_UDP_FACE_SOCKET_ERROR;
   }else{
     return NDN_SUCCESS;
@@ -103,7 +168,7 @@ ndn_unix_face_send(ndn_face_intf_t* self, const uint8_t* packet, uint32_t size){
 }
 
 ndn_unix_face_t*
-ndn_unix_face_construct(const char* addr){
+ndn_unix_face_construct(const char* addr, bool client){
   ndn_unix_face_t* ret;
   int iret;
 
@@ -121,7 +186,11 @@ ndn_unix_face_construct(const char* addr){
 
   ret->intf.type = NDN_FACE_TYPE_APP;
   ret->intf.state = NDN_FACE_STATE_DOWN;
-  ret->intf.up = ndn_unix_face_up;
+  if(client){
+    ret->intf.up = ndn_unix_client_face_up;
+  }else{
+    ret->intf.up = ndn_unix_server_face_up;
+  }
   ret->intf.down = ndn_unix_face_down;
   ret->intf.send = ndn_unix_face_send;
   ret->intf.destroy = ndn_unix_face_destroy;
@@ -135,11 +204,57 @@ ndn_unix_face_construct(const char* addr){
     strncpy(ret->addr.sun_path, addr, sizeof(ret->addr.sun_path) - 1);
   }
 
+  ret->client = client;
   ret->sock = -1;
   ret->process_event = NULL;
   ndn_face_up(&ret->intf);
 
   return ret;
+}
+
+static ndn_unix_face_t*
+ndn_unix_slave_face_construct(int sock){
+  ndn_unix_face_t* ret;
+  int iret;
+
+  ret = (ndn_unix_face_t*)malloc(sizeof(ndn_unix_face_t));
+  if(!ret){
+    return NULL;
+  }
+
+  ret->intf.face_id = NDN_INVALID_ID;
+  iret = ndn_forwarder_register_face(&ret->intf);
+  if(iret != NDN_SUCCESS){
+    free(ret);
+    return NULL;
+  }
+  //printf("New face registered %d\n", ret->intf.face_id);
+
+  ret->intf.type = NDN_FACE_TYPE_APP;
+  ret->intf.state = NDN_FACE_STATE_UP;
+  ret->intf.up = NULL;
+  ret->intf.down = ndn_unix_slave_face_down;
+  ret->intf.send = ndn_unix_face_send;
+  ret->intf.destroy = NULL;
+
+  ret->client = false;
+  ret->sock = sock;
+  ret->process_event = ndn_msgqueue_post(ret, ndn_unix_face_recv, 0, NULL);
+  if(ret->process_event == NULL){
+    ndn_face_down(&ret->intf);
+    return NULL;
+  }
+
+  return ret;
+}
+
+static int
+ndn_unix_slave_face_down(struct ndn_face_intf* self){
+  ndn_unix_face_down(self);
+  ndn_forwarder_unregister_face(self);
+  free(container_of(self, ndn_unix_face_t, intf));
+  //printf("Unix face deleted %d\n", container_of(self, ndn_unix_face_t, intf)->sock);
+  return NDN_SUCCESS;
 }
 
 static void
@@ -154,7 +269,7 @@ ndn_unix_face_recv(void *self, size_t param_len, void *param){
   ptr->process_event = NULL;
 
   size = recv(ptr->sock, ptr->buf, sizeof(ptr->buf), 0);
-  if(size >= 0){
+  if(size > 0){
     // Some packets recved
     // TODO: Maybe Assembling?
     for(buf = ptr->buf; buf < ptr->buf + size; buf += cur_size){
@@ -164,6 +279,7 @@ ndn_unix_face_recv(void *self, size_t param_len, void *param){
       }
       cur_size += valptr - buf;
       if(buf + cur_size > ptr->buf + size){
+        //printf("ERROR: incomplete fragment\n");
         break;
       }
       ndn_forwarder_receive(&ptr->intf, buf, cur_size);
@@ -171,9 +287,33 @@ ndn_unix_face_recv(void *self, size_t param_len, void *param){
   }else if(size == -1 && errno == EWOULDBLOCK){
     // No more packet
   }else{
+    // size == 0 means a shutdown
     ndn_face_down(&ptr->intf);
     return;
   }
 
   ptr->process_event = ndn_msgqueue_post(self, ndn_unix_face_recv, param_len, param);
+}
+
+static void
+ndn_unix_face_accept(void *self, size_t param_len, void *param){
+  ndn_unix_face_t* ptr = (ndn_unix_face_t*)self;
+  int ret = 0;
+
+  ptr->process_event = NULL;
+
+  ret = accept(ptr->sock, NULL, NULL);
+  if(ret >= 0){
+    //printf("New face created %d\n", ret);
+    if(ndn_unix_slave_face_construct(ret) == NULL){
+      close(ret);
+    }
+  }else if(ret == -1 && errno == EWOULDBLOCK){
+    //No more connections
+  }else{
+    ndn_face_down(&ptr->intf);
+    return;
+  }
+
+  ptr->process_event = ndn_msgqueue_post(self, ndn_unix_face_accept, param_len, param);
 }

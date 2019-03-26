@@ -36,10 +36,12 @@ typedef struct ndn_unix_face {
   struct ndn_msg* process_event;
   int sock;
   uint8_t buf[NDN_UNIX_BUFFER_SIZE];
+
+  bool client;
 } ndn_unix_face_t;
 
 ndn_unix_face_t*
-ndn_unix_face_construct(const char* addr);
+ndn_unix_face_construct(const char* addr, bool client);
 
 #ifdef __cplusplus
 }

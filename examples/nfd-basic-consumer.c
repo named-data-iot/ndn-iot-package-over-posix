@@ -65,7 +65,7 @@ int main(int argc, char *argv[]){
 
   ndn_lite_startup();
   srandom(time(0));
-  face = ndn_unix_face_construct(NDN_NFD_DEFAULT_ADDR);
+  face = ndn_unix_face_construct(NDN_NFD_DEFAULT_ADDR, true);
 
   running = true;
   encoder_init(&encoder, buf, 4096);

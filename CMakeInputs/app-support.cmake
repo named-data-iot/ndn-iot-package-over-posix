@@ -1,12 +1,10 @@
 set(DIR_APP_SUPPORT "${DIR_NDN_LITE}/app-support")
-set(DIR_BOOTSTRAPPING "${DIR_APP_SUPPORT}/bootstrapping")
-set(DIR_SECURE_SIGN_ON "${DIR_BOOTSTRAPPING}/secure-sign-on")
+set(DIR_SECURE_SIGN_ON "${DIR_APP_SUPPORT}/secure-sign-on")
 set(DIR_SECURITY "${DIR_SECURE_SIGN_ON}/security")
 set(DIR_VARIANTS "${DIR_SECURE_SIGN_ON}/variants")
 set(DIR_ECC256 "${DIR_VARIANTS}/ecc_256")
 target_sources(ndn-lite PUBLIC
   ${DIR_APP_SUPPORT}/access-control.h
-  ${DIR_APP_SUPPORT}/bootstrapping.h
   ${DIR_APP_SUPPORT}/service-discovery.h
 )
 target_sources(ndn-lite PRIVATE
@@ -27,7 +25,6 @@ target_sources(ndn-lite PRIVATE
   ${DIR_ECC256}/sign-on-basic-ecc-256-sec.h
 )
 unset(DIR_APP_SUPPORT)
-unset(DIR_BOOTSTRAPPING)
 unset(DIR_SECURE_SIGN_ON)
 unset(DIR_SECURITY)
 unset(DIR_VARIANTS)

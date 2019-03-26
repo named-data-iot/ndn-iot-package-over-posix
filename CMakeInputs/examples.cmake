@@ -11,6 +11,8 @@ set(LIST_EXAMPLES
 #  "access-control-controller"
   "nfd-basic-consumer"
   "nfd-basic-producer"
+  "deamon-producer"
+  "ndn-putchunks"
 )
 foreach(EXAM_NAME IN LISTS LIST_EXAMPLES)
   add_executable(${EXAM_NAME} "${DIR_EXAMPLES}/${EXAM_NAME}.c")
