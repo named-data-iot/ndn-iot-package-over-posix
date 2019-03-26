@@ -26,8 +26,7 @@ uint8_t buf[4096];
 uint8_t chunks[MAX_CHUNKS_NUM][DATA_CHUNK_SIZE];
 uint32_t chunk_sizes[MAX_CHUNKS_NUM];
 uint32_t chunks_num = 0;
-//ndn_unix_face_t *face;
-ndn_udp_face_t *face;
+ndn_unix_face_t *face;
 bool running;
 
 int parse_args(int argc, char *argv[]){
@@ -137,7 +136,6 @@ int on_interest(const uint8_t* raw_interest, uint32_t interest_size, void* userd
       segno = segno * 0x100 + comp->value[i];
     }
   }
-  //printf("On interest: %d\n", segno);
   if(segno < chunks_num){
     ndn_forwarder_put_data(chunks[segno], chunk_sizes[segno]);
   }
@@ -160,12 +158,7 @@ int main(int argc, char *argv[]){
 
   printf("Data ready: %u chunks\n", chunks_num);
 
-  //face = ndn_unix_face_construct(NDN_NFD_DEFAULT_ADDR);
-  face = ndn_udp_unicast_face_construct(
-    htonl(INADDR_LOOPBACK),
-    htons(6363),
-    htonl(INADDR_LOOPBACK),
-    htons(5152));
+  face = ndn_unix_face_construct(NDN_NFD_DEFAULT_ADDR, false);
 
   running = true;
   encoder_init(&encoder, buf, sizeof(buf));
@@ -173,7 +166,7 @@ int main(int argc, char *argv[]){
   ndn_forwarder_register_prefix(encoder.output_value, encoder.offset, on_interest, NULL);
   while(running){
     ndn_forwarder_process();
-    usleep(10000);
+    usleep(10);
   }
 
   ndn_face_destroy(&face->intf);

@@ -51,12 +51,15 @@ ndn_unix_slave_face_construct(int sock);
 static int
 ndn_unix_face_up(struct ndn_face_intf* self){
   ndn_unix_face_t* ptr = container_of(self, ndn_unix_face_t, intf);
-  int iyes = 1;
+  int iyes = 1, sendbuff = 262144;
 
   ptr->sock = socket(AF_UNIX, SOCK_STREAM, 0);
   if(ptr->sock == -1){
     return NDN_UDP_FACE_SOCKET_ERROR;
   }
+
+  setsockopt(ptr->sock, SOL_SOCKET, SO_SNDBUF, &sendbuff, sizeof(sendbuff));
+
   if(ioctl(ptr->sock, FIONBIO, (char *)&iyes) == -1){
     ndn_face_down(self);
     return NDN_UDP_FACE_SOCKET_ERROR;
@@ -206,6 +209,7 @@ ndn_unix_face_construct(const char* addr, bool client){
 
   ret->client = client;
   ret->sock = -1;
+  ret->offset = 0;
   ret->process_event = NULL;
   ndn_face_up(&ret->intf);
 
@@ -239,6 +243,7 @@ ndn_unix_slave_face_construct(int sock){
 
   ret->client = false;
   ret->sock = sock;
+  ret->offset = 0;
   ret->process_event = ndn_msgqueue_post(ret, ndn_unix_face_recv, 0, NULL);
   if(ret->process_event == NULL){
     ndn_face_down(&ret->intf);
@@ -268,10 +273,13 @@ ndn_unix_face_recv(void *self, size_t param_len, void *param){
   // So ndn_face_down won't cancel a not existing event.
   ptr->process_event = NULL;
 
-  size = recv(ptr->sock, ptr->buf, sizeof(ptr->buf), 0);
+  size = recv(ptr->sock,
+              ptr->buf + ptr->offset,
+              sizeof(ptr->buf) - ptr->offset,
+              0);
   if(size > 0){
     // Some packets recved
-    // TODO: Maybe Assembling?
+    size += ptr->offset;
     for(buf = ptr->buf; buf < ptr->buf + size; buf += cur_size){
       valptr = tlv_get_type_length(buf, ptr->buf + size - buf, &cur_type, &cur_size);
       if(valptr == NULL){
@@ -279,10 +287,16 @@ ndn_unix_face_recv(void *self, size_t param_len, void *param){
       }
       cur_size += valptr - buf;
       if(buf + cur_size > ptr->buf + size){
-        //printf("ERROR: incomplete fragment\n");
         break;
       }
       ndn_forwarder_receive(&ptr->intf, buf, cur_size);
+    }
+    if(buf < ptr->buf + size){
+      // TODO: Too large packets will block the receive.
+      memcpy(ptr->buf, buf, ptr->buf + size - buf);
+      ptr->offset = ptr->buf + size - buf;
+    }else{
+      ptr->offset = 0;
     }
   }else if(size == -1 && errno == EWOULDBLOCK){
     // No more packet

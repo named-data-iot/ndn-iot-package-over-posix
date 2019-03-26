@@ -35,7 +35,9 @@ typedef struct ndn_unix_face {
   struct sockaddr_un addr;
   struct ndn_msg* process_event;
   int sock;
+
   uint8_t buf[NDN_UNIX_BUFFER_SIZE];
+  uint32_t offset;
 
   bool client;
 } ndn_unix_face_t;

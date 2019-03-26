@@ -6,7 +6,7 @@ Occasional Dead Nonce List
 Nonce is used to eliminate Interest loop when the looping time is longer than
 its lifetime and no corresponding Data. However this is a very rare case, since
 the default lifetime is 4s, and the access time from LA to Shanghai is about
-200ms (non official data by JS). Especially, our work is used for local network
+200ms (non official data by S.K.S). Especially, our work is used for local network
 of constrained devices. It's reasonable to ignore nonces.
 
 But there's another solution, to exploit the garbage collecting of Name Tree,
@@ -72,3 +72,32 @@ Maybe we can only implement it on platforms that support malloc().
 Or do it only in FIFO, since a queue can support variable emelent sizes.
 CS is important when we want to extend NDN-Lite to mobile scenarios, though
 currently we only focus on Home IoT.
+
+Thread Safety of MsgQueue
+-------------------------
+Current MsgQueue is not thread-safe. A mutex can give the thread safety but
+still not reentrancy, which may be more important. The only solution for
+reentrancy is to only allow one task writing and the other reading. So we need
+a different queue for faces. It seems that no atomic operation is needed.
+```C++
+struct OneWayQueue{
+  uint8_t buf[BUF_SIZE];
+  int32_t roar;
+  int32_t head;
+}
+
+void PutDataToNormalSide(uint8_t* data, uint32_t len){
+  // Only called from ISR side, won't be interrupted.
+  // Codes dealing with rewind are omitted
+  memcpy(buf + roar, data, len);
+  roar += len;
+}
+
+uint32_t ReadDataFromISRSide(uint8_t* data, uint32_t len){
+  int32_t datasize = int32_t(roar) - int32_t(head); // Safe, read only
+  if(datasize == 0) return 0;
+  if(datasize < 0) datasize += BUF_SIZE;
+  memcpy(data, buf + head, datasize); // Safe, data won't be changed
+  return datasize;
+}
+```
