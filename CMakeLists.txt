@@ -116,4 +116,6 @@ install(DIRECTORY "${PROJECT_SOURCE_DIR}/adaptation"
 install(FILES "${PROJECT_SOURCE_DIR}/ndn-lite.h"
         DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
 )
-install(TARGETS ndn-lite)
+install(TARGETS ndn-lite
+        ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+)
