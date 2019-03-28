@@ -13,6 +13,7 @@
 #include <stdlib.h>
 #include <ndn-lite.h>
 #include <sys/time.h>
+#include <errno.h>
 #include "ndn-lite/encode/name.h"
 #include "ndn-lite/encode/data.h"
 #include "ndn-lite/encode/interest.h"
@@ -159,6 +160,12 @@ int main(int argc, char *argv[]){
   printf("Data ready: %u chunks\n", chunks_num);
 
   face = ndn_unix_face_construct(NDN_NFD_DEFAULT_ADDR, false);
+  if(face->intf.state != NDN_FACE_STATE_UP){
+    printf("ERROR: Unable to establish unix socket: %d\n", errno);
+    printf("If NDN_NFD_DEFAULT_ADDR is used, sudo is needed.\n");
+    ndn_face_destroy(&face->intf);
+    return -1;
+  }
 
   running = true;
   encoder_init(&encoder, buf, sizeof(buf));

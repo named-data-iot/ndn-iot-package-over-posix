@@ -7,6 +7,7 @@
  */
 
 #include <sys/ioctl.h>
+#include <sys/stat.h>
 #include <errno.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -121,6 +122,8 @@ ndn_unix_server_face_up(struct ndn_face_intf* self){
     ndn_face_down(self);
     return NDN_UNIX_FACE_SOCKET_ERROR;
   }
+
+  chmod(ptr->addr.sun_path, 0666);
 
   ptr->process_event = ndn_msgqueue_post(ptr, ndn_unix_face_accept, 0, NULL);
   if(ptr->process_event == NULL){
