@@ -17,7 +17,7 @@
 #include "adaptation/udp/udp-face.h"
 #include "adaptation/unix-socket/unix-face.h"
 #include "ndn-lite/security/ndn-lite-sec-config.h"
-//#include "ndn-lite/encode/forwarder-helper.h"
+#include "ndn-lite/encode/forwarder-helper.h"
 
 #ifdef __cplusplus
 extern "C" {
