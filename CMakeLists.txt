@@ -1,5 +1,5 @@
 # Root CMake file for NDN-Lite over POSIX
-cmake_minimum_required (VERSION 3.11)
+cmake_minimum_required (VERSION 3.5)
 project(ndn-lite)
 
 option(BUILD_DOCS "Build documentation" OFF)
@@ -68,7 +68,7 @@ endif()
 include(${DIR_CMAKEFILES}/adaptation.cmake)
 
 # Unit test program
-add_executable(unittest)
+add_executable(unittest ndn-lite.h)
 target_link_libraries(unittest ndn-lite)
 include(${DIR_CMAKEFILES}/unittest.cmake)
 
