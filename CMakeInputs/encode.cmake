@@ -15,6 +15,7 @@ target_sources(ndn-lite PUBLIC
   ${DIR_ENCODE}/tlv.h
   ${DIR_ENCODE}/forwarder-helper.h
   ${DIR_ENCODE}/ndn-rule-storage.h
+  ${DIR_ENCODE}/wrapper-api.h
   ${DIR_TRUST_SCHEMA}/ndn-trust-schema-common.h
   ${DIR_TRUST_SCHEMA}/ndn-trust-schema-pattern-component.h
   ${DIR_TRUST_SCHEMA}/ndn-trust-schema-pattern.h
@@ -31,6 +32,7 @@ target_sources(ndn-lite PRIVATE
   ${DIR_ENCODE}/signed-interest.c
   ${DIR_ENCODE}/forwarder-helper.c
   ${DIR_ENCODE}/ndn-rule-storage.c
+  ${DIR_ENCODE}/wrapper-api.c
   ${DIR_TRUST_SCHEMA}/ndn-trust-schema-pattern-component.c
   ${DIR_TRUST_SCHEMA}/ndn-trust-schema-pattern.c
   ${DIR_TRUST_SCHEMA}/ndn-trust-schema-rule.c

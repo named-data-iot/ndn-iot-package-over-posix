@@ -25,7 +25,7 @@
 ndn_name_t name_prefix, versioned_name;
 uint8_t buf[4096];
 uint8_t chunks[MAX_CHUNKS_NUM][DATA_CHUNK_SIZE];
-uint32_t chunk_sizes[MAX_CHUNKS_NUM];
+size_t chunk_sizes[MAX_CHUNKS_NUM];
 uint32_t chunks_num = 0;
 ndn_unix_face_t *face;
 bool running;
@@ -62,33 +62,9 @@ int parse_args(int argc, char *argv[]){
   return 0;
 }
 
-void make_blockid(name_component_t* comp, uint32_t val){
-  int i, cur;
-  comp->type = TLV_GenericNameComponent;
-  cur = val;
-  for(i = 0; cur > 0; i ++){
-    cur /= 0x100;
-  }
-  if(i == 0){
-    i ++;
-  }
-  // For own use
-  if(i == 1){
-    i ++;
-  }
-  comp->size = i + 1;
-  cur = val;
-  for(; i >= 0; i --){
-    comp->value[i] = (uint8_t)(cur % 0x100);
-    cur /= 0x100;
-  }
-}
-
 int prepare_data(const char* filename){
   long filesize, i, cursz;
-  ndn_data_t data;
-  ndn_metainfo_t* metainfo = &data.metainfo;
-  ndn_encoder_t encoder;
+  int ret;
 
   FILE* file = fopen(filename, "rb");
   if(file == NULL){
@@ -101,21 +77,15 @@ int prepare_data(const char* filename){
   fseek(file, 0 , SEEK_SET);
   chunks_num = (filesize + DATA_BLOCK_SIZE - 1) / DATA_BLOCK_SIZE;
 
-  ndn_metainfo_init(metainfo);
-  ndn_metainfo_set_freshness_period(metainfo, 10000);
-  metainfo->enable_FinalBlockId = true;
-  make_blockid(&metainfo->final_block_id, chunks_num - 1);
-
   for(i = 0; !feof(file); i ++){
-    cursz = fread(data.content_value, 1, DATA_BLOCK_SIZE, file);
-    data.content_size = cursz;
-    encoder_init(&encoder, chunks[i], DATA_CHUNK_SIZE);
-    data.name = versioned_name;
-    make_blockid(&data.name.components[data.name.components_size], i);
-    data.name.components_size ++;
-
-    ndn_data_tlv_encode_digest_sign(&encoder, &data);
-    chunk_sizes[i] = encoder.offset;
+    cursz = fread(buf, 1, DATA_BLOCK_SIZE, file);
+    ret = tlv_make_data(chunks[i], DATA_CHUNK_SIZE, &chunk_sizes[i], 6,
+                        TLV_DATAARG_NAME_PTR, &versioned_name,
+                        TLV_DATAARG_NAME_SEGNO_U64, (uint64_t)i,
+                        TLV_DATAARG_FRESHNESSPERIOD_U64, (uint64_t)10000,
+                        TLV_DATAARG_FINALBLOCKID_U64, (uint64_t)(chunks_num - 1),
+                        TLV_DATAARG_CONTENT_BUF, buf,
+                        TLV_DATAARG_CONTENT_SIZE, (size_t)cursz);
   }
 
   fclose(file);
