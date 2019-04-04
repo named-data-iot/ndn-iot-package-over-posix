@@ -52,14 +52,12 @@ ndn_unix_slave_face_construct(int sock);
 static int
 ndn_unix_face_up(struct ndn_face_intf* self){
   ndn_unix_face_t* ptr = container_of(self, ndn_unix_face_t, intf);
-  int iyes = 1, sendbuff = 262144;
+  int iyes = 1;
 
   ptr->sock = socket(AF_UNIX, SOCK_STREAM, 0);
   if(ptr->sock == -1){
     return NDN_UNIX_FACE_SOCKET_ERROR;
   }
-
-  setsockopt(ptr->sock, SOL_SOCKET, SO_SNDBUF, &sendbuff, sizeof(sendbuff));
 
   if(ioctl(ptr->sock, FIONBIO, (char *)&iyes) == -1){
     ndn_face_down(self);
