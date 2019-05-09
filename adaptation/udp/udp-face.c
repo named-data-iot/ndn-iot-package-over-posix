@@ -10,6 +10,7 @@
 #include <errno.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <fcntl.h>
 #include <string.h>
 #include "udp-face.h"
 #include "ndn-lite/ndn-error-code.h"
@@ -43,7 +44,7 @@ ndn_udp_face_recv(void *self, size_t param_len, void *param);
 static int
 ndn_udp_face_up(struct ndn_face_intf* self){
   ndn_udp_face_t* ptr = container_of(self, ndn_udp_face_t, intf);
-  int iyes = 1;
+  int iyes = 1, iflags;
   u_char ttl = 5;
   struct ip_mreq mreq;
 
@@ -55,7 +56,13 @@ ndn_udp_face_up(struct ndn_face_intf* self){
     return NDN_UDP_FACE_SOCKET_ERROR;
   }
   setsockopt(ptr->sock, SOL_SOCKET, SO_REUSEADDR, &iyes, sizeof(int));
-  if(ioctl(ptr->sock, FIONBIO, (char *)&iyes) == -1){
+  //if(ioctl(ptr->sock, FIONBIO, (char *)&iyes) == -1){
+  iflags = fcntl(ptr->sock, F_GETFL, 0);
+  if(iflags == -1){
+    ndn_face_down(self);
+    return NDN_UDP_FACE_SOCKET_ERROR;
+  }
+  if(fcntl(ptr->sock, F_SETFL, iflags | O_NONBLOCK) == -1){
     ndn_face_down(self);
     return NDN_UDP_FACE_SOCKET_ERROR;
   }
@@ -200,12 +207,12 @@ ndn_udp_face_recv(void *self, size_t param_len, void *param){
   ndn_udp_face_t* ptr = (ndn_udp_face_t*)self;
 
   while(true){
-    size = recvfrom(ptr->sock, ptr->buf, sizeof(ptr->buf), MSG_DONTWAIT,
+    size = recvfrom(ptr->sock, ptr->buf, sizeof(ptr->buf), 0,
                     (struct sockaddr*)&client_addr, &addr_len);
     if(size >= 0){
       // A packet recved
       ret = ndn_forwarder_receive(&ptr->intf, ptr->buf, size);
-    }else if(size == -1 && errno == EWOULDBLOCK){
+    }else if(size == -1 && (errno == EWOULDBLOCK || errno == EAGAIN)){
       // No more packet
       break;
     }else{
