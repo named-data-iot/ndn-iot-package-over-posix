@@ -13,6 +13,8 @@ set(LIST_EXAMPLES
   "nfd-basic-producer"
   "deamon-producer"
   "ndn-putchunks"
+  "file-transfer-client"
+  "file-transfer-server"
 )
 foreach(EXAM_NAME IN LISTS LIST_EXAMPLES)
   add_executable(${EXAM_NAME} "${DIR_EXAMPLES}/${EXAM_NAME}.c")
