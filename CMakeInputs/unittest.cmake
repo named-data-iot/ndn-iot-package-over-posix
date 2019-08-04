@@ -21,7 +21,7 @@ set(LIST_TESTS
   "metainfo"
   "name-encode-decode"
   "random"
-  "service-discovery"
+# "service-discovery"
   "signature"
   "util"
 )
