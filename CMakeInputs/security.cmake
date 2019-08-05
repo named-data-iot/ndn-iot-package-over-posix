@@ -1,5 +1,5 @@
 set(DIR_SECURITY "${DIR_NDN_LITE}/security")
-set(DIR_DEFAULT_BACKEND "${DIR_SECURITY}/detail/default-backend/")
+set(DIR_DEFAULT_BACKEND "${DIR_SECURITY}/default-backend/")
 set(DIR_MICRO_ECC "${DIR_DEFAULT_BACKEND}/sec-lib/micro-ecc")
 set(DIR_TINYCRYPT "${DIR_DEFAULT_BACKEND}/sec-lib/tinycrypt")
 target_sources(ndn-lite PUBLIC
