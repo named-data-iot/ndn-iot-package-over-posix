@@ -11,6 +11,7 @@
 #include <errno.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <fcntl.h>
 #include <string.h>
 #include "unix-face.h"
 #include "ndn-lite/ndn-error-code.h"
@@ -53,15 +54,21 @@ static int
 ndn_unix_face_up(struct ndn_face_intf* self){
   ndn_unix_face_t* ptr = container_of(self, ndn_unix_face_t, intf);
   int iyes = 1;
+  int iflags;
 
   ptr->sock = socket(AF_UNIX, SOCK_STREAM, 0);
   if(ptr->sock == -1){
     return NDN_UNIX_FACE_SOCKET_ERROR;
   }
 
-  if(ioctl(ptr->sock, FIONBIO, (char *)&iyes) == -1){
+  iflags = fcntl(ptr->sock, F_GETFL, 0);
+  if(iflags == -1){
     ndn_face_down(self);
-    return NDN_UNIX_FACE_SOCKET_ERROR;
+    return NDN_UDP_FACE_SOCKET_ERROR;
+  }
+  if(fcntl(ptr->sock, F_SETFL, iflags | O_NONBLOCK) == -1){
+    ndn_face_down(self);
+    return NDN_UDP_FACE_SOCKET_ERROR;
   }
 
   return NDN_SUCCESS;
