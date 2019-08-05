@@ -13,10 +13,13 @@
 
 #include <stdint.h>
 
+/**
+ * return 1 if runs successfully
+ */
 int
-ndn_lite_posix_nrf_crypto(uint8_t *dest, unsigned size);
+ndn_lite_posix_rng(uint8_t *dest, unsigned size);
 
 void
-ndn_lite_posix_crypto_rng_load_backend(void);
+ndn_lite_posix_rng_load_backend(void);
 
 #endif // RNG_POSIX_CRYPTO_IMPL_H

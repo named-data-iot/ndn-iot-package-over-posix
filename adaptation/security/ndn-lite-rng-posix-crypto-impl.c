@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019
+ * Copyright (C) 2018-2019 Zhiyi Zhang
  *
  * This file is subject to the terms and conditions of the GNU Lesser
  * General Public License v2.1. See the file LICENSE in the top level
@@ -17,15 +17,15 @@
 #endif
 
 int
-ndn_lite_rng_posix_crypto(uint8_t *dest, unsigned size)
+ndn_lite_posix_rng(uint8_t *dest, unsigned size)
 {
   arc4random_buf((void*)dest, size);
-  return 0;
+  return 1;
 }
 
 void
-ndn_lite_posix_crypto_rng_load_backend(void)
+ndn_lite_posix_rng_load_backend(void)
 {
   ndn_rng_backend_t* backend = ndn_rng_get_backend();
-  backend->rng = ndn_lite_rng_posix_crypto;
+  backend->rng = ndn_lite_posix_rng;
 }
