@@ -8,7 +8,7 @@
  * See AUTHORS.md for complete list of NDN IOT PKG authors and contributors.
  */
 /*
- * This file-tranfer-client works with file-transfer-server. 
+ * This file-tranfer-client works with file-transfer-server.
  * Launch the file-transfer-server, input local port, client ip, client port and name.
  * Launch the file-transfer-client, input local port, server ip, server port, name and the file name.
  * The server will then return the requested file to the client. (if the file exists in the directory)
@@ -99,17 +99,17 @@ void on_data(const uint8_t* rawdata, uint32_t data_size, void* userdata){
 }
 
 int save_file (uint8_t* file_data){
-    FILE * fp = fopen(file_name,"w");
-    if(fp == NULL){
-      fprintf(stderr, "ERROR: fail to open a file when writing.\n");
-      return 1;
-    }
-    if(fputs((char*)file_data,fp) == EOF){
-      fprintf(stderr, "ERROR: fail to write data.\n");
-      return 1;
-    }
-    fclose(fp);
-    return 0;
+  FILE * fp = fopen(file_name,"w");
+  if(fp == NULL){
+    fprintf(stderr, "ERROR: fail to open a file when writing.\n");
+    return 1;
+  }
+  if(fputs((char*)file_data,fp) == EOF){
+    fprintf(stderr, "ERROR: fail to write data.\n");
+    return 1;
+  }
+  fclose(fp);
+  return 0;
 }
 
 void on_timeout(void* userdata){

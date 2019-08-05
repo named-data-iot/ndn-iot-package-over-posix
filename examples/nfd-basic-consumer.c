@@ -73,8 +73,8 @@ int main(int argc, char *argv[]){
   ndn_forwarder_add_route(&face->intf, buf, encoder.offset);
 
   ndn_interest_from_name(&interest, &name_prefix);
-  interest.enable_MustBeFresh = true;
-  interest.enable_CanBePrefix = true;
+  ndn_interest_set_MustBeFresh(&interest, true);
+  ndn_interest_set_CanBePrefix(&interest, true);
   interest.nonce = random();
   encoder_init(&encoder, buf, 4096);
   ndn_interest_tlv_encode(&encoder, &interest);
