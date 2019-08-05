@@ -64,11 +64,11 @@ ndn_unix_face_up(struct ndn_face_intf* self){
   iflags = fcntl(ptr->sock, F_GETFL, 0);
   if(iflags == -1){
     ndn_face_down(self);
-    return NDN_UDP_FACE_SOCKET_ERROR;
+    return NDN_UNIX_FACE_SOCKET_ERROR;
   }
   if(fcntl(ptr->sock, F_SETFL, iflags | O_NONBLOCK) == -1){
     ndn_face_down(self);
-    return NDN_UDP_FACE_SOCKET_ERROR;
+    return NDN_UNIX_FACE_SOCKET_ERROR;
   }
 
   return NDN_SUCCESS;
