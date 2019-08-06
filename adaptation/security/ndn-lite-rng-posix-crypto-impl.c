@@ -10,16 +10,29 @@
 
 #include "ndn-lite-rng-posix-crypto-impl.h"
 #include <ndn-lite/security/ndn-lite-rng.h>
-#if defined(__linux__)
-  #include <bsd/stdlib.h>
-#elif defined(__APPLE__)
+#include <sys/stat.h>
+#include <fcntl.h>
+#if defined(__APPLE__)
   #include <stdlib.h>
 #endif
 
 int
 ndn_lite_posix_rng(uint8_t *dest, unsigned size)
 {
+#if defined(__APPLE__)
   arc4random_buf((void*)dest, size);
+  return 1;
+#endif
+  int randomData = open("/dev/urandom", O_RDONLY);
+  if (randomData < 0) {
+    return 0;
+  }
+  else {
+    int result = read(randomData, dest, size);
+    if (result < 0) {
+      return 0;
+    }
+  }
   return 1;
 }
 
