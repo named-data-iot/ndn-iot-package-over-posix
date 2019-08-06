@@ -12,6 +12,7 @@
 #include "ndn-lite/ndn-enums.h"
 #include "ndn-lite/ndn-error-code.h"
 #include "ndn-lite/ndn-services.h"
+#include "ndn-lite/encode/key-storage.h"
 #include "ndn-lite/forwarder/forwarder.h"
 #include "ndn-lite/encode/wrapper-api.h"
 #include "adaptation/adapt-consts.h"
