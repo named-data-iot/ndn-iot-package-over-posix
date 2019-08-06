@@ -37,8 +37,8 @@ parseArgs(int argc, char *argv[]) {
   return 0;
 }
 
-int 
-main(int argc, char *argv[]) 
+int
+main(int argc, char *argv[])
 {
   // default params
   in_port_t multicast_port = 56363;

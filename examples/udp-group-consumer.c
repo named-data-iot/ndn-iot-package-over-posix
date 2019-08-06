@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Xinyu Ma
+ * Copyright (C) 2019 Xinyu Ma, Zhiyi Zhang
  *
  * This file is subject to the terms and conditions of the GNU Lesser
  * General Public License v3.0. See the file LICENSE in the top level
@@ -12,11 +12,11 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <arpa/inet.h>
-#include "adaptation/udp-multicast/ndn-udp-multicast-face.h"
+#include "../adaptation/udp/udp-face.h"
 #include "ndn-lite/forwarder/forwarder.h"
-#include "ndn-lite/face/direct-face.h"
-#include "ndn-lite/encode/encoder.h"
 #include "ndn-lite/encode/data.h"
+#include "ndn-lite/encode/interest.h"
+#include "ndn-lite/encode/encoder.h"
 
 in_port_t port;
 in_addr_t server_ip;
@@ -24,42 +24,46 @@ ndn_name_t name_prefix;
 uint8_t buf[4096];
 bool running;
 
-int parseArgs(int argc, char *argv[]){
+int
+parseArgs(int argc, char *argv[])
+{
   char *sz_port, *sz_addr;
   uint32_t ul_port;
 
-  if(argc < 4){
+  if (argc < 2) {
     fprintf(stderr, "ERROR: wrong arguments.\n");
-    printf("Usage: <port> <group-ip> <name-prefix>\n");
+    printf("Usage: <name-prefix> <port>=56363 <group-ip>=224.0.23.170\n");
     return 1;
   }
-  sz_port = argv[1];
-  sz_addr = argv[2];
-  //sz_prefix = argv[3];
-
-  if(strlen(sz_port) <= 0 || strlen(sz_addr) <= 0){
-    fprintf(stderr, "ERROR: wrong arguments.\n");
-    return 1;
-  }
-
-  server_ip = inet_addr(sz_addr);
-
-  ul_port = strtoul(sz_port, NULL, 10);
-  if(ul_port < 1024 || ul_port >= 65536){
-    fprintf(stderr, "ERROR: wrong port number.\n");
-    return 3;
-  }
-  port = htons((uint16_t) ul_port);
-
-  if(ndn_name_from_string(&name_prefix, argv[3], strlen(argv[3])) != NDN_SUCCESS){
+  if (ndn_name_from_string(&name_prefix, argv[1], strlen(argv[1])) != NDN_SUCCESS) {
     fprintf(stderr, "ERROR: wrong name.\n");
     return 4;
   }
-
+  port = 56363;
+  server_ip = inet_addr("224.0.23.170");
+  if (argc >= 3) {
+    sz_port = argv[2];
+    if (strlen(sz_port) <= 0 || strlen(sz_addr) <= 0) {
+      fprintf(stderr, "ERROR: wrong arguments.\n");
+      return 1;
+    }
+    ul_port = strtoul(sz_port, NULL, 10);
+    if (ul_port < 1024 || ul_port >= 65536) {
+      fprintf(stderr, "ERROR: wrong port number.\n");
+      return 3;
+    }
+    port = htons((uint16_t) ul_port);
+  }
+  if (argc >= 4) {
+    sz_addr = argv[3];
+    server_ip = inet_addr(sz_addr);
+  }
   return 0;
 }
 
-int on_data(const uint8_t* rawdata, uint32_t data_size){
+int
+on_data(const uint8_t* rawdata, uint32_t data_size)
+{
   ndn_data_t data;
   printf("On data\n");
   if(ndn_data_tlv_decode_digest_verify(&data, rawdata, data_size)){
@@ -72,8 +76,17 @@ int on_data(const uint8_t* rawdata, uint32_t data_size){
   return NDN_SUCCESS;
 }
 
-int main(int argc, char *argv[]){
-  ndn_udp_multicast_face_t *face;
+void
+on_timeout(void* userdata)
+{
+  printf("On timeout\n");
+  running = false;
+}
+
+int
+main(int argc, char *argv[])
+{
+  ndn_udp_face_t *face;
   ndn_interest_t interest;
   ndn_encoder_t encoder;
   int ret;
@@ -84,24 +97,22 @@ int main(int argc, char *argv[]){
 
   ndn_forwarder_init();
   ndn_security_init();
-  face = ndn_udp_multicast_face_construct(1, INADDR_ANY, port, server_ip);
-  ndn_direct_face_construct(2);
+  face = ndn_udp_multicast_face_construct(INADDR_ANY, server_ip, port);
 
-  running = true;
-  ndn_forwarder_fib_insert(&name_prefix, &face->intf, 0);
+  encoder_init(&encoder, buf, 4096);
+  ndn_name_tlv_encode(&encoder, &name_prefix);
+  ndn_forwarder_add_route(&face->intf, buf, encoder.offset);
 
   ndn_interest_from_name(&interest, &name_prefix);
   encoder_init(&encoder, buf, 4096);
   ndn_interest_tlv_encode(&encoder, &interest);
+  ndn_forwarder_express_interest(encoder.output_value, encoder.offset, on_data, on_timeout, NULL);
 
-  ndn_direct_face_express_interest(&name_prefix, encoder.output_value, encoder.offset, on_data, NULL);
-
-  while(running){
-    ndn_udp_multicast_face_recv(face);
-    usleep(10);
+  running = true;
+  while (running) {
+    ndn_forwarder_process();
+    usleep(10000);
   }
-
   ndn_face_destroy(&face->intf);
-
   return 0;
 }
