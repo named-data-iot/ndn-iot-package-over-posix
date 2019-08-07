@@ -52,6 +52,7 @@ main(int argc, char *argv[])
   face = ndn_udp_multicast_face_construct(INADDR_ANY, multicast_ip, multicast_port);
   ndn_sd_init(&self_identity);
   sd_add_or_update_self_service(NDN_SD_LED, true, 1);
+  sd_start_adv_self_services();
 
   running = true;
   while(running){

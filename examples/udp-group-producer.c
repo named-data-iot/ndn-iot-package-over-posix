@@ -32,7 +32,7 @@ parseArgs(int argc, char *argv[])
 
   if (argc < 2) {
     fprintf(stderr, "ERROR: wrong arguments.\n");
-    printf("Usage: <name-prefix> port>=56363 <group-ip>=224.0.23.170\n");
+    printf("Usage: <name-prefix> <port>=56363 <group-ip>=224.0.23.170\n");
     return 1;
   }
   if (ndn_name_from_string(&name_prefix, argv[1], strlen(argv[1])) != NDN_SUCCESS) {
@@ -43,7 +43,7 @@ parseArgs(int argc, char *argv[])
   server_ip = inet_addr("224.0.23.170");
   if (argc >= 3) {
     sz_port = argv[2];
-    if (strlen(sz_port) <= 0 || strlen(sz_addr) <= 0) {
+    if (strlen(sz_port) <= 0) {
       fprintf(stderr, "ERROR: wrong arguments.\n");
       return 1;
     }
@@ -56,6 +56,10 @@ parseArgs(int argc, char *argv[])
   }
   if (argc >= 4) {
     sz_addr = argv[3];
+    if (strlen(sz_addr) <= 0) {
+      fprintf(stderr, "ERROR: wrong arguments.\n");
+      return 1;
+    }
     server_ip = inet_addr(sz_addr);
   }
   return 0;
