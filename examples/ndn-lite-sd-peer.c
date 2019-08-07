@@ -19,6 +19,7 @@
 #include "ndn-lite/ndn-services.h"
 
 ndn_name_t self_identity;
+ndn_name_t name_prefix;
 uint8_t buf[4096];
 ndn_udp_face_t *face;
 bool running;
@@ -34,6 +35,8 @@ parseArgs(int argc, char *argv[]) {
     fprintf(stderr, "ERROR: wrong name.\n");
     return 4;
   }
+  ndn_name_init(&name_prefix);
+  ndn_name_append_component(&name_prefix, &self_identity.components[0]);
   return 0;
 }
 
@@ -51,9 +54,23 @@ main(int argc, char *argv[])
 
   ndn_lite_startup();
   face = ndn_udp_multicast_face_construct(INADDR_ANY, multicast_ip, multicast_port);
+
+  ndn_encoder_t encoder;
+  encoder_init(&encoder, buf, 4096);
+  ndn_name_tlv_encode(&encoder, &name_prefix);
+  ndn_forwarder_add_route(&face->intf, buf, encoder.offset);
+
   ndn_sd_init(&self_identity);
   sd_add_or_update_self_service(NDN_SD_LED, true, 1);
   sd_start_adv_self_services();
+  usleep(10000);
+  printf("***Service Query\n");
+  ndn_name_t bedroom_name;
+  ndn_name_from_string(&bedroom_name, "bedroom", strlen("bedroom"));
+  sd_query_service(NDN_SD_LED, &bedroom_name, true);
+  usleep(10000);
+  printf("***Controller Service Info Query\n");
+  sd_query_sys_services(NDN_SD_LED);
 
   running = true;
   while(running){
