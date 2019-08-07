@@ -70,7 +70,8 @@ main(int argc, char *argv[])
   sd_query_service(NDN_SD_LED, &bedroom_name, true);
   usleep(10000);
   printf("***Controller Service Info Query\n");
-  sd_query_sys_services(NDN_SD_LED);
+  uint8_t service_id = NDN_SD_LED;
+  sd_query_sys_services(&service_id, 1);
 
   running = true;
   while(running){
