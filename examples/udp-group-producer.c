@@ -39,7 +39,8 @@ parseArgs(int argc, char *argv[])
     fprintf(stderr, "ERROR: wrong name.\n");
     return 4;
   }
-  port = 56363;
+  uint32_t portnum = 56363;
+  port = htons(portnum);
   server_ip = inet_addr("224.0.23.170");
   if (argc >= 3) {
     sz_port = argv[2];
