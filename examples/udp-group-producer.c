@@ -15,7 +15,7 @@
 #include "../adaptation/udp/udp-face.h"
 #include "ndn-lite/forwarder/forwarder.h"
 #include "ndn-lite/encode/data.h"
-#include "ndn-lite/encode/data.h"
+#include "ndn-lite/encode/interest.h"
 
 in_port_t port;
 in_addr_t server_ip;
@@ -69,12 +69,14 @@ parseArgs(int argc, char *argv[])
 int
 on_interest(const uint8_t* interest, uint32_t interest_size)
 {
+  ndn_interest_t interest_pkt;
+  ndn_interest_from_block(&interest_pkt, interest, interest_size);
   ndn_data_t data;
   ndn_encoder_t encoder;
   char * str = "I'm a Data packet.";
 
   printf("On interest\n");
-  data.name = name_prefix;
+  data.name = interest_pkt.name;
   ndn_data_set_content(&data, str, strlen(str));
   ndn_metainfo_init(&data.metainfo);
   ndn_metainfo_set_content_type(&data.metainfo, NDN_CONTENT_TYPE_BLOB);

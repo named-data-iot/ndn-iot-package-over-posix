@@ -41,7 +41,8 @@ int
 main(int argc, char *argv[])
 {
   // default params
-  in_port_t multicast_port = 56363;
+  uint32_t portnum = 56363;
+  in_port_t multicast_port = htons(portnum);
   in_addr_t multicast_ip = inet_addr("224.0.23.170");
   int ret;
   if ((ret = parseArgs(argc, argv)) != 0) {
