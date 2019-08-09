@@ -10,6 +10,8 @@ target_sources(ndn-lite PUBLIC
 target_sources(ndn-lite PRIVATE
   ${DIR_APP_SUPPORT}/access-control.c
   ${DIR_APP_SUPPORT}/service-discovery.c
+  ${DIR_APP_SUPPORT}/security-bootstrapping.c
+  ${DIR_APP_SUPPORT}/security-bootstrapping.h
   ${DIR_SECURE_SIGN_ON}/sign-on-basic-client-consts.h
   ${DIR_SECURE_SIGN_ON}/sign-on-basic-client.c
   ${DIR_SECURE_SIGN_ON}/sign-on-basic-client.h

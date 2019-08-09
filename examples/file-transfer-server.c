@@ -105,7 +105,7 @@ int on_interest(const uint8_t* interest, uint32_t interest_size, void* userdata)
 
   char temp_buffer[1024];
   FILE *fp = fopen(file_name,"r");
-  printf("The requested file name is: %s\n",file_name);
+  printf("The requested file name is: %s\nlength is %d\n",file_name,param_size);
   if(fp == NULL){
     fprintf(stderr, "ERROR: fail to open file.\n");
     return 1;

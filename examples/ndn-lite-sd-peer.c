@@ -12,6 +12,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <arpa/inet.h>
+#include <ndn-lite.h>
 #include "../adaptation/udp/udp-face.h"
 #include "ndn-lite/forwarder/forwarder.h"
 #include "ndn-lite/encode/data.h"
@@ -21,7 +22,8 @@
 ndn_name_t self_identity;
 ndn_name_t name_prefix;
 uint8_t buf[4096];
-ndn_udp_face_t *face;
+ndn_unix_face_t *face;
+//ndn_udp_face_t *face;
 bool running;
 
 int
@@ -53,7 +55,8 @@ main(int argc, char *argv[])
   }
 
   ndn_lite_startup();
-  face = ndn_udp_multicast_face_construct(INADDR_ANY, multicast_ip, multicast_port);
+  //face = ndn_udp_multicast_face_construct(INADDR_ANY, multicast_ip, multicast_port);
+  face = ndn_unix_face_construct(NDN_NFD_DEFAULT_ADDR,true);
 
   ndn_encoder_t encoder;
   encoder_init(&encoder, buf, 4096);
