@@ -99,11 +99,6 @@ int main(int argc, char *argv[]){
 
   ndn_lite_startup();
 
-  //sign on name
-  char sign_on_name_str[20] = "/ndn/sign-on";
-  ndn_name_t sign_on_name;
-  ndn_name_from_string(&sign_on_name, sign_on_name_str, strlen(sign_on_name_str));
-
   //set up routes
   face = ndn_unix_face_construct(NDN_NFD_DEFAULT_ADDR,true);
   //face = ndn_udp_unicast_face_construct(INADDR_ANY, htons((uint16_t) 2000), inet_addr("224.0.23.170"), htons((uint16_t) 56363));
@@ -111,9 +106,7 @@ int main(int argc, char *argv[]){
   // in_addr_t multicast_ip = inet_addr("224.0.23.170");
   // face = ndn_udp_multicast_face_construct(INADDR_ANY, multicast_port, multicast_ip);
   running = true;
-  encoder_init(&encoder, buf, 4096);
-  ndn_name_tlv_encode(&encoder, &sign_on_name);
-  ndn_forwarder_add_route(&face->intf, buf, encoder.offset);
+  ndn_forwarder_add_route_str_prefix(&face->intf, "/ndn/sign-on", strlen("/ndn/sign-on"));
 
   //bootstrapping
   capability = (uint8_t *) malloc(sizeof(uint8_t) * 2);
@@ -136,7 +129,7 @@ int main(int argc, char *argv[]){
   ndn_key_storage_get_empty_hmac_key(&hmac_key);
   ndn_hmac_key_init(hmac_key,hmac_key_str,sizeof(hmac_key_str),0);
 
-  ndn_security_bootstrapping(ecc_secp256r1_prv_key,hmac_key,device_identifier,strlen(device_identifier),capability,strlen(capability));
+  ndn_security_bootstrapping(&face->intf, ecc_secp256r1_prv_key,hmac_key,device_identifier,strlen(device_identifier),capability,strlen(capability));
 
   while(running){
     ndn_forwarder_process();
