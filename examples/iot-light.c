@@ -44,7 +44,7 @@ int parseArgs(int argc, char *argv[]) {
 }
 
 int light_service(const uint8_t* interest, uint32_t interest_size, void* userdata) {
-  uint8_t *param, *name;
+  uint8_t *param, *name, new_val;
   ndn_name_t name_check;
   size_t *param_size, ret_size;
   int ret;
@@ -58,6 +58,11 @@ int light_service(const uint8_t* interest, uint32_t interest_size, void* userdat
                            TLV_INTARG_PARAMS_SIZE, &param_size);
   if(ret != NDN_SUCCESS){
     return NDN_FWD_STRATEGY_SUPPRESS;
+  }
+
+  // Remove parameter digest
+  if(name_check.components[name_check.components_size - 1].type != TLV_GenericNameComponent){
+    name_check.components_size --;
   }
 
   // Check the function ID (=0)
@@ -78,9 +83,14 @@ int light_service(const uint8_t* interest, uint32_t interest_size, void* userdat
   }
 
   // Execute the function
-  if(*param != 0xFF){
-    if((*param > 0) != (light_brightness > 0)){
-      if(*param > 0){
+  if(param){
+    new_val = *param;
+  }else{
+    new_val = 0xFF;
+  }
+  if(new_val != 0xFF){
+    if((new_val > 0) != (light_brightness > 0)){
+      if(new_val > 0){
         printf("Switch on the light.\n");
         sd_add_or_update_self_service(NDN_SD_LED, true, 1);
       }else{
@@ -88,8 +98,8 @@ int light_service(const uint8_t* interest, uint32_t interest_size, void* userdat
         sd_add_or_update_self_service(NDN_SD_LED, true, 0);
       }
     } 
-    if(*param < 10) {
-      light_brightness = *param;
+    if(new_val < 10) {
+      light_brightness = new_val;
       if(light_brightness > 0){
         printf("Successfully set the brightness = %u\n", light_brightness);
       }
