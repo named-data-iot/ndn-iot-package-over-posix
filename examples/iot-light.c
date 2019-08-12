@@ -92,10 +92,8 @@ int light_service(const uint8_t* interest, uint32_t interest_size, void* userdat
     if((new_val > 0) != (light_brightness > 0)){
       if(new_val > 0){
         printf("Switch on the light.\n");
-        sd_add_or_update_self_service(NDN_SD_LED, true, 1);
       }else{
         printf("Turn off the light.\n");
-        sd_add_or_update_self_service(NDN_SD_LED, true, 0);
       }
     } 
     if(new_val < 10) {
