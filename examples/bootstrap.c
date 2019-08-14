@@ -106,7 +106,7 @@ int main(int argc, char *argv[]){
   // in_addr_t multicast_ip = inet_addr("224.0.23.170");
   // face = ndn_udp_multicast_face_construct(INADDR_ANY, multicast_port, multicast_ip);
   running = true;
-  ndn_forwarder_add_route_str_prefix(&face->intf, "/ndn/sign-on", strlen("/ndn/sign-on"));
+  ndn_forwarder_add_route_by_str(&face->intf, "/ndn/sign-on", strlen("/ndn/sign-on"));
 
   //bootstrapping
   capability = (uint8_t *) malloc(sizeof(uint8_t) * 2);

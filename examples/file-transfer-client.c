@@ -34,22 +34,15 @@ uint8_t anchor_bytes[2048];
 uint32_t anchor_bytes_size;
 bool running;
 
-uint8_t secp256r1_prv_key_str[] = {
-  0xf9,'.',0xbc,0xc5,0xb1,0xcb,0x8c,0x08,
-  'G','b','c','-','L',0xf1,0x96,0xcc,
-  'r',0xed,0x91,0xaf,0x9e,'!',0x02,0xf2,
-  0xef,'h','L',0xbc,'r',0xf5,'l',0x01
+uint8_t secp256r1_prv_key_str[32] = {
+0xA7, 0x58, 0x4C, 0xAB, 0xD3, 0x82, 0x82, 0x5B, 0x38, 0x9F, 0xA5, 0x45, 0x73, 0x00, 0x0A, 0x32,
+0x42, 0x7C, 0x12, 0x2F, 0x42, 0x4D, 0xB2, 0xAD, 0x49, 0x8C, 0x8D, 0xBF, 0x80, 0xC9, 0x36, 0xB5
 };
-
 uint8_t secp256r1_pub_key_str[64] = {
-  0x90,0xa6,0xbc,0xe8,0x00,'W',0xc0,'e',
-  0xe9,0x8a,'\\',0x05,'(','d',0x9a,0x99,
-  'y',0xc1,0x10,0x0f,0xf8,0x8a,0xd0,'I',
-  'U',0xaa,0xbf,0xbb,0x1b,'\\',0xe2,0xab,
-  '9','W',0x89,0x96,0xb5,0xee,':',0xf9,
-  '_',0xd3,0x89,0x15,0xdc,3,0x7f,'g',
-  0xca,'R','b','\t',0xbe,0x88,'Y',0xe2,
-  0xbc,0xcf,0xbd,0xd4,0x18,0xdd,'8',0x01
+0x99, 0x26, 0xD6, 0xCE, 0xF8, 0x39, 0x0A, 0x05, 0xD1, 0x8C, 0x10, 0xAE, 0xEF, 0x3C, 0x2A, 0x3C,
+0x56, 0x06, 0xC4, 0x46, 0x0C, 0xE9, 0xE5, 0xE7, 0xE6, 0x04, 0x26, 0x43, 0x13, 0x8A, 0x3E, 0xD4,
+0x6E, 0xBE, 0x0F, 0xD2, 0xA2, 0x05, 0x0F, 0x00, 0xAC, 0x6F, 0x5D, 0x4B, 0x29, 0x77, 0x2D, 0x54,
+0x32, 0x27, 0xDC, 0x05, 0x77, 0xA7, 0xDC, 0xE0, 0xA2, 0x69, 0xC8, 0x8B, 0x4C, 0xBF, 0x25, 0xF2
 };
 
 int parseArgs(int argc, char *argv[]){
@@ -135,7 +128,7 @@ int save_file (uint8_t* file_data){
 }
 
 void on_timeout(void* userdata){
-  printf("On timeout\n");
+  printf("On file request interest timeout\n");
   running = false;
 }
 
@@ -157,15 +150,16 @@ int main(int argc, char *argv[]){
                    NDN_ECDSA_CURVE_SECP256R1, 123);
   ndn_data_t anchor;
   ndn_data_init(&anchor);
-  ndn_name_from_string(&anchor.name, "/ndn-iot/controller/KEY", strlen("/ndn-iot/controller/KEY"));
+  ndn_name_from_string(&anchor.name, "/ndn-iot/controller", strlen("/ndn-iot/controller"));
+  ndn_name_t anchor_id;
+  memcpy(&anchor_id, &anchor.name, sizeof(ndn_name_t));
+  ndn_name_append_string_component(&anchor.name, "KEY", strlen("KEY"));
   ndn_name_append_keyid(&anchor.name, 123);
-  ndn_name_t key_name;
-  memcpy(&key_name, &anchor.name, sizeof(ndn_name_t));
   ndn_name_append_string_component(&anchor.name, "self", strlen("self"));
   ndn_name_append_keyid(&anchor.name, 456);
   ndn_data_set_content(&anchor, secp256r1_pub_key_str, sizeof(secp256r1_pub_key_str));
   encoder_init(&encoder, anchor_bytes, sizeof(anchor_bytes));
-  ndn_data_tlv_encode_ecdsa_sign(&encoder, &anchor, &key_name, &anchor_prv_key);
+  ndn_data_tlv_encode_ecdsa_sign(&encoder, &anchor, &anchor_id, &anchor_prv_key);
   anchor_bytes_size = encoder.offset;
   ndn_data_tlv_decode_no_verify(&anchor, encoder.output_value, encoder.offset, NULL, NULL);
   ndn_key_storage_set_trust_anchor(&anchor);
@@ -174,19 +168,19 @@ int main(int argc, char *argv[]){
   ndn_ecc_pub_t* self_pub;
   ndn_ecc_prv_t* self_prv;
   ndn_key_storage_get_empty_ecc_key(&self_pub, &self_prv);
-  ndn_ecc_make_key(self_pub, self_prv, NDN_ECDSA_CURVE_SECP256R1, 234);
+  ndn_ecc_make_key(self_pub, self_prv, NDN_ECDSA_CURVE_SECP256R1, 890);
 
   // self cert
   ndn_data_t self_cert;
   ndn_data_init(&self_cert);
-  ndn_name_from_string(&self_cert.name, "/ndn-iot/bedroom/file-client/KEY", strlen("/ndn-iot/bedroom/file-server/KEY"));
-  ndn_name_append_keyid(&self_cert.name, 234);
+  ndn_name_from_string(&self_cert.name, "/ndn-iot/bedroom/file-client/KEY", strlen("/ndn-iot/bedroom/file-client/KEY"));
+  ndn_name_append_keyid(&self_cert.name, 890);
   ndn_name_append_string_component(&self_cert.name, "home", strlen("home"));
-  ndn_name_append_keyid(&self_cert.name, 567);
+  ndn_name_append_keyid(&self_cert.name, 891);
   ndn_data_set_content(&self_cert, ndn_ecc_get_pub_key_value(self_pub),
                        ndn_ecc_get_pub_key_size(self_pub));
   encoder_init(&encoder, anchor_bytes, sizeof(anchor_bytes));
-  ndn_data_tlv_encode_ecdsa_sign(&encoder, &self_cert, &key_name, &anchor_prv_key);
+  ndn_data_tlv_encode_ecdsa_sign(&encoder, &self_cert, &anchor_id, &anchor_prv_key);
   ndn_data_tlv_decode_no_verify(&self_cert, encoder.output_value, encoder.offset, NULL, NULL);
   ndn_key_storage_set_self_identity(&self_cert, self_prv);
 
@@ -206,6 +200,7 @@ int main(int argc, char *argv[]){
   ndn_interest_t request;
   ndn_interest_from_name(&request, &name_prefix);
   ndn_interest_set_Parameters(&request, (uint8_t*)file_name, strlen(file_name));
+  interest.lifetime = 10000;
   ndn_signed_interest_ecdsa_sign(&request, &storage->self_identity, self_prv);
   // tlv_make_interest(interest_buf,4096,&interest_off,6,TLV_INTARG_NAME_PTR,&name_prefix,
   //                   TLV_INTARG_PARAMS_BUF,(uint8_t*)file_name,TLV_INTARG_PARAMS_SIZE,strlen(file_name),
