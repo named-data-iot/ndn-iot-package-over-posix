@@ -46,8 +46,6 @@ ndn_udp_face_t *face;
 char* device_identifier;
 // Buf used in this program
 uint8_t buf[4096];
-// Device services
-uint8_t * capability;
 // Wether the program is running or not
 bool running;
 // A global var to keep the brightness
@@ -72,7 +70,7 @@ light_service(const uint8_t* interest, uint32_t interest_size, void* userdata)
 {
   uint8_t *param, *name, new_val;
   ndn_name_t name_check;
-  size_t *param_size, ret_size;
+  size_t param_size, ret_size;
   int ret;
 
   printf("RECEIVED INTEREST\n");
@@ -185,12 +183,11 @@ void SignalHandler(int signum){
 int
 main(int argc, char *argv[])
 {
-  ndn_udp_face_t *face;
   signal(SIGINT, SignalHandler);
   signal(SIGTERM, SignalHandler);
   signal(SIGQUIT, SignalHandler);
 
-  ndn_encoder_t encoder;
+  // PARSE COMMAND LINE PARAMETERS
   int ret;
   if ((ret = parseArgs(argc, argv)) != 0) {
     return ret;
@@ -198,25 +195,20 @@ main(int argc, char *argv[])
   ndn_lite_startup();
 
   // CREAT A MULTICAST FACE
-  // face = ndn_unix_face_construct(NDN_NFD_DEFAULT_ADDR,true);
-  // face = ndn_udp_unicast_face_construct(INADDR_ANY, htons((uint16_t) 2000), inet_addr("224.0.23.170"), htons((uint16_t) 56363));
+  // ndn_unix_face_t* face = ndn_unix_face_construct(NDN_NFD_DEFAULT_ADDR,true);
+  // ndn_udp_face_t* face = ndn_udp_unicast_face_construct(INADDR_ANY, htons((uint16_t) 2000), inet_addr("224.0.23.170"), htons((uint16_t) 56363));
   in_port_t multicast_port = htons((uint16_t) 56363);
   in_addr_t multicast_ip = inet_addr("224.0.23.170");
-  face = ndn_udp_multicast_face_construct(INADDR_ANY, multicast_ip, multicast_port);
-  // SET UP ROUTE
+  ndn_udp_face_t* face = ndn_udp_multicast_face_construct(INADDR_ANY, multicast_ip, multicast_port);
+
+  // SET UP DEFAULT ROUTE
   running = true;
   ndn_forwarder_add_route_by_str(&face->intf, "/ndn/sign-on", strlen("/ndn/sign-on"));
 
-  // BOOTSTRAPPING PROCESS
-  capability = (uint8_t *) malloc(sizeof(uint8_t) * 2);
-  capability[0] = NDN_SD_LED;
-  capability[1] = NDN_SD_TEMP;
-
-  // PARSE PRE-INSTALLED PRV KEY AND PUB KEY
-  ndn_key_storage_t* key_storage =  ndn_key_storage_init();
+  // LOAD PRE-INSTALLED PRV KEY AND PUB KEY
   ndn_ecc_prv_t* ecc_secp256r1_prv_key;
   ndn_ecc_pub_t* ecc_secp256r1_pub_key;
-  ndn_key_storage_get_empty_ecc_key(&ecc_secp256r1_prv_key,&ecc_secp256r1_pub_key);
+  ndn_key_storage_get_empty_ecc_key(&ecc_secp256r1_pub_key, &ecc_secp256r1_prv_key);
   ndn_ecc_prv_init(ecc_secp256r1_prv_key, secp256r1_prv_key_str, sizeof(secp256r1_prv_key_str),
                    NDN_ECDSA_CURVE_SECP256R1, 1);
   ndn_ecc_pub_init(ecc_secp256r1_pub_key, secp256r1_pub_key_str, sizeof(secp256r1_pub_key_str),
@@ -225,10 +217,15 @@ main(int argc, char *argv[])
   ndn_key_storage_get_empty_hmac_key(&hmac_key);
   ndn_hmac_key_init(hmac_key,hmac_key_str, sizeof(hmac_key_str), 2);
 
-  // SET UP BOOTSTRAPPING
+  // LOAD SERVICES PROVIDED BY SELF DEVICE
+  uint8_t capability[2];
+  capability[0] = NDN_SD_LED;
+  capability[1] = NDN_SD_TEMP;
+
+  // START BOOTSTRAPPING
   ndn_security_bootstrapping(&face->intf, ecc_secp256r1_prv_key,hmac_key,
                              device_identifier,strlen(device_identifier),
-                             capability,strlen(capability), after_bootstrapping);
+                             capability, sizeof(capability), after_bootstrapping);
 
   // SET UP SERVICE DISCOVERY
   ndn_sd_init();
