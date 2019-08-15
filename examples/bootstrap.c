@@ -88,6 +88,13 @@ int parseArgs(int argc, char *argv[]){
   return 0;
 }
 
+void
+after_bootstrapping()
+{
+  printf("Bootstrapping Ends");
+  return;
+}
+
 int main(int argc, char *argv[]){
   // ndn_unix_face_t *face;
   ndn_udp_face_t *face;
@@ -130,9 +137,11 @@ int main(int argc, char *argv[]){
   ndn_key_storage_get_empty_hmac_key(&hmac_key);
   ndn_hmac_key_init(hmac_key,hmac_key_str,sizeof(hmac_key_str),0);
 
-  ndn_security_bootstrapping(&face->intf, ecc_secp256r1_prv_key,hmac_key,device_identifier,strlen(device_identifier),capability,strlen(capability));
+  ndn_security_bootstrapping(&face->intf, ecc_secp256r1_prv_key,hmac_key,
+                             device_identifier,strlen(device_identifier),
+                             capability,strlen(capability), after_bootstrapping);
 
-  while(running){
+  while(running) {
     ndn_forwarder_process();
     usleep(10000);
   }

@@ -148,20 +148,6 @@ int main(int argc, char *argv[]){
   // face = ndn_unix_face_construct(NDN_NFD_DEFAULT_ADDR, true);
   face = ndn_udp_multicast_face_construct(INADDR_ANY, multicast_ip, multicast_port);
 
-  // Register light service
-  ndn_name_init(&temp_name);
-  ndn_name_append_component(&temp_name, &home_prefix.components[0]);
-  temp_byte = NDN_SD_LED;
-  ndn_name_append_bytes_component(&temp_name, &temp_byte, sizeof(temp_byte));
-
-  encoder_init(&encoder, data_buf, sizeof(data_buf));
-  ndn_name_tlv_encode(&encoder, &home_prefix);
-  ndn_forwarder_add_route(&face->intf, data_buf, encoder.offset);
-
-  encoder_init(&encoder, data_buf, sizeof(data_buf));
-  ndn_name_tlv_encode(&encoder, &temp_name);
-  ndn_forwarder_register_prefix(data_buf, encoder.offset, light_service, NULL);
-
   // Start service discovery (This should be done after adding route)
   ndn_sd_init(&self_identity);
 
