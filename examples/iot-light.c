@@ -9,6 +9,8 @@
  */
 #include <stdio.h>
 #include <unistd.h>
+#include <signal.h>
+#include <arpa/inet.h>
 #include <ndn-lite.h>
 #include "ndn-lite/app-support/service-discovery.h"
 
@@ -17,8 +19,10 @@ ndn_name_t home_prefix;
 ndn_name_t locator;
 uint8_t light_brightness;
 uint8_t data_buf[NDN_CONTENT_BUFFER_SIZE * 2];
-ndn_unix_face_t *face;
-ndn_encoder_t encoder; // Why we need this fool thing?
+// ndn_unix_face_t *face;
+ndn_udp_face_t *face;
+ndn_encoder_t encoder;
+bool running;
 
 int parseArgs(int argc, char *argv[]) {
   int i;
@@ -119,16 +123,30 @@ int light_service(const uint8_t* interest, uint32_t interest_size, void* userdat
   return NDN_FWD_STRATEGY_SUPPRESS;
 }
 
+void SignalHandler(int signum){
+  running = false;
+}
+
 int main(int argc, char *argv[]){
   uint8_t temp_byte;
-  bool running;
   ndn_name_t temp_name;
+  in_port_t multicast_port = htons(56363);
+  in_addr_t multicast_ip = inet_addr("224.0.23.170");
+  int ret;
+
+  signal(SIGINT, SignalHandler);
+  signal(SIGTERM, SignalHandler);
+  signal(SIGQUIT, SignalHandler);
 
   ndn_lite_startup();
-  parseArgs(argc, argv);
+  ret = parseArgs(argc, argv);
+  if(ret != 0){
+    return ret;
+  }
 
   // Create face
-  face = ndn_unix_face_construct(NDN_NFD_DEFAULT_ADDR, true);
+  // face = ndn_unix_face_construct(NDN_NFD_DEFAULT_ADDR, true);
+  face = ndn_udp_multicast_face_construct(INADDR_ANY, multicast_ip, multicast_port);
 
   // Register light service
   ndn_name_init(&temp_name);
