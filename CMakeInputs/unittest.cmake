@@ -39,6 +39,8 @@ unset(LIST_TESTS)
 target_sources(unittest PRIVATE
   "${DIR_UNITTESTS}/sign-verify/sign-verify-tests.h"
   "${DIR_UNITTESTS}/sign-verify/sign-verify-tests.c"
+  "${DIR_UNITTESTS}/hmac/hmac-tests.h"
+  "${DIR_UNITTESTS}/hmac/hmac-tests.c"
 )
 set(LIST_SIGN_VERIFY_TESTS
   "asn-encode-decode-tests"
