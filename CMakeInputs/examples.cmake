@@ -2,6 +2,7 @@ set(DIR_EXAMPLES_OUTPUT "${PROJECT_BINARY_DIR}/examples")
 
 # Single-file examples
 set(LIST_EXAMPLES
+  "tutorial-app"
   "ndn-lite-sd-peer"
   "udp-basic-producer"
   "udp-basic-consumer"
