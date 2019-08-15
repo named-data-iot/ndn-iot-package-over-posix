@@ -195,15 +195,11 @@ main(int argc, char *argv[])
   ndn_lite_startup();
 
   // CREAT A MULTICAST FACE
-  // ndn_unix_face_t* face = ndn_unix_face_construct(NDN_NFD_DEFAULT_ADDR,true);
-  // ndn_udp_face_t* face = ndn_udp_unicast_face_construct(INADDR_ANY, htons((uint16_t) 2000), inet_addr("224.0.23.170"), htons((uint16_t) 56363));
+  // face = ndn_unix_face_construct(NDN_NFD_DEFAULT_ADDR, true);
+  // face = ndn_udp_unicast_face_construct(INADDR_ANY, htons((uint16_t) 2000), inet_addr("224.0.23.170"), htons((uint16_t) 56363));
   in_port_t multicast_port = htons((uint16_t) 56363);
   in_addr_t multicast_ip = inet_addr("224.0.23.170");
-  ndn_udp_face_t* face = ndn_udp_multicast_face_construct(INADDR_ANY, multicast_ip, multicast_port);
-
-  // SET UP DEFAULT ROUTE
-  running = true;
-  ndn_forwarder_add_route_by_str(&face->intf, "/ndn/sign-on", strlen("/ndn/sign-on"));
+  face = ndn_udp_multicast_face_construct(INADDR_ANY, multicast_ip, multicast_port);
 
   // LOAD PRE-INSTALLED PRV KEY AND PUB KEY
   ndn_ecc_prv_t* ecc_secp256r1_prv_key;
@@ -215,24 +211,25 @@ main(int argc, char *argv[])
                    NDN_ECDSA_CURVE_SECP256R1, 1);
   ndn_hmac_key_t* hmac_key;
   ndn_key_storage_get_empty_hmac_key(&hmac_key);
-  ndn_hmac_key_init(hmac_key,hmac_key_str, sizeof(hmac_key_str), 2);
+  ndn_hmac_key_init(hmac_key, hmac_key_str, sizeof(hmac_key_str), 2);
 
   // LOAD SERVICES PROVIDED BY SELF DEVICE
   uint8_t capability[2];
   capability[0] = NDN_SD_LED;
   capability[1] = NDN_SD_TEMP;
 
-  // START BOOTSTRAPPING
-  ndn_security_bootstrapping(&face->intf, ecc_secp256r1_prv_key,hmac_key,
-                             device_identifier,strlen(device_identifier),
-                             capability, sizeof(capability), after_bootstrapping);
-
   // SET UP SERVICE DISCOVERY
   ndn_sd_init();
   sd_add_or_update_self_service(NDN_SD_LED, true, 1); // state code 1 means normal
   sd_add_or_update_self_service(NDN_SD_TEMP, true, 1); // state code 1 means normal
 
+  // START BOOTSTRAPPING
+  ndn_security_bootstrapping(&face->intf, ecc_secp256r1_prv_key,hmac_key,
+                             device_identifier,strlen(device_identifier),
+                             capability, sizeof(capability), after_bootstrapping);
+
   // START MAIN LOOP
+  running = true;
   while(running) {
     ndn_forwarder_process();
     usleep(10000);

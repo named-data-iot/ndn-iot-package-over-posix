@@ -8,7 +8,7 @@
  * See AUTHORS.md for complete list of NDN IOT PKG authors and contributors.
  */
 /*
- * This file-tranfer-client works with file-transfer-server. 
+ * This file-tranfer-client works with file-transfer-server.
  * Launch the file-transfer-server, input local port, client ip, client port and name.
  * Launch the file-transfer-client, input local port, server ip, server port, name and the file name.
  * The server will then return the requested file to the client. (if the file exists in the directory)
@@ -96,8 +96,8 @@ after_bootstrapping()
 }
 
 int main(int argc, char *argv[]){
-  // ndn_unix_face_t *face;
-  ndn_udp_face_t *face;
+  ndn_unix_face_t *face;
+  // ndn_udp_face_t *face;
   ndn_encoder_t encoder;
   int ret;
 
@@ -108,13 +108,12 @@ int main(int argc, char *argv[]){
   ndn_lite_startup();
 
   //set up routes
-  //face = ndn_unix_face_construct(NDN_NFD_DEFAULT_ADDR,true);
+  face = ndn_unix_face_construct(NDN_NFD_DEFAULT_ADDR,true);
   //face = ndn_udp_unicast_face_construct(INADDR_ANY, htons((uint16_t) 2000), inet_addr("224.0.23.170"), htons((uint16_t) 56363));
   in_port_t multicast_port =  htons((uint16_t) 56363);
   in_addr_t multicast_ip = inet_addr("224.0.23.170");
-  face = ndn_udp_multicast_face_construct(INADDR_ANY, multicast_ip, multicast_port);
+  // face = ndn_udp_multicast_face_construct(INADDR_ANY, multicast_ip, multicast_port);
   running = true;
-  ndn_forwarder_add_route_by_str(&face->intf, "/ndn/sign-on", strlen("/ndn/sign-on"));
 
   //bootstrapping
   capability = (uint8_t *) malloc(sizeof(uint8_t) * 2);
@@ -125,7 +124,7 @@ int main(int argc, char *argv[]){
   ndn_key_storage_t * key_storage =  ndn_key_storage_init();
   ndn_ecc_prv_t * ecc_secp256r1_prv_key;
   ndn_ecc_pub_t * ecc_secp256r1_pub_key;
-  ndn_key_storage_get_empty_ecc_key(&ecc_secp256r1_prv_key,&ecc_secp256r1_pub_key);
+  ndn_key_storage_get_empty_ecc_key(&ecc_secp256r1_pub_key, &ecc_secp256r1_prv_key);
   //ecc prv key
   ndn_ecc_prv_init(ecc_secp256r1_prv_key,
                    secp256r1_prv_key_str,
