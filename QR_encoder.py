@@ -10,7 +10,7 @@ with open("build/tutorial_shared_info.txt") as fp:
   fp.readline()
   info["device_identifier"] = fp.readline()[:-1]
   info["public_key"] = fp.readline()[:-1]
-  info["symmetric_key"] = fp.readline()[:-1]
+  info["symmetric_key"] = fp.readline()
 
 print(info["device_identifier"])
 print(info["public_key"])
