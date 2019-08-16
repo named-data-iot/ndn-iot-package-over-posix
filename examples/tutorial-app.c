@@ -12,6 +12,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <signal.h>
+#include <string.h>
 #include <ndn-lite.h>
 #include "ndn-lite/encode/name.h"
 #include "ndn-lite/encode/data.h"
@@ -21,29 +22,20 @@
 #include "ndn-lite/encode/key-storage.h"
 
 // DEVICE manufacture-created private key
-uint8_t secp256r1_prv_key_str[] = {
-  0xf9,'.',0xbc,0xc5,0xb1,0xcb,0x8c,0x08,'G','b','c','-','L',0xf1,0x96,0xcc,
-  'r',0xed,0x91,0xaf,0x9e,'!',0x02,0xf2,0xef,'h','L',0xbc,'r',0xf5,'l',0x01
-};
+uint8_t secp256r1_prv_key_bytes[32] = {0};
 
 // HERE TO SET pre-shared public key
-uint8_t secp256r1_pub_key_str[64] = {
-  0x90,0xa6,0xbc,0xe8,0x00,'W',0xc0,'e', 0xe9,0x8a,'\\',0x05,'(','d',0x9a,0x99,
-  'y',0xc1,0x10,0x0f,0xf8,0x8a,0xd0,'I','U',0xaa,0xbf,0xbb,0x1b,'\\',0xe2,0xab,
-  '9','W',0x89,0x96,0xb5,0xee,':',0xf9,'_',0xd3,0x89,0x15,0xdc,3,0x7f,'g',
-  0xca,'R','b','\t',0xbe,0x88,'Y',0xe2,0xbc,0xcf,0xbd,0xd4,0x18,0xdd,'8',0x01
-};
+uint8_t secp256r1_pub_key_bytes[64] = {0};
 
 //HERE TO SET pre-shared secrets
-uint8_t hmac_key_str[] = {
-    0x54,0x69,0xB8,0xC0,0xB6,0x28,0x77,0x70,
-    0x1C,0xDD,0xE8,0x89,0x92,0x03,0xFD,0xDE
-};
+uint8_t hmac_key_bytes[16] = {0};
+
+// Device identifer
+char device_identifier[30];
+size_t device_len;
 
 // Face Declare
 ndn_udp_face_t *face;
-// Device identifer
-char* device_identifier;
 // Buf used in this program
 uint8_t buf[4096];
 // Wether the program is running or not
@@ -56,12 +48,59 @@ ndn_name_t locator;
 int
 parseArgs(int argc, char *argv[])
 {
-  if (argc < 2) {
-    fprintf(stderr, "ERROR: wrong arguments.\n");
-    printf("<device-identifier>\n");
-    return 1;
+  FILE * fp;
+  char buf[255];
+  char* buf_ptr;
+  fp = fopen("tutorial_shared_info.txt", "r");
+  if (fp == NULL) exit(1);
+  size_t i = 0;
+  for(size_t lineindex = 0; lineindex < 4; lineindex++) {
+    memset(buf, 0, sizeof(buf));
+    buf_ptr = buf;
+    fgets(buf, sizeof(buf), fp);
+    if (lineindex == 0) {
+      for (i = 0; i < 32; i++) {
+        sscanf(buf_ptr, "%2hhx", &secp256r1_prv_key_bytes[i]);
+        buf_ptr += 2;
+      }
+    }
+    else if (lineindex == 1) {
+      buf[strlen(buf) - 1] = '\0';
+      strcpy(device_identifier, buf);
+    }
+    else if (lineindex == 2) {
+      for (i = 0; i < 64; i++) {
+        sscanf(buf_ptr, "%2hhx", &secp256r1_pub_key_bytes[i]);
+        buf_ptr += 2;
+      }
+    }
+    else {
+      for (i = 0; i < 16; i++) {
+        sscanf(buf_ptr, "%2hhx", &hmac_key_bytes[i]);
+        buf_ptr += 2;
+      }
+    }
   }
-  device_identifier = argv[1];
+  fclose(fp);
+
+  // prv key
+  printf("Pre-installed ECC Private Key:");
+  for (int i = 0; i < 32; i++) {
+    printf("%02X", secp256r1_prv_key_bytes[i]);
+  }
+  printf("\nPre-installed Device Identifier: ");
+  // device id
+  printf("%s\nPre-installed ECC Pub Key: ", device_identifier);
+  // pub key
+  for (int i = 0; i < 64; i++) {
+    printf("%02X", secp256r1_pub_key_bytes[i]);
+  }
+  printf("\nPre-installed Shared Secret: ");
+  // hmac key
+  for (int i = 0; i < 16; i++) {
+    printf("%02X", hmac_key_bytes[i]);
+  }
+  printf("\n");
   return 0;
 }
 
@@ -82,6 +121,10 @@ light_service(const uint8_t* interest, uint32_t interest_size, void* userdata)
                            TLV_INTARG_PARAMS_SIZE, &param_size);
   if (ret != NDN_SUCCESS) {
     return NDN_FWD_STRATEGY_SUPPRESS;
+  }
+  if (param_size <= 10) {
+    printf("No signature. Ignore the command.");
+    return -1;
   }
 
   // Remove parameter digest
@@ -205,13 +248,13 @@ main(int argc, char *argv[])
   ndn_ecc_prv_t* ecc_secp256r1_prv_key;
   ndn_ecc_pub_t* ecc_secp256r1_pub_key;
   ndn_key_storage_get_empty_ecc_key(&ecc_secp256r1_pub_key, &ecc_secp256r1_prv_key);
-  ndn_ecc_prv_init(ecc_secp256r1_prv_key, secp256r1_prv_key_str, sizeof(secp256r1_prv_key_str),
+  ndn_ecc_prv_init(ecc_secp256r1_prv_key, secp256r1_prv_key_bytes, sizeof(secp256r1_prv_key_bytes),
                    NDN_ECDSA_CURVE_SECP256R1, 1);
-  ndn_ecc_pub_init(ecc_secp256r1_pub_key, secp256r1_pub_key_str, sizeof(secp256r1_pub_key_str),
+  ndn_ecc_pub_init(ecc_secp256r1_pub_key, secp256r1_pub_key_bytes, sizeof(secp256r1_pub_key_bytes),
                    NDN_ECDSA_CURVE_SECP256R1, 1);
   ndn_hmac_key_t* hmac_key;
   ndn_key_storage_get_empty_hmac_key(&hmac_key);
-  ndn_hmac_key_init(hmac_key, hmac_key_str, sizeof(hmac_key_str), 2);
+  ndn_hmac_key_init(hmac_key, hmac_key_bytes, sizeof(hmac_key_bytes), 2);
 
   // LOAD SERVICES PROVIDED BY SELF DEVICE
   uint8_t capability[2];
@@ -225,7 +268,7 @@ main(int argc, char *argv[])
 
   // START BOOTSTRAPPING
   ndn_security_bootstrapping(&face->intf, ecc_secp256r1_prv_key,hmac_key,
-                             device_identifier,strlen(device_identifier),
+                             device_identifier, strlen(device_identifier),
                              capability, sizeof(capability), after_bootstrapping);
 
   // START MAIN LOOP
