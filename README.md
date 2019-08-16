@@ -56,7 +56,7 @@ pip3 install pypng
 Go to https://github.com/named-data-iot/ndn-iot-controller to download and run our python based controller.
 The controller require NFD running on the same device as the controller.
 
-### 3 Play with the examples
+### 3 Play with the examples: Bootstrapping
 Controller:
 a. click `bootstrapping` on the left sidebar and upload the QR code image.
 b. click `bootstrap` button which will trigger a blocking packet listen.
@@ -65,6 +65,18 @@ Device:
 cd build
 ./bin/examples/tutorial-app
 ```
+### 4 Play with the examples: Service Discovery
+Device:
+After the bootstrapping process, the device program will automatically broadcast its services to the system, where the controller will hear the information.
+Controller:
+By clicking the `service list` on the left sidebar, one can know all the heard services in the system.
+To invoke a service, simply copy the service name, e.g., `/ndn-iot/%01/%0B/device-123` (the device ID must be the same as your bootstrapped device), into the `NDN ping` page, modify the name to be `/ndn-iot/%0B/device-123/%00`, set the signed interest to be true, input a integer 0 to 5 into the parameter box as the desired  and express the interest out.
+
+Notice: `%01` means service in NDN-Lite service discovery protocol.
+`%0B` is the service type, which is LED service.
+`%00` at the end of the name is the command index 0 under the LED service, which is to control the LED light.
+
+Notice: If the ping Interest is not signed, the service cannot be invoked successfully.
 
 ## Generate XCode Project and Documentation
 If you prefer to use XCode for your application development, you can generate a XCode project by the following commands.
