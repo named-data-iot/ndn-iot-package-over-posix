@@ -47,4 +47,39 @@ Run `./unittest` in the `build` folder.
  make docs
  open docs/html/index.html
  ```
- 
+
+## A Demonstration of NDN-Lite's Security Bootstrapping and Service Discovery
+
+This requires two devices (e.g., two laptops, or one laptop one RaspberryPi) connected through WiFi ad-hoc or WiFi AP mode whose UDP multicast has been enabled.
+
+### 1 Generate a QR code for the controller to scan
+We first generate the shared secret and a new pair of ECC keys on the device side:
+```
+cd build
+./bin/examples/tutorial-gen-new-shared-info
+```
+Then we use the `QR_encoder.py` to encode the public information into a QR code image.
+```
+cd ..
+python3 QR_encoder.py
+```
+Notice: to run `QR_encoder.py`, one needs to install the dependency:
+```
+pip3 install pyqrcode
+pip3 install pypng
+```
+
+### 2 Set up the IoT system controller
+Go to https://github.com/named-data-iot/ndn-iot-controller to download and run our python based controller.
+The controller require NFD running on the same device as the controller.
+
+### 3 Play with the examples
+Controller:
+a. click `bootstrapping` on the left sidebar and upload the QR code image.
+b. click `bootstrap` button which will trigger a blocking packet listen.
+Device:
+```
+cd build
+./bin/examples/tutorial-app
+```
+
