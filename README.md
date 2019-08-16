@@ -31,23 +31,6 @@ This package uses CMake. A way to build is:
 ### Unit Test ###
 Run `./unittest` in the `build` folder.
 
-### Generate XCode Project ###
- ```
- mkdir xcode
- cd xcode
- cmake -G "Xcode" ..
- open ndn-lite.xcodeproj
- ```
-
-### Generate Doxygen Documentation ###
- ```
- mkdir build
- cd build
- cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_DOCS=ON ..
- make docs
- open docs/html/index.html
- ```
-
 ## A Demonstration of NDN-Lite's Security Bootstrapping and Service Discovery
 
 This requires two devices (e.g., two laptops, or one laptop one RaspberryPi) connected through WiFi ad-hoc or WiFi AP mode whose UDP multicast has been enabled.
@@ -83,3 +66,22 @@ cd build
 ./bin/examples/tutorial-app
 ```
 
+## Generate XCode Project and Documentation
+If you prefer to use XCode for your application development, you can generate a XCode project by the following commands.
+### Generate XCode Project ###
+ ```
+ mkdir xcode
+ cd xcode
+ cmake -G "Xcode" ..
+ open ndn-lite.xcodeproj
+ ```
+
+One can also generate a Doxygen-empowered library documentation by the following commands.
+### Generate Doxygen Documentation ###
+ ```
+ mkdir build
+ cd build
+ cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_DOCS=ON ..
+ make docs
+ open docs/html/index.html
+ ```
