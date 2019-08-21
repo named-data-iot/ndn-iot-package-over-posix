@@ -1,0 +1,8 @@
+dist: bionic
+language: c
+compiler: gcc
+script:
+  - mkdir build && cd build
+  - cmake -DCMAKE_BUILD_TYPE=Release ..
+  - make -j2
+  - ./unittest
