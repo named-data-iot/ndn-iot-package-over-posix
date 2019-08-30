@@ -32,9 +32,6 @@ bool running;
 
 int parse_args(int argc, char *argv[]){
   struct timeval tv;
-  name_component_t *comp;
-  uint64_t tim;
-  int i;
 
   if(argc < 3){
     fprintf(stderr, "ERROR: wrong arguments.\n");
@@ -77,7 +74,7 @@ int prepare_data(const char* filename){
   fseek(file, 0 , SEEK_SET);
   chunks_num = (filesize + DATA_BLOCK_SIZE - 1) / DATA_BLOCK_SIZE;
 
-  for(i = 0; !feof(file); i ++){
+  for (i = 0; !feof(file); i++) {
     cursz = fread(buf, 1, DATA_BLOCK_SIZE, file);
     ret = tlv_make_data(chunks[i], DATA_CHUNK_SIZE, &chunk_sizes[i], 6,
                         TLV_DATAARG_NAME_PTR, &versioned_name,
@@ -86,13 +83,18 @@ int prepare_data(const char* filename){
                         TLV_DATAARG_FINALBLOCKID_U64, (uint64_t)(chunks_num - 1),
                         TLV_DATAARG_CONTENT_BUF, buf,
                         TLV_DATAARG_CONTENT_SIZE, (size_t)cursz);
+    if (ret != NDN_SUCCESS) {
+      fprintf(stderr, "ERROR: Cannot make data. Error Code: %d.\n", ret);
+    }
   }
 
   fclose(file);
   return 0;
 }
 
-int on_interest(const uint8_t* raw_interest, uint32_t interest_size, void* userdata){
+int
+on_interest(const uint8_t* raw_interest, uint32_t interest_size, void* userdata)
+{
   ndn_interest_t interest;
   name_component_t *comp;
   int ret, i, segno = 0;

@@ -101,9 +101,11 @@ int parseArgs(int argc, char *argv[]){
   return 0;
 }
 
+int save_file(uint8_t* file_data);
 
-void on_data(const uint8_t* rawdata, uint32_t data_size, void* userdata){
-  ndn_data_t data;
+void
+on_data(const uint8_t* rawdata, uint32_t data_size, void* userdata)
+{
   printf("Receiving data\n");
   // char data_buf[1024];
   char* data_buf;
@@ -113,7 +115,9 @@ void on_data(const uint8_t* rawdata, uint32_t data_size, void* userdata){
   save_file(data_buf);
 }
 
-int save_file (uint8_t* file_data){
+int
+save_file(uint8_t* file_data)
+{
   FILE * fp = fopen(file_name,"w");
   if(fp == NULL){
     fprintf(stderr, "ERROR: fail to open a file when writing.\n");
@@ -134,7 +138,6 @@ void on_timeout(void* userdata){
 
 int main(int argc, char *argv[]){
   ndn_udp_face_t *face;
-  ndn_interest_t interest;
   ndn_encoder_t encoder;
   int ret;
 
@@ -195,12 +198,11 @@ int main(int argc, char *argv[]){
   ndn_sig_verifier_init(&face->intf);
 
   char interest_buf[4096];
-  int interest_off;
   ndn_key_storage_t* storage = ndn_key_storage_get_instance();
   ndn_interest_t request;
   ndn_interest_from_name(&request, &name_prefix);
   ndn_interest_set_Parameters(&request, (uint8_t*)file_name, strlen(file_name));
-  interest.lifetime = 10000;
+  request.lifetime = 10000;
   ndn_signed_interest_ecdsa_sign(&request, &storage->self_identity, self_prv);
   // tlv_make_interest(interest_buf,4096,&interest_off,6,TLV_INTARG_NAME_PTR,&name_prefix,
   //                   TLV_INTARG_PARAMS_BUF,(uint8_t*)file_name,TLV_INTARG_PARAMS_SIZE,strlen(file_name),

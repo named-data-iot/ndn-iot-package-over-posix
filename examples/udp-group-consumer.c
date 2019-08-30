@@ -66,19 +66,16 @@ parseArgs(int argc, char *argv[])
   return 0;
 }
 
-int
-on_data(const uint8_t* rawdata, uint32_t data_size)
+void
+on_data(const uint8_t* rawdata, uint32_t data_size, void* userdata)
 {
   ndn_data_t data;
   printf("On data\n");
-  if(ndn_data_tlv_decode_digest_verify(&data, rawdata, data_size)){
+  if (ndn_data_tlv_decode_digest_verify(&data, rawdata, data_size)) {
     printf("Decoding failed.\n");
-    return -1;
+    return;
   }
-
   printf("It says: %s\n", data.content_value);
-
-  return NDN_SUCCESS;
 }
 
 void

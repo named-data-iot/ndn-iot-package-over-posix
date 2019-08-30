@@ -16,7 +16,7 @@ main(int argc, char *argv[])
 {
   ndn_lite_startup();
   ndn_ecc_pub_t pre_installed_pub;
-  ndn_ecc_pub_t pre_installed_prv;
+  ndn_ecc_prv_t pre_installed_prv;
   ndn_ecc_make_key(&pre_installed_pub, &pre_installed_prv, NDN_ECDSA_CURVE_SECP256R1, 1);
   uint16_t device_id;
   ndn_rng((uint8_t*)&device_id, 2);

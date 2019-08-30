@@ -35,7 +35,8 @@ char device_identifier[30];
 size_t device_len;
 
 // Face Declare
-ndn_udp_face_t *face;
+// ndn_udp_face_t *face;
+ndn_unix_face_t *face;
 // Buf used in this program
 uint8_t buf[4096];
 // Wether the program is running or not
@@ -196,8 +197,7 @@ light_service(const uint8_t* interest, uint32_t interest_size, void* userdata)
 void
 after_bootstrapping()
 {
-  ndn_encoder_t encoder;
-  uint8_t temp_byte;
+  uint8_t temp_byte = 0;
   ndn_name_t temp_name;
   ndn_key_storage_t* storage = ndn_key_storage_get_instance();
 
@@ -210,13 +210,9 @@ after_bootstrapping()
   // Register light service
   ndn_name_init(&temp_name);
   ndn_name_append_component(&temp_name, &storage->self_identity.components[0]);
-  ndn_forwarder_add_route_by_name(&face->intf, &temp_name);
   temp_byte = NDN_SD_LED;
   ndn_name_append_bytes_component(&temp_name, &temp_byte, sizeof(temp_byte));
-
-  encoder_init(&encoder, buf, sizeof(buf));
-  ndn_name_tlv_encode(&encoder, &temp_name);
-  ndn_forwarder_register_prefix(buf, encoder.offset, light_service, NULL);
+  ndn_forwarder_register_name_prefix(&temp_name, light_service, NULL);
 }
 
 void SignalHandler(int signum){
@@ -238,11 +234,11 @@ main(int argc, char *argv[])
   ndn_lite_startup();
 
   // CREAT A MULTICAST FACE
-  // face = ndn_unix_face_construct(NDN_NFD_DEFAULT_ADDR, true);
+  face = ndn_unix_face_construct(NDN_NFD_DEFAULT_ADDR, true);
   // face = ndn_udp_unicast_face_construct(INADDR_ANY, htons((uint16_t) 2000), inet_addr("224.0.23.170"), htons((uint16_t) 56363));
-  in_port_t multicast_port = htons((uint16_t) 56363);
-  in_addr_t multicast_ip = inet_addr("224.0.23.170");
-  face = ndn_udp_multicast_face_construct(INADDR_ANY, multicast_ip, multicast_port);
+  // in_port_t multicast_port = htons((uint16_t) 56363);
+  // in_addr_t multicast_ip = inet_addr("224.0.23.170");
+  // face = ndn_udp_multicast_face_construct(INADDR_ANY, multicast_ip, multicast_port);
 
   // LOAD PRE-INSTALLED PRV KEY AND PUB KEY
   ndn_ecc_prv_t* ecc_secp256r1_prv_key;

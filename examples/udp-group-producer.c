@@ -67,7 +67,7 @@ parseArgs(int argc, char *argv[])
 }
 
 int
-on_interest(const uint8_t* interest, uint32_t interest_size)
+on_interest(const uint8_t* interest, uint32_t interest_size, void* userdata)
 {
   ndn_interest_t interest_pkt;
   ndn_interest_from_block(&interest_pkt, interest, interest_size);
@@ -77,14 +77,14 @@ on_interest(const uint8_t* interest, uint32_t interest_size)
 
   printf("On interest\n");
   data.name = interest_pkt.name;
-  ndn_data_set_content(&data, str, strlen(str));
+  ndn_data_set_content(&data, (uint8_t*)str, strlen(str));
   ndn_metainfo_init(&data.metainfo);
   ndn_metainfo_set_content_type(&data.metainfo, NDN_CONTENT_TYPE_BLOB);
   encoder_init(&encoder, buf, 4096);
   ndn_data_tlv_encode_digest_sign(&encoder, &data);
   ndn_forwarder_put_data(encoder.output_value, encoder.offset);
 
-  return NDN_SUCCESS;
+  return NDN_FWD_STRATEGY_SUPPRESS;
 }
 
 int
