@@ -6,9 +6,9 @@ option(BUILD_DOCS "Build documentation" OFF)
 option(DYNAMIC_LIB "Build dynamic link library" OFF)
 option(BUILD_PYTHON "Build python bindings" OFF)
 
-if (NOT CMAKE_BUILD_TYPE) 
-  set(CMAKE_BUILD_TYPE DEBUG) 
-endif() 
+if (NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE DEBUG)
+endif()
 
 add_definitions(-D_GNU_SOURCE)
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c11 -Wall")
