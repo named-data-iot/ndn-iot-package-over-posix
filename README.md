@@ -1,4 +1,6 @@
-ndn-lite
+[![Build Status](https://travis-ci.org/named-data-iot/ndn-iot-package-over-posix.svg?branch=master)](https://travis-ci.org/named-data-iot/ndn-iot-package-over-posix)
+
+NDN-Lite
 ========
 
 <img src="https://zhiyi-zhang.com/images/ndn-lite-logo.jpg" alt="logo" width="500"/>
