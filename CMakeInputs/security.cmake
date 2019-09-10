@@ -26,14 +26,14 @@ target_sources(ndn-lite PRIVATE
   ${DIR_DEFAULT_BACKEND}/ndn-lite-default-aes-impl.c
   ${DIR_DEFAULT_BACKEND}/ndn-lite-default-ecc-impl.h
   ${DIR_DEFAULT_BACKEND}/ndn-lite-default-ecc-impl.c
+  ${DIR_DEFAULT_BACKEND}/ndn-lite-default-rng-impl.h
+  ${DIR_DEFAULT_BACKEND}/ndn-lite-default-rng-impl.c
   ${DIR_DEFAULT_BACKEND}/ndn-lite-default-hmac-impl.h
   ${DIR_DEFAULT_BACKEND}/ndn-lite-default-hmac-impl.c
   ${DIR_DEFAULT_BACKEND}/ndn-lite-default-sha-impl.h
   ${DIR_DEFAULT_BACKEND}/ndn-lite-default-sha-impl.c
   ${DIR_MICRO_ECC}/uECC.c
   ${DIR_MICRO_ECC}/uECC.h
-  ${DIR_MICRO_ECC}/uECC_vli.h
-  ${DIR_MICRO_ECC}/types.h
   ${DIR_TINYCRYPT}/tc_aes_decrypt.c
   ${DIR_TINYCRYPT}/tc_aes_encrypt.c
   ${DIR_TINYCRYPT}/tc_aes.h

@@ -58,16 +58,8 @@ foreach(TESTNAME IN LISTS LIST_SIGN_VERIFY_TESTS)
 endforeach()
 unset(LIST_SIGN_VERIFY_TESTS)
 target_sources(unittest PRIVATE
-  "${DIR_UNITTESTS}/sign-verify/ecdsa-sign-verify-tests/test-secp160r1-def.h"
-  "${DIR_UNITTESTS}/sign-verify/ecdsa-sign-verify-tests/test-secp160r1-def.c"
-  "${DIR_UNITTESTS}/sign-verify/ecdsa-sign-verify-tests/test-secp192r1-def.h"
-  "${DIR_UNITTESTS}/sign-verify/ecdsa-sign-verify-tests/test-secp192r1-def.c"
-  "${DIR_UNITTESTS}/sign-verify/ecdsa-sign-verify-tests/test-secp224r1-def.h"
-  "${DIR_UNITTESTS}/sign-verify/ecdsa-sign-verify-tests/test-secp224r1-def.c"
   "${DIR_UNITTESTS}/sign-verify/ecdsa-sign-verify-tests/test-secp256r1-def.h"
   "${DIR_UNITTESTS}/sign-verify/ecdsa-sign-verify-tests/test-secp256r1-def.c"
-  "${DIR_UNITTESTS}/sign-verify/ecdsa-sign-verify-tests/test-secp256k1-def.h"
-  "${DIR_UNITTESTS}/sign-verify/ecdsa-sign-verify-tests/test-secp256k1-def.c"
 )
 
 target_sources(unittest PRIVATE
