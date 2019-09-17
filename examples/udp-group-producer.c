@@ -98,11 +98,7 @@ main(int argc, char *argv[])
   ndn_forwarder_init();
   ndn_security_init();
   face = ndn_udp_multicast_face_construct(INADDR_ANY, server_ip, port);
-
-  ndn_encoder_t encoder;
-  encoder_init(&encoder, buf, sizeof(buf));
-  ndn_name_tlv_encode(&encoder, &name_prefix);
-  ndn_forwarder_register_prefix(encoder.output_value, encoder.offset, on_interest, NULL);
+  ndn_forwarder_register_name_prefix(&name_prefix, on_interest, NULL);
 
   running = true;
   while (running) {

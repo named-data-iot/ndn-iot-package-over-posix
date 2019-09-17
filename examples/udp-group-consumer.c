@@ -100,15 +100,9 @@ main(int argc, char *argv[])
   ndn_forwarder_init();
   ndn_security_init();
   face = ndn_udp_multicast_face_construct(INADDR_ANY, server_ip, port);
-
-  encoder_init(&encoder, buf, 4096);
-  ndn_name_tlv_encode(&encoder, &name_prefix);
-  ndn_forwarder_add_route(&face->intf, buf, encoder.offset);
-
+  ndn_forwarder_add_route_by_name(&face->intf, &name_prefix);
   ndn_interest_from_name(&interest, &name_prefix);
-  encoder_init(&encoder, buf, 4096);
-  ndn_interest_tlv_encode(&encoder, &interest);
-  ndn_forwarder_express_interest(encoder.output_value, encoder.offset, on_data, on_timeout, NULL);
+  ndn_forwarder_express_interest_struct(&interest, on_data, on_timeout, NULL);
 
   running = true;
   while (running) {
