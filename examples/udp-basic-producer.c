@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Xinyu Ma
+ * Copyright (C) 2019 Xinyu Ma, Zhiyi Zhang
  *
  * This file is subject to the terms and conditions of the GNU Lesser
  * General Public License v3.0. See the file LICENSE in the top level
@@ -23,13 +23,15 @@ uint8_t buf[4096];
 ndn_udp_face_t *face;
 bool running;
 
-int parseArgs(int argc, char *argv[]){
+int
+parseArgs(int argc, char *argv[])
+{
   char *sz_port1, *sz_port2, *sz_addr;
   uint32_t ul_port;
   struct hostent * host_addr;
   struct in_addr ** paddrs;
 
-  if(argc < 5){
+  if (argc < 5) {
     fprintf(stderr, "ERROR: wrong arguments.\n");
     printf("Usage: <local-port> <remote-ip> <remote-port> <name-prefix>\n");
     return 1;
@@ -97,10 +99,10 @@ int on_interest(const uint8_t* interest, uint32_t interest_size, void* userdata)
   return 0;
 }
 
-int main(int argc, char *argv[]){
+int
+main(int argc, char *argv[])
+{
   int ret;
-  ndn_encoder_t encoder;
-
   if((ret = parseArgs(argc, argv)) != 0){
     return ret;
   }
@@ -109,15 +111,13 @@ int main(int argc, char *argv[]){
   face = ndn_udp_unicast_face_construct(INADDR_ANY, port1, server_ip, port2);
 
   running = true;
-  encoder_init(&encoder, buf, sizeof(buf));
-  ndn_name_tlv_encode(&encoder, &name_prefix);
-  ndn_forwarder_register_prefix(encoder.output_value, encoder.offset, on_interest, NULL);
-  while(running){
+  ndn_forwarder_register_name_prefix(&name_prefix, on_interest, NULL);
+
+  while(running) {
     ndn_forwarder_process();
     usleep(10000);
   }
 
   ndn_face_destroy(&face->intf);
-
   return 0;
 }
