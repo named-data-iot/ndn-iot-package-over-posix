@@ -63,18 +63,15 @@ main(int argc, char *argv[])
 {
   ndn_unix_face_t *face;
   ndn_interest_t interest;
-  ndn_encoder_t encoder;
   int ret;
 
-  if((ret = parseArgs(argc, argv)) != 0){
+  if ((ret = parseArgs(argc, argv)) != 0) {
     return ret;
   }
 
   ndn_lite_startup();
   srandom(time(0));
   face = ndn_unix_face_construct(NDN_NFD_DEFAULT_ADDR, true);
-
-  running = true;
   ndn_forwarder_add_route_by_name(&face->intf, &name_prefix);
 
   ndn_interest_from_name(&interest, &name_prefix);
@@ -83,6 +80,7 @@ main(int argc, char *argv[])
   interest.nonce = random();
   ndn_forwarder_express_interest_struct(&interest, on_data, on_timeout, NULL);
 
+  running = true;
   while(running) {
     ndn_forwarder_process();
     usleep(10000);

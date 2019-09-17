@@ -85,7 +85,7 @@ on_data(const uint8_t* rawdata, uint32_t data_size, void* userdata)
 {
   ndn_data_t data;
   printf("On data\n");
-  if(ndn_data_tlv_decode_digest_verify(&data, rawdata, data_size)){
+  if (ndn_data_tlv_decode_digest_verify(&data, rawdata, data_size)) {
     printf("Decoding failed.\n");
   }
   printf("It says: %s\n", data.content_value);
@@ -93,7 +93,7 @@ on_data(const uint8_t* rawdata, uint32_t data_size, void* userdata)
 }
 
 void
-on_timeout(void* userdata){
+on_timeout(void* userdata) {
   printf("On timeout\n");
   running = false;
 }
@@ -103,7 +103,6 @@ main(int argc, char *argv[])
 {
   ndn_udp_face_t *face;
   ndn_interest_t interest;
-  ndn_encoder_t encoder;
   int ret;
 
   if((ret = parseArgs(argc, argv)) != 0){
@@ -112,12 +111,11 @@ main(int argc, char *argv[])
 
   ndn_lite_startup();
   face = ndn_udp_unicast_face_construct(INADDR_ANY, port1, server_ip, port2);
-  running = true;
-
   ndn_forwarder_add_route_by_name(&face->intf, &name_prefix);
   ndn_interest_from_name(&interest, &name_prefix);
   ndn_forwarder_express_interest_struct(&interest, on_data, on_timeout, NULL);
 
+  running = true;
   while(running) {
     ndn_forwarder_process();
     usleep(10000);

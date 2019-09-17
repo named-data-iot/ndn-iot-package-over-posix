@@ -136,7 +136,7 @@ int main(int argc, char *argv[]){
   ndn_key_storage_get_empty_hmac_key(&hmac_key);
   ndn_hmac_key_init(hmac_key,hmac_key_str,sizeof(hmac_key_str),0);
 
-  ndn_security_bootstrapping(&face->intf, ecc_secp256r1_prv_key,hmac_key,
+  ndn_security_bootstrapping(&face->intf, ecc_secp256r1_prv_key, hmac_key,
                              device_identifier,strlen(device_identifier),
                              capability,strlen(capability), after_bootstrapping);
 

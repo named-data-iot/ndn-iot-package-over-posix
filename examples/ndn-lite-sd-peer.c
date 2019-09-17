@@ -27,7 +27,8 @@ ndn_unix_face_t *face;
 bool running;
 
 int
-parseArgs(int argc, char *argv[]) {
+parseArgs(int argc, char *argv[])
+{
   if (argc < 2) {
     fprintf(stderr, "ERROR: wrong arguments.\n");
     printf("Usage: <self-prefix>\n");
@@ -56,7 +57,7 @@ main(int argc, char *argv[])
 
   ndn_lite_startup();
   //face = ndn_udp_multicast_face_construct(INADDR_ANY, multicast_ip, multicast_port);
-  face = ndn_unix_face_construct(NDN_NFD_DEFAULT_ADDR,true);
+  face = ndn_unix_face_construct(NDN_NFD_DEFAULT_ADDR, true);
 
   ndn_encoder_t encoder;
   encoder_init(&encoder, buf, 4096);

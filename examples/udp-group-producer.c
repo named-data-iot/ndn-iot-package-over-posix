@@ -12,13 +12,14 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <arpa/inet.h>
+#include <ndn-lite.h>
 #include "../adaptation/udp/udp-face.h"
 #include "ndn-lite/forwarder/forwarder.h"
 #include "ndn-lite/encode/data.h"
 #include "ndn-lite/encode/interest.h"
 
 in_port_t port;
-in_addr_t server_ip;
+in_addr_t multicast_ip;
 ndn_name_t name_prefix;
 uint8_t buf[4096];
 ndn_udp_face_t *face;
@@ -41,7 +42,7 @@ parseArgs(int argc, char *argv[])
   }
   uint32_t portnum = 56363;
   port = htons(portnum);
-  server_ip = inet_addr("224.0.23.170");
+  multicast_ip = inet_addr("224.0.23.170");
   if (argc >= 3) {
     sz_port = argv[2];
     if (strlen(sz_port) <= 0) {
@@ -61,7 +62,7 @@ parseArgs(int argc, char *argv[])
       fprintf(stderr, "ERROR: wrong arguments.\n");
       return 1;
     }
-    server_ip = inet_addr(sz_addr);
+    multicast_ip = inet_addr(sz_addr);
   }
   return 0;
 }
@@ -95,9 +96,8 @@ main(int argc, char *argv[])
     return ret;
   }
 
-  ndn_forwarder_init();
-  ndn_security_init();
-  face = ndn_udp_multicast_face_construct(INADDR_ANY, server_ip, port);
+  ndn_lite_startup();
+  face = ndn_udp_multicast_face_construct(INADDR_ANY, multicast_ip, port);
   ndn_forwarder_register_name_prefix(&name_prefix, on_interest, NULL);
 
   running = true;

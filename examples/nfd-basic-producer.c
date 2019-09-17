@@ -53,15 +53,14 @@ on_interest(const uint8_t* interest, uint32_t interest_size, void* userdata)
   ndn_data_tlv_encode_digest_sign(&encoder, &data);
   ndn_forwarder_put_data(encoder.output_value, encoder.offset);
 
-  return 0;
+  return NDN_FWD_STRATEGY_SUPPRESS;
 }
 
 int
 main(int argc, char *argv[])
 {
   int ret;
-
-  if((ret = parseArgs(argc, argv)) != 0){
+  if ((ret = parseArgs(argc, argv)) != 0) {
     return ret;
   }
 

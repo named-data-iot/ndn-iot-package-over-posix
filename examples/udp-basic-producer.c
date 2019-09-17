@@ -82,7 +82,9 @@ parseArgs(int argc, char *argv[])
   return 0;
 }
 
-int on_interest(const uint8_t* interest, uint32_t interest_size, void* userdata){
+int
+on_interest(const uint8_t* interest, uint32_t interest_size, void* userdata)
+{
   ndn_data_t data;
   ndn_encoder_t encoder;
   char * str = "I'm a Data packet.";
@@ -96,24 +98,23 @@ int on_interest(const uint8_t* interest, uint32_t interest_size, void* userdata)
   ndn_data_tlv_encode_digest_sign(&encoder, &data);
   ndn_forwarder_put_data(encoder.output_value, encoder.offset);
 
-  return 0;
+  return NDN_FWD_STRATEGY_SUPPRESS;
 }
 
 int
 main(int argc, char *argv[])
 {
   int ret;
-  if((ret = parseArgs(argc, argv)) != 0){
+  if ((ret = parseArgs(argc, argv)) != 0) {
     return ret;
   }
 
   ndn_lite_startup();
   face = ndn_udp_unicast_face_construct(INADDR_ANY, port1, server_ip, port2);
-
-  running = true;
   ndn_forwarder_register_name_prefix(&name_prefix, on_interest, NULL);
 
-  while(running) {
+  running = true;
+  while (running) {
     ndn_forwarder_process();
     usleep(10000);
   }
