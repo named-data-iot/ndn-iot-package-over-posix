@@ -55,7 +55,7 @@ parseArgs(int argc, char *argv[])
   fp = fopen("tutorial_shared_info.txt", "r");
   if (fp == NULL) exit(1);
   size_t i = 0;
-  for(size_t lineindex = 0; lineindex < 4; lineindex++) {
+  for (size_t lineindex = 0; lineindex < 4; lineindex++) {
     memset(buf, 0, sizeof(buf));
     buf_ptr = buf;
     fgets(buf, sizeof(buf), fp);
@@ -161,27 +161,31 @@ light_service(const uint8_t* interest, uint32_t interest_size, void* userdata)
   // Execute the function
   if (param) {
     new_val = *param;
-  } else {
+  }
+  else {
     new_val = 0xFF;
   }
-  if(new_val != 0xFF){
-    if((new_val > 0) != (light_brightness > 0)){
-      if(new_val > 0){
+  if (new_val != 0xFF) {
+    if ((new_val > 0) != (light_brightness > 0)) {
+      if (new_val > 0) {
         printf("Switch on the light.\n");
-      }else{
+      }
+      else {
         printf("Turn off the light.\n");
       }
     }
-    if(new_val < 10) {
+    if (new_val < 10) {
       light_brightness = new_val;
-      if(light_brightness > 0){
+      if (light_brightness > 0) {
         printf("Successfully set the brightness = %u\n", light_brightness);
       }
-    }else{
+    }
+    else {
       light_brightness = 10;
       printf("Exceeding range. Set the brightness = %u\n", light_brightness);
     }
-  }else{
+  }
+  else {
     printf("Query the brightness = %u\n", light_brightness);
   }
 
