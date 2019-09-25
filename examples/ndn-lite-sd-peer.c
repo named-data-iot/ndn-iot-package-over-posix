@@ -20,10 +20,9 @@
 #include "ndn-lite/ndn-services.h"
 
 ndn_name_t self_identity;
-ndn_name_t name_prefix;
 uint8_t buf[4096];
 ndn_unix_face_t *face;
-//ndn_udp_face_t *face;
+// ndn_udp_face_t *face;
 bool running;
 
 int
@@ -38,8 +37,6 @@ parseArgs(int argc, char *argv[])
     fprintf(stderr, "ERROR: wrong name.\n");
     return 4;
   }
-  ndn_name_init(&name_prefix);
-  ndn_name_append_component(&name_prefix, &self_identity.components[0]);
   return 0;
 }
 
@@ -56,29 +53,35 @@ main(int argc, char *argv[])
   }
 
   ndn_lite_startup();
-  //face = ndn_udp_multicast_face_construct(INADDR_ANY, multicast_ip, multicast_port);
+  // face = ndn_udp_multicast_face_construct(INADDR_ANY, multicast_ip, multicast_port);
   face = ndn_unix_face_construct(NDN_NFD_DEFAULT_ADDR, true);
 
-  ndn_encoder_t encoder;
-  encoder_init(&encoder, buf, 4096);
-  ndn_name_tlv_encode(&encoder, &name_prefix);
-  ndn_forwarder_add_route(&face->intf, buf, encoder.offset);
+  ndn_forwarder_add_route_by_name(&face->intf, &self_identity);
 
-  ndn_sd_init(&self_identity);
   sd_add_or_update_self_service(NDN_SD_LED, true, 1);
-  sd_start_adv_self_services();
   usleep(10000);
-  printf("***Service Query\n");
-  ndn_name_t bedroom_name;
-  ndn_name_from_string(&bedroom_name, "bedroom", strlen("bedroom"));
-  sd_query_service(NDN_SD_LED, &bedroom_name, true);
+
+  // simulate bootstrapping process
+  ndn_ecc_pub_t pre_installed_pub;
+  ndn_ecc_prv_t pre_installed_prv;
+  ndn_ecc_make_key(&pre_installed_pub, &pre_installed_prv, NDN_ECDSA_CURVE_SECP256R1, 1);
+  ndn_key_storage_t *ndn_key_storage = ndn_key_storage_get_instance();
+  ndn_key_storage->self_identity = self_identity;
+  ndn_key_storage->self_identity_key = pre_installed_prv;
+  ndn_sd_after_bootstrapping(&face->intf);
+
+  printf("***Service Query***\n");
+  ndn_name_t livingroom_name;
+  ndn_name_from_string(&livingroom_name, "livingroom", strlen("livingroom"));
+  sd_query_service(NDN_SD_LED, &livingroom_name, true);
+
   usleep(10000);
-  printf("***Controller Service Info Query\n");
+  printf("***Controller Service Info Query***\n");
   uint8_t service_id = NDN_SD_LED;
   sd_query_sys_services(&service_id, 1);
 
   running = true;
-  while(running){
+  while (running) {
     ndn_forwarder_process();
     usleep(10000);
   }

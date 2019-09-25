@@ -262,7 +262,6 @@ main(int argc, char *argv[])
   capability[1] = NDN_SD_TEMP;
 
   // SET UP SERVICE DISCOVERY
-  ndn_sd_init();
   sd_add_or_update_self_service(NDN_SD_LED, true, 1); // state code 1 means normal
   sd_add_or_update_self_service(NDN_SD_TEMP, true, 1); // state code 1 means normal
 

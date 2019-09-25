@@ -163,15 +163,10 @@ int main(int argc, char *argv[]){
   ndn_forwarder_register_prefix(data_buf, encoder.offset, light_service, NULL);
 
   // Start service discovery (This should be done after adding route)
-  ndn_sd_init(&self_identity);
-
+  sd_add_or_update_self_service(NDN_SD_LED, true, 0);
   ndn_key_storage_t *ndn_key_storage = ndn_key_storage_get_instance();
   ndn_key_storage->self_identity = self_identity;
-  ndn_sd_after_bootstrapping();
-
-  sd_add_or_update_self_service(NDN_SD_LED, true, 0);
-  sd_listen(&face->intf);
-  sd_start_adv_self_services();
+  ndn_sd_after_bootstrapping(&face->intf);
 
   // Main loop
   running = true;
