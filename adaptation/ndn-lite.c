@@ -7,7 +7,6 @@ void
 ndn_lite_startup()
 {
   register_platform_security_init(ndn_lite_posix_rng_load_backend);
-  ndn_key_storage_init();
   ndn_security_init();
   ndn_forwarder_init();
 }

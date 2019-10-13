@@ -121,7 +121,6 @@ int main(int argc, char *argv[]){
   capability[1] = 0xbb;
 
   //set up keys
-  ndn_key_storage_t * key_storage =  ndn_key_storage_init();
   ndn_ecc_prv_t * ecc_secp256r1_prv_key;
   ndn_ecc_pub_t * ecc_secp256r1_pub_key;
   ndn_key_storage_get_empty_ecc_key(&ecc_secp256r1_pub_key, &ecc_secp256r1_prv_key);
