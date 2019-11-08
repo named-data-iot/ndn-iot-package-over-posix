@@ -5,6 +5,7 @@ target_sources(ndn-lite PUBLIC
   ${DIR_UTIL}/uniform-time.h
   ${DIR_UTIL}/bit-operations.h
   ${DIR_UTIL}/re.h
+  ${DIR_UTIL}/logger.h
 )
 target_sources(ndn-lite PRIVATE
   ${DIR_UTIL}/memory-pool.c
