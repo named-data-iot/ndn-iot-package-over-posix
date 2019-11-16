@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Tianyuan Yu
+ * Copyright (C) 2019 Tianyuan Yu, Zhiyi Zhang
  *
  * This file is subject to the terms and conditions of the GNU Lesser
  * General Public License v3.0. See the file LICENSE in the top level
@@ -8,12 +8,6 @@
  * See AUTHORS.md for complete list of NDN IOT PKG authors and contributors.
  */
 
-/*
- * This file-tranfer-server works with file-transfer-client. 
- * Launch the file-transfer-server, input local port, client ip, client port and name.
- * Launch the file-transfer-client, input local port, server ip, server port, name and the file name.
- * The server will then return the requested file to the client. (if the file exists in the directory)
- */
 #include <stdio.h>
 #include <netdb.h>
 #include <unistd.h>
@@ -54,7 +48,7 @@ int parseArgs(int argc, char *argv[]){
   struct hostent * host_addr;
   struct in_addr ** paddrs;
 
-  if(argc < 4){
+  if(argc < 4) {
     fprintf(stderr, "ERROR: wrong arguments.\n");
     printf("Usage: <local-port> <client-ip> <client-port>\n");
     return 1;
@@ -186,12 +180,12 @@ int main(int argc, char *argv[]){
   char* id_2 = "bbb";
   name_component_from_string(&id[1], id_2, strlen(id_2));
 
-  ps_subscribe_to(NDN_SD_TEMP, DATA, id, 2, 30000, on_publish);
+  ps_subscribe_to(NDN_SD_TEMP, false, id, 2, 30000, on_publish, NULL);
 
 
   usleep(10000);
 
-  ps_publish_command(NDN_SD_TEMP, 32, id, 2);
+  ps_publish_command(NDN_SD_TEMP, 32, id, 2, NULL, 0);
 
   printf("running into loop\n");
   while(running){

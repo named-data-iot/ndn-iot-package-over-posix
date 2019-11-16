@@ -1,19 +1,12 @@
 
 /*
- * Copyright (C) 2019 Tianyuan Yu
+ * Copyright (C) 2019 Tianyuan Yu, Zhiyi Zhang
  *
  * This file is subject to the terms and conditions of the GNU Lesser
  * General Public License v3.0. See the file LICENSE in the top level
  * directory for more details.
  *
  * See AUTHORS.md for complete list of NDN IOT PKG authors and contributors.
- */
-
-/*
- * This file-tranfer-server works with file-transfer-client.
- * Launch the file-transfer-server, input local port, client ip, client port and name.
- * Launch the file-transfer-client, input local port, server ip, server port, name and the file name.
- * The server will then return the requested file to the client. (if the file exists in the directory)
  */
 
 #include <stdio.h>
@@ -72,7 +65,7 @@ simlutae_bootstrap()
                      NDN_ECDSA_CURVE_SECP256R1, 123);
     ndn_ecc_pub_t anchor_pub_key;
     ndn_ecc_pub_init(&anchor_pub_key, secp256r1_pub_key_str, sizeof(secp256r1_pub_key_str), NDN_ECDSA_CURVE_SECP256R1, 123);
-    
+
     ndn_data_t anchor;
     ndn_data_init(&anchor);
     ndn_name_from_string(&anchor.name, "/ndn-iot/controller/KEY", strlen("/ndn-iot/controller/KEY"));
@@ -88,13 +81,13 @@ simlutae_bootstrap()
     anchor_bytes_size = encoder.offset;
     ndn_data_tlv_decode_no_verify(&anchor, encoder.output_value, encoder.offset, NULL, NULL);
     ndn_key_storage_set_trust_anchor(&anchor);
-    
+
     // ndn_ecc_prv_t self_prv_key
     ndn_ecc_pub_t* self_pub = NULL;
     ndn_ecc_prv_t* self_prv = NULL;
     ndn_key_storage_get_empty_ecc_key(&self_pub, &self_prv);
     ndn_ecc_make_key(self_pub, self_prv, NDN_ECDSA_CURVE_SECP256R1, 234);
-    
+
     // self cert
     ndn_data_t self_cert;
     ndn_data_init(&self_cert);
@@ -108,11 +101,11 @@ simlutae_bootstrap()
     ndn_data_tlv_encode_ecdsa_sign(&encoder, &self_cert, &anchor_id, &anchor_prv_key);
     ndn_data_tlv_decode_no_verify(&self_cert, encoder.output_value, encoder.offset, NULL, NULL);
     ndn_key_storage_set_self_identity(&self_cert, self_prv);
-    
+
     // set up sig verifier
     ndn_sig_verifier_init(&face->intf);
-    
-    running = true;    
+
+    running = true;
 }
 
 void
@@ -142,7 +135,7 @@ int main(int argc, char *argv[]){
 
     ndn_lite_startup();
     face = ndn_dummy_face_construct();
-    
+
     simlutae_bootstrap();
     ndn_key_storage_t* storage = ndn_key_storage_get_instance();
     name_component_t* home_prefix = &storage->self_identity.components[0];
@@ -150,7 +143,7 @@ int main(int argc, char *argv[]){
     ndn_name_t home; ndn_name_init(&home);ndn_name_append_component(&home, home_prefix);
     ndn_name_print(&home);putchar('\n');
     ndn_forwarder_add_route_by_name(&face->intf, &home);
-    
+
     // sub
     name_component_t id[2];
     char* id_1 = "aaa";
@@ -160,7 +153,7 @@ int main(int argc, char *argv[]){
 
     // pub
     uint8_t content[8] = {1, 9, 2, 6, 0, 8, 1, 7};
-    ps_publish_content(NDN_SD_TEMP, id, 2, content, sizeof(content));
+    ps_publish_content(NDN_SD_TEMP, content, sizeof(content));
     printf("one-time process\n");
     ndn_forwarder_process();
     //ps_subscribe_to(NDN_SD_TEMP, CMD, NULL, 0, 30000, on_publish);
@@ -172,8 +165,8 @@ int main(int argc, char *argv[]){
     printf("one-time process\n");
     ndn_forwarder_process();
 
-    
+
     ndn_face_destroy(&face->intf);
-    
+
     return 0;
 }
