@@ -1,6 +1,6 @@
 
 /*
- * Copyright (C) 2019 Tianyuan Yu, Zhiyi Zhang
+ * Copyright (C) 2019 Zhiyi Zhang, Tianyuan Yu
  *
  * This file is subject to the terms and conditions of the GNU Lesser
  * General Public License v3.0. See the file LICENSE in the top level
@@ -17,9 +17,7 @@
 #include "ndn-lite/encode/name.h"
 #include "ndn-lite/encode/data.h"
 #include "ndn-lite/encode/interest.h"
-#include "ndn-lite/app-support/ndn-sig-verifier.h"
 #include "ndn-lite/app-support/pub-sub.h"
-#include "ndn-lite/face/dummy-face.h"
 
 uint8_t secp256r1_prv_key_str[32] = {
     0xA7, 0x58, 0x4C, 0xAB, 0xD3, 0x82, 0x82, 0x5B, 0x38, 0x9F, 0xA5, 0x45, 0x73, 0x00, 0x0A, 0x32,
@@ -32,20 +30,14 @@ uint8_t secp256r1_pub_key_str[64] = {
     0x32, 0x27, 0xDC, 0x05, 0x77, 0xA7, 0xDC, 0xE0, 0xA2, 0x69, 0xC8, 0x8B, 0x4C, 0xBF, 0x25, 0xF2
 };
 
-in_port_t port1, port2;
-in_addr_t client_ip;
-ndn_name_t name_prefix;
-uint8_t buf[4096];
+ndn_unix_face_t *face;
 uint8_t anchor_bytes[2048];
 uint32_t anchor_bytes_size;
-ndn_dummy_face_t *face;
 bool running;
+uint8_t buffer[4096];
 
-uint8_t buffer[200];
-
-int on_publish(uint8_t service, uint16_t type_action,
-                const name_component_t* identifier, uint32_t component_size,
-                const uint8_t* content, uint32_t content_len)
+int on_publish(uint8_t service, bool is_cmd, const name_component_t* identifier, uint32_t component_size,
+               uint8_t action, const uint8_t* content, uint32_t content_len, void* userdata)
 {
   ndn_data_t data;
   ndn_encoder_t encoder;
@@ -54,9 +46,8 @@ int on_publish(uint8_t service, uint16_t type_action,
   return NDN_SUCCESS;
 }
 
-
 void
-simlutae_bootstrap()
+simulate_bootstrap()
 {
     ndn_encoder_t encoder;
     // simulate bootstrapping process
@@ -91,7 +82,7 @@ simlutae_bootstrap()
     // self cert
     ndn_data_t self_cert;
     ndn_data_init(&self_cert);
-    ndn_name_from_string(&self_cert.name, "/ndn-iot/bedroom/file-server/KEY", strlen("/ndn-iot/bedroom/file-server/KEY"));
+    ndn_name_from_string(&self_cert.name, "/ndn-iot/bedroom/peer-2/KEY", strlen("/ndn-iot/bedroom/peer-2/KEY"));
     ndn_name_append_keyid(&self_cert.name, 234);
     ndn_name_append_string_component(&self_cert.name, "home", strlen("home"));
     ndn_name_append_keyid(&self_cert.name, 567);
@@ -102,71 +93,37 @@ simlutae_bootstrap()
     ndn_data_tlv_decode_no_verify(&self_cert, encoder.output_value, encoder.offset, NULL, NULL);
     ndn_key_storage_set_self_identity(&self_cert, self_prv);
 
-    // set up sig verifier
-    ndn_sig_verifier_init(&face->intf);
-
-    running = true;
+    // register prefix
+    ndn_forwarder_add_route_by_str(face, "ndn-iot", strlen("ndn-iot"));
 }
 
-void
-prepare_data_interest(uint8_t service, uint8_t* value, uint32_t value_size,
-                      uint32_t* output_size)
+int main(int argc, char *argv[])
 {
-  ndn_key_storage_t* storage = ndn_key_storage_get_instance();
-  name_component_t* home_prefix = &storage->self_identity.components[0];
-
-  int ret = 0;
-  ndn_name_t name;
-  ndn_name_init(&name);
-  ndn_name_append_component(&name, home_prefix);
-  ndn_name_append_bytes_component(&name, &service, sizeof(service));
-  ndn_name_append_string_component(&name, "DATA", strlen("DATA"));
-  ndn_name_append_string_component(&name, "aaa", strlen("aaa"));
-  ndn_name_append_string_component(&name, "bbb", strlen("bbb"));
-  tlv_make_interest(value, value_size, output_size, 4,
-                      TLV_INTARG_NAME_PTR, &name,
-                      TLV_INTARG_CANBEPREFIX_BOOL, true,
-                      TLV_INTARG_MUSTBEFRESH_BOOL, true,
-                      TLV_INTARG_LIFETIME_U64, (uint64_t)600);
-}
-
-int main(int argc, char *argv[]){
-    int ret;
-
+    int ret = 0;
     ndn_lite_startup();
-    face = ndn_dummy_face_construct();
-
-    simlutae_bootstrap();
-    ndn_key_storage_t* storage = ndn_key_storage_get_instance();
-    name_component_t* home_prefix = &storage->self_identity.components[0];
-    printf("add route: ");
-    ndn_name_t home; ndn_name_init(&home);ndn_name_append_component(&home, home_prefix);
-    ndn_name_print(&home);putchar('\n');
-    ndn_forwarder_add_route_by_name(&face->intf, &home);
+    face = ndn_unix_face_construct(NDN_NFD_DEFAULT_ADDR, true);
+    simulate_bootstrap();
 
     // sub
     name_component_t id[2];
-    char* id_1 = "aaa";
+    char* id_1 = "bedroom";
     name_component_from_string(&id[0], id_1, strlen(id_1));
-    char* id_2 = "bbb";
+    char* id_2 = "peer-1";
     name_component_from_string(&id[1], id_2, strlen(id_2));
+    ps_subscribe_to(20, false, id, 2, 3000, on_publish, NULL);
+
+    ps_after_bootstrapping();
+    ndn_forwarder_process();
 
     // pub
-    uint8_t content[8] = {1, 9, 2, 6, 0, 8, 1, 7};
+    uint8_t content[8] = {1};
     ps_publish_content(NDN_SD_TEMP, content, sizeof(content));
-    printf("one-time process\n");
+
+  running = true;
+  while(running) {
     ndn_forwarder_process();
-    //ps_subscribe_to(NDN_SD_TEMP, CMD, NULL, 0, 30000, on_publish);
-
-    uint32_t output_size = 0;
-    prepare_data_interest(NDN_SD_TEMP, buffer, sizeof(buffer), &output_size);
-    ndn_forwarder_receive(face, buffer, output_size);
-
-    printf("one-time process\n");
-    ndn_forwarder_process();
-
-
-    ndn_face_destroy(&face->intf);
-
-    return 0;
+    usleep(500);
+  }
+  ndn_face_destroy(&face->intf);
+  return 0;
 }
