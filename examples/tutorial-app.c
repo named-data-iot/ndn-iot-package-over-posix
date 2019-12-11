@@ -266,7 +266,7 @@ main(int argc, char *argv[])
   sd_add_or_update_self_service(NDN_SD_TEMP, true, 1); // state code 1 means normal
 
   // START BOOTSTRAPPING
-  ndn_security_bootstrapping(&face->intf, ecc_secp256r1_prv_key,hmac_key,
+  ndn_security_bootstrapping(&face->intf, ecc_secp256r1_prv_key, hmac_key,
                              device_identifier, strlen(device_identifier),
                              capability, sizeof(capability), after_bootstrapping);
 
