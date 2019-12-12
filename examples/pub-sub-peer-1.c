@@ -45,7 +45,10 @@ int on_publish(uint8_t service, bool is_cmd, const name_component_t* identifier,
   ndn_data_t data;
   ndn_encoder_t encoder;
 
-  printf("On content publish\n");
+  if (is_cmd)
+    printf("\n\nNew Command publish!! Content: %llu\n\n", *(uint64_t*)content);
+  else
+    printf("\n\nNew Content publish!! Content: %llu\n\n", *(uint64_t*)content);
   return NDN_SUCCESS;
 }
 
@@ -109,23 +112,25 @@ int main(int argc, char *argv[])
   simulate_bootstrap();
 
   // sub
-  ps_subscribe_to(NDN_SD_TEMP, false, NULL, 0, 3000, on_publish, NULL);
-  ps_subscribe_to(20, true, NULL, 0, 3000, on_publish, NULL);
+  ps_subscribe_to(NDN_SD_TEMP, false, NULL, 0, 5000, on_publish, NULL);
+  ps_subscribe_to(20, true, NULL, 0, 5000, on_publish, NULL);
 
   ps_after_bootstrapping();
   ndn_forwarder_process();
 
   // pub
-  uint8_t content[8] = {1};
-  ps_publish_content(20, content, sizeof(content));
-  ps_publish_command(NDN_SD_TEMP, 111, NULL, 0, "hello", strlen("hello"));
-  ndn_forwarder_process();
-
+  uint64_t content = 0;
   running = true;
   while(running) {
-    ps_publish_command(NDN_SD_TEMP, 111, NULL, 0, "hello", strlen("hello"));
     ndn_forwarder_process();
-    usleep(10000);
+
+    ps_publish_content(20, &content, sizeof(content));
+    content++;
+
+    ps_publish_command(NDN_SD_TEMP, 111, NULL, 0, &content, sizeof(content));
+    content++;
+
+    usleep(1000000);
   }
   ndn_face_destroy(&face->intf);
   return 0;
