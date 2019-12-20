@@ -12,7 +12,6 @@ target_sources(unittest PRIVATE
 # Well-named tests
 set(LIST_TESTS
 #  "access-control"
-  "aes"
   "data"
   "encoder-decoder"
   "forwarder"
@@ -41,6 +40,8 @@ target_sources(unittest PRIVATE
   "${DIR_UNITTESTS}/sign-verify/sign-verify-tests.c"
   "${DIR_UNITTESTS}/hmac/hmac-tests.h"
   "${DIR_UNITTESTS}/hmac/hmac-tests.c"
+  "${DIR_UNITTESTS}/aes/aes-tests.c"
+  "${DIR_UNITTESTS}/aes/aes-tests.h"
 )
 set(LIST_SIGN_VERIFY_TESTS
   "asn-encode-decode-tests"

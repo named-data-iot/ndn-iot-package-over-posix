@@ -257,13 +257,11 @@ main(int argc, char *argv[])
   ndn_hmac_key_init(hmac_key, hmac_key_bytes, sizeof(hmac_key_bytes), 2);
 
   // LOAD SERVICES PROVIDED BY SELF DEVICE
-  uint8_t capability[2];
+  uint8_t capability[1];
   capability[0] = NDN_SD_LED;
-  capability[1] = NDN_SD_TEMP;
 
   // SET UP SERVICE DISCOVERY
   sd_add_or_update_self_service(NDN_SD_LED, true, 1); // state code 1 means normal
-  sd_add_or_update_self_service(NDN_SD_TEMP, true, 1); // state code 1 means normal
 
   // START BOOTSTRAPPING
   ndn_security_bootstrapping(&face->intf, ecc_secp256r1_prv_key, hmac_key,

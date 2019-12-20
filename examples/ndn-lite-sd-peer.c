@@ -78,7 +78,7 @@ main(int argc, char *argv[])
   usleep(10000);
   printf("***Controller Service Info Query***\n");
   uint8_t service_id = NDN_SD_LED;
-  sd_query_sys_services(&service_id, 1);
+  // sd_query_sys_services(&service_id, 1);
 
   running = true;
   while (running) {
