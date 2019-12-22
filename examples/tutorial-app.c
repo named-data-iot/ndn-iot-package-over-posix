@@ -18,6 +18,7 @@
 #include "ndn-lite/encode/data.h"
 #include "ndn-lite/encode/interest.h"
 #include "ndn-lite/app-support/service-discovery.h"
+#include "ndn-lite/app-support/access-control.h"
 #include "ndn-lite/app-support/security-bootstrapping.h"
 #include "ndn-lite/encode/key-storage.h"
 
@@ -262,6 +263,8 @@ main(int argc, char *argv[])
 
   // SET UP SERVICE DISCOVERY
   sd_add_or_update_self_service(NDN_SD_LED, true, 1); // state code 1 means normal
+  ndn_ac_register_service_require_ek(NDN_SD_LED);
+  // ndn_ac_register_access_request(NDN_SD_TEMP);
 
   // START BOOTSTRAPPING
   ndn_security_bootstrapping(&face->intf, ecc_secp256r1_prv_key, hmac_key,
