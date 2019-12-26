@@ -20,6 +20,8 @@
 #include "ndn-lite/app-support/service-discovery.h"
 #include "ndn-lite/app-support/access-control.h"
 #include "ndn-lite/app-support/security-bootstrapping.h"
+#include "ndn-lite/app-support/ndn-sig-verifier.h"
+#include "ndn-lite/app-support/pub-sub.h"
 #include "ndn-lite/encode/key-storage.h"
 
 // DEVICE manufacture-created private key
@@ -44,8 +46,6 @@ uint8_t buf[4096];
 bool running;
 // A global var to keep the brightness
 uint8_t light_brightness;
-// The locator of the device, e.g., /bedroom/sensor1
-ndn_name_t locator;
 
 int
 parseArgs(int argc, char *argv[])
@@ -107,61 +107,21 @@ parseArgs(int argc, char *argv[])
 }
 
 int
-light_service(const uint8_t* interest, uint32_t interest_size, void* userdata)
+light_service(uint8_t service, bool is_cmd,
+              const name_component_t* identifier, uint32_t component_size,
+              uint8_t action, const uint8_t* content, uint32_t content_len,
+              void* userdata)
 {
   uint8_t *param, *name, new_val;
   ndn_name_t name_check;
   size_t param_size, ret_size;
   int ret;
 
-  printf("RECEIVED INTEREST\n");
-
-  ret = tlv_parse_interest(interest, interest_size, 4,
-                           TLV_INTARG_NAME_BUF, &name,
-                           TLV_INTARG_NAME_PTR, &name_check,
-                           TLV_INTARG_PARAMS_BUF, &param,
-                           TLV_INTARG_PARAMS_SIZE, &param_size);
-  if (ret != NDN_SUCCESS) {
-    return NDN_FWD_STRATEGY_SUPPRESS;
-  }
-  if (param_size <= 10) {
-    printf("No signature. Ignore the command.");
-    return -1;
-  }
-
-  // Remove parameter digest
-  if(name_check.components[name_check.components_size - 1].type != TLV_GenericNameComponent){
-    name_check.components_size --;
-  }
-
-  // Check the function ID (=0)
-  if(name_check.components[name_check.components_size - 1].size != 1 ||
-     name_check.components[name_check.components_size - 1].value[0] != 0) {
-    return NDN_FWD_STRATEGY_SUPPRESS;
-  }
-
-  // Check the locator (can become API)
-  if(name_check.components_size - 3 > locator.components_size){
-    return NDN_FWD_STRATEGY_SUPPRESS;
-  }
-  if(ndn_name_compare_sub_names(&locator, 0, name_check.components_size - 3,
-                                &name_check, 2, name_check.components_size - 1) != 0) {
-    return NDN_FWD_STRATEGY_SUPPRESS;
-  }
-
-  // check signature
-  ndn_key_storage_t* storage = ndn_key_storage_get_instance();
-  ndn_data_t signature_carrier;
-  ret = ndn_data_tlv_decode_ecdsa_verify(&signature_carrier, param + 1, param_size - 1, &storage->trust_anchor_key);
-  if (ret != NDN_SUCCESS) {
-    printf("Cannot verify signature. Ignore the command.");
-    return NDN_FWD_STRATEGY_SUPPRESS;
-  }
-  printf("Signature verify success. Execute the command.");
+  printf("RECEIVED NEW COMMAND\n");
 
   // Execute the function
-  if (param) {
-    new_val = *param;
+  if (content) {
+    new_val = *content;
   }
   else {
     new_val = 0xFF;
@@ -189,35 +149,12 @@ light_service(const uint8_t* interest, uint32_t interest_size, void* userdata)
   else {
     printf("Query the brightness = %u\n", light_brightness);
   }
-
-  tlv_make_data(buf, sizeof(buf), &ret_size, 4,
-                TLV_DATAARG_NAME_BUF, name,
-                TLV_DATAARG_CONTENT_BUF, &light_brightness,
-                TLV_DATAARG_CONTENT_SIZE, sizeof(light_brightness),
-                TLV_DATAARG_FRESHNESSPERIOD_U64, 1000);
-  ndn_forwarder_put_data(buf, ret_size);
-  return NDN_FWD_STRATEGY_SUPPRESS;
 }
 
 void
 after_bootstrapping()
 {
-  uint8_t temp_byte = 0;
-  ndn_name_t temp_name;
-  ndn_key_storage_t* storage = ndn_key_storage_get_instance();
-
-  // set locator
-  ndn_name_init(&locator);
-  for (int i = 1; i < storage->self_identity.components_size; i ++) {
-    ndn_name_append_component(&locator, &storage->self_identity.components[i]);
-  }
-
-  // Register light service
-  ndn_name_init(&temp_name);
-  ndn_name_append_component(&temp_name, &storage->self_identity.components[0]);
-  temp_byte = NDN_SD_LED;
-  ndn_name_append_bytes_component(&temp_name, &temp_byte, sizeof(temp_byte));
-  ndn_forwarder_register_name_prefix(&temp_name, light_service, NULL);
+  ps_subscribe_to(NDN_SD_LED, true, NULL, 0, 5000, light_service, NULL);
 }
 
 void SignalHandler(int signum){

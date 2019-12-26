@@ -232,7 +232,7 @@ int main(int argc, char *argv[]){
   ndn_key_storage_set_self_identity(&self_cert, self_prv);
 
   // set up sig verifier
-  ndn_sig_verifier_init(&face->intf);
+  ndn_sig_verifier_after_bootstrapping(&face->intf);
 
   running = true;
   encoder_init(&encoder, buf, sizeof(buf));

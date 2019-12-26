@@ -195,7 +195,7 @@ int main(int argc, char *argv[]){
   ndn_forwarder_add_route(&face->intf, buf, encoder.offset);
 
   // set up sig verifier
-  ndn_sig_verifier_init(&face->intf);
+  ndn_sig_verifier_after_bootstrapping(&face->intf);
 
   char interest_buf[4096];
   ndn_key_storage_t* storage = ndn_key_storage_get_instance();
