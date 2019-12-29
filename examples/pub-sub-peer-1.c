@@ -39,17 +39,14 @@ uint32_t anchor_bytes_size;
 bool running;
 uint8_t buffer[4096];
 
-int on_publish(uint8_t service, bool is_cmd, const name_component_t* identifier, uint32_t component_size,
-               uint8_t action, const uint8_t* content, uint32_t content_len, void* userdata)
+void on_publish(uint8_t service, bool is_cmd, const name_component_t* identifiers, uint32_t identifiers_size,
+               const uint8_t* suffix, uint32_t suffix_len, const uint8_t* content, uint32_t content_len,
+               void* userdata)
 {
-  ndn_data_t data;
-  ndn_encoder_t encoder;
-
   if (is_cmd)
     printf("\n\nNew Command publish!! Content: %llu\n\n", *(uint64_t*)content);
   else
     printf("\n\nNew Content publish!! Content: %llu\n\n", *(uint64_t*)content);
-  return NDN_SUCCESS;
 }
 
 void
@@ -112,22 +109,24 @@ int main(int argc, char *argv[])
   simulate_bootstrap();
 
   // sub
-  ps_subscribe_to(NDN_SD_TEMP, false, NULL, 0, 5000, on_publish, NULL);
-  ps_subscribe_to(20, true, NULL, 0, 5000, on_publish, NULL);
+  ps_subscribe_to_content(NDN_SD_TEMP, NULL, 0, 5000, on_publish, NULL);
+  ps_subscribe_to_command(20, NULL, 0, on_publish, NULL);
 
   ps_after_bootstrapping();
   ndn_forwarder_process();
 
   // pub
   uint64_t content = 0;
+  char* content_id = "current-state";
+  uint8_t command_id = 111;
   running = true;
   while(running) {
     ndn_forwarder_process();
 
-    ps_publish_content(20, &content, sizeof(content));
+    ps_publish_content(20, (uint8_t*)content_id, strlen(content_id), &content, sizeof(content));
     content++;
 
-    ps_publish_command(NDN_SD_TEMP, 111, NULL, 0, &content, sizeof(content));
+    ps_publish_command(NDN_SD_TEMP, &command_id, sizeof(command_id), NULL, 0, &content, sizeof(content));
     content++;
 
     usleep(1000000);

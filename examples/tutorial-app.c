@@ -106,10 +106,11 @@ parseArgs(int argc, char *argv[])
   return 0;
 }
 
-int
+void
 light_service(uint8_t service, bool is_cmd,
-              const name_component_t* identifier, uint32_t component_size,
-              uint8_t action, const uint8_t* content, uint32_t content_len,
+              const name_component_t* identifiers, uint32_t identifiers_size,
+              uint8_t* suffix, uint32_t suffix_len,
+              const uint8_t* content, uint32_t content_len,
               void* userdata)
 {
   uint8_t *param, *name, new_val;
@@ -154,7 +155,7 @@ light_service(uint8_t service, bool is_cmd,
 void
 after_bootstrapping()
 {
-  ps_subscribe_to(NDN_SD_LED, true, NULL, 0, 5000, light_service, NULL);
+  ps_subscribe_to_command(NDN_SD_LED, NULL, 0, light_service, NULL);
 }
 
 void SignalHandler(int signum){
