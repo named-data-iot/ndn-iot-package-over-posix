@@ -23,6 +23,7 @@
 #include "ndn-lite/app-support/ndn-sig-verifier.h"
 #include "ndn-lite/app-support/pub-sub.h"
 #include "ndn-lite/encode/key-storage.h"
+#include "ndn-lite/encode/ndn-rule-storage.h"
 
 // DEVICE manufacture-created private key
 uint8_t secp256r1_prv_key_bytes[32] = {0};
@@ -46,6 +47,22 @@ uint8_t buf[4096];
 bool running;
 // A global var to keep the brightness
 uint8_t light_brightness;
+
+
+// Same-room rule. Only for DATA type
+#define same_room_rule_data_pattern_string "<>*<DATA>(<>)<>*"
+#define same_room_rule_key_pattern_string "<>*\\0<><KEY><>*"
+#define same_room_rule_example_data_name_string "/home/temp/DATA/living/sensor/banana/data_1"
+#define same_room_rule_example_key_name_string "/home/living/sensor/KEY/2313"
+
+// Controller only rule
+#define controller_only_rule_data_pattern_string "(<>)<>*"
+#define controller_only_rule_key_pattern_string "\\0<controller><>*"
+#define controller_only_rule_example_data_name_string "/home/temp/DATA/living/sensor/banana/data_1"
+#define controller_only_rule_example_key_name_string "/home/controller/KEY/2313"
+
+static ndn_trust_schema_rule_t same_room;
+static ndn_trust_schema_rule_t controller_only;
 
 int
 parseArgs(int argc, char *argv[])
@@ -208,6 +225,15 @@ main(int argc, char *argv[])
   ndn_security_bootstrapping(&face->intf, ecc_secp256r1_prv_key, hmac_key,
                              device_identifier, strlen(device_identifier),
                              capability, sizeof(capability), after_bootstrapping);
+
+  // SETTING TRUST SCHEMA
+  ndn_rule_storage_init();
+  ndn_trust_schema_rule_from_strings(&same_room, same_room_rule_data_pattern_string, strlen(same_room_rule_data_pattern_string),
+  					                         same_room_rule_key_pattern_string, strlen(same_room_rule_key_pattern_string));
+  ndn_trust_schema_rule_from_strings(&controller_only, controller_only_rule_data_pattern_string, strlen(controller_only_rule_data_pattern_string),
+  					                         controller_only_rule_key_pattern_string, strlen(controller_only_rule_key_pattern_string));
+  ndn_rule_storage_add_rule("same_room", &same_room);
+  ndn_rule_storage_add_rule("controller_only", &controller_only);
 
   // START MAIN LOOP
   running = true;
