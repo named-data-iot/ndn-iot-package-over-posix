@@ -131,8 +131,7 @@ int main(int argc, char *argv[]){
                    NDN_ECDSA_CURVE_SECP256R1,
                    0);
 
-  ndn_hmac_key_t * hmac_key;
-  ndn_key_storage_get_empty_hmac_key(&hmac_key);
+  ndn_hmac_key_t * hmac_key = ndn_key_storage_get_empty_hmac_key();
   ndn_hmac_key_init(hmac_key,hmac_key_str,sizeof(hmac_key_str),0);
 
   ndn_security_bootstrapping(&face->intf, ecc_secp256r1_prv_key, hmac_key,

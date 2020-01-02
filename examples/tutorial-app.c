@@ -133,13 +133,21 @@ light_service(uint8_t service, bool is_cmd,
   uint8_t *param, *name, new_val;
   ndn_name_t name_check;
   size_t param_size, ret_size;
-  int ret;
+  uint8_t real_payload[256] = {0};
+  uint32_t used_size = 0;
+  ndn_aes_key_t* aes_key = ndn_ac_get_key_for_service(service);
+  int ret = ndn_parse_encrypted_payload(content, content_len, real_payload, &used_size, aes_key->key_id);
+  if (ret != NDN_SUCCESS) {
+    return;
+  }
+  real_payload[used_size] = '\0';
 
   printf("RECEIVED NEW COMMAND\n");
 
   // Execute the function
-  if (content) {
-    new_val = *content;
+  if (real_payload) {
+    // new_val = *real_payload;
+    new_val = atoi(real_payload);
   }
   else {
     new_val = 0xFF;
@@ -208,8 +216,7 @@ main(int argc, char *argv[])
                    NDN_ECDSA_CURVE_SECP256R1, 1);
   ndn_ecc_pub_init(ecc_secp256r1_pub_key, secp256r1_pub_key_bytes, sizeof(secp256r1_pub_key_bytes),
                    NDN_ECDSA_CURVE_SECP256R1, 1);
-  ndn_hmac_key_t* hmac_key;
-  ndn_key_storage_get_empty_hmac_key(&hmac_key);
+  ndn_hmac_key_t* hmac_key = ndn_key_storage_get_empty_hmac_key();
   ndn_hmac_key_init(hmac_key, hmac_key_bytes, sizeof(hmac_key_bytes), 2);
 
   // LOAD SERVICES PROVIDED BY SELF DEVICE
