@@ -44,9 +44,6 @@ uint32_t anchor_bytes_size;
 ndn_udp_face_t *face;
 bool running;
 
-ndn_interest_t ek_interest;
-
-
 int parseArgs(int argc, char *argv[]){
   char *sz_port1, *sz_port2, *sz_addr;
   uint32_t ul_port;
@@ -145,7 +142,7 @@ int on_interest(const uint8_t* interest, uint32_t interest_size, void* userdata)
   ndn_encoder_t encoder;
 
   printf("On interest\n");
-  ndn_sig_verifier_verify_int(interest, interest_size, &ek_interest, on_success, on_failure);
+  ndn_sig_verifier_verify_int(interest, interest_size, on_success, NULL, on_failure, NULL);
 }
 
 

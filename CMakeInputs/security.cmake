@@ -11,7 +11,6 @@ target_sources(ndn-lite PUBLIC
   ${DIR_SECURITY}/ndn-lite-sec-config.h
   ${DIR_SECURITY}/ndn-lite-sec-utils.h
   ${DIR_SECURITY}/ndn-lite-sha.h
-  ${DIR_SECURITY}/ndn-trust-schema.h
 )
 target_sources(ndn-lite PRIVATE
   ${DIR_SECURITY}/ndn-lite-aes.c
@@ -21,7 +20,6 @@ target_sources(ndn-lite PRIVATE
   ${DIR_SECURITY}/ndn-lite-sec-config.c
   ${DIR_SECURITY}/ndn-lite-sec-utils.c
   ${DIR_SECURITY}/ndn-lite-sha.c
-  ${DIR_SECURITY}/ndn-trust-schema.c
   ${DIR_DEFAULT_BACKEND}/ndn-lite-default-aes-impl.h
   ${DIR_DEFAULT_BACKEND}/ndn-lite-default-aes-impl.c
   ${DIR_DEFAULT_BACKEND}/ndn-lite-default-ecc-impl.h

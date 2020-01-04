@@ -48,19 +48,6 @@ bool running;
 // A global var to keep the brightness
 uint8_t light_brightness;
 
-
-// Same-room rule. Only for DATA type
-#define same_room_rule_data_pattern_string "<>*<DATA>(<>)<>*"
-#define same_room_rule_key_pattern_string "<>*\\0<><KEY><>*"
-#define same_room_rule_example_data_name_string "/home/temp/DATA/living/sensor/banana/data_1"
-#define same_room_rule_example_key_name_string "/home/living/sensor/KEY/2313"
-
-// Controller only rule
-#define controller_only_rule_data_pattern_string "(<>)<>*"
-#define controller_only_rule_key_pattern_string "\\0<controller><>*"
-#define controller_only_rule_example_data_name_string "/home/temp/DATA/living/sensor/banana/data_1"
-#define controller_only_rule_example_key_name_string "/home/controller/KEY/2313"
-
 static ndn_trust_schema_rule_t same_room;
 static ndn_trust_schema_rule_t controller_only;
 
@@ -132,22 +119,16 @@ light_service(uint8_t service, bool is_cmd,
 {
   uint8_t *param, *name, new_val;
   ndn_name_t name_check;
-  size_t param_size, ret_size;
-  uint8_t real_payload[256] = {0};
-  uint32_t used_size = 0;
-  ndn_aes_key_t* aes_key = ndn_ac_get_key_for_service(service);
-  int ret = ndn_parse_encrypted_payload(content, content_len, real_payload, &used_size, aes_key->key_id);
-  if (ret != NDN_SUCCESS) {
-    return;
-  }
-  real_payload[used_size] = '\0';
 
   printf("RECEIVED NEW COMMAND\n");
 
   // Execute the function
-  if (real_payload) {
+  if (content) {
     // new_val = *real_payload;
-    new_val = atoi(real_payload);
+    char content_str[128] = {0};
+    memcpy(content_str, content, content_len);
+    content_str[content_len] = '\0';
+    new_val = atoi(content_str);
   }
   else {
     new_val = 0xFF;
