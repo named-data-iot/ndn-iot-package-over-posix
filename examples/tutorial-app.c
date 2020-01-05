@@ -162,6 +162,7 @@ void
 after_bootstrapping()
 {
   ps_subscribe_to_command(NDN_SD_LED, NULL, 0, light_service, NULL);
+  ps_publish_content(NDN_SD_LED, "state", strlen("state"), "hello", strlen("hello"));
 }
 
 void SignalHandler(int signum){
@@ -206,22 +207,13 @@ main(int argc, char *argv[])
 
   // SET UP SERVICE DISCOVERY
   sd_add_or_update_self_service(NDN_SD_LED, true, 1); // state code 1 means normal
-  ndn_ac_register_service_require_ek(NDN_SD_LED);
+  ndn_ac_register_encryption_key_request(NDN_SD_LED);
   // ndn_ac_register_access_request(NDN_SD_TEMP);
 
   // START BOOTSTRAPPING
   ndn_security_bootstrapping(&face->intf, ecc_secp256r1_prv_key, hmac_key,
                              device_identifier, strlen(device_identifier),
                              capability, sizeof(capability), after_bootstrapping);
-
-  // SETTING TRUST SCHEMA
-  ndn_rule_storage_init();
-  ndn_trust_schema_rule_from_strings(&same_room, same_room_rule_data_pattern_string, strlen(same_room_rule_data_pattern_string),
-  					                         same_room_rule_key_pattern_string, strlen(same_room_rule_key_pattern_string));
-  ndn_trust_schema_rule_from_strings(&controller_only, controller_only_rule_data_pattern_string, strlen(controller_only_rule_data_pattern_string),
-  					                         controller_only_rule_key_pattern_string, strlen(controller_only_rule_key_pattern_string));
-  ndn_rule_storage_add_rule("same_room", &same_room);
-  ndn_rule_storage_add_rule("controller_only", &controller_only);
 
   // START MAIN LOOP
   running = true;
