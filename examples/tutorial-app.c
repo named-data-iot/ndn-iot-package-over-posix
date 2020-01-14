@@ -146,6 +146,7 @@ light_service(uint8_t service, bool is_cmd,
       light_brightness = new_val;
       if (light_brightness > 0) {
         printf("Successfully set the brightness = %u\n", light_brightness);
+        ps_publish_content(NDN_SD_LED, "state", strlen("state"), &light_brightness, 1);
       }
     }
     else {
