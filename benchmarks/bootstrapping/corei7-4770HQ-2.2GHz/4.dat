@@ -1,0 +1,12 @@
+DEBUG: ndn_security_bootstrapping, L446: BOOTSTRAPPING-INT1-ECDH-KEYGEN: 2844us
+DEBUG: sec_boot_send_sign_on_interest, L380: BOOTSTRAPPING-INT1-PKT-ENCODING: 8us
+DEBUG: sec_boot_send_sign_on_interest, L391: BOOTSTRAPPING-INT1-PKT-ECDSA-SIGN: 2967us
+DEBUG: ndn_data_tlv_decode_hmac_verify, L451: DATA-PKT-DECODING: 8us
+DEBUG: ndn_data_tlv_decode_hmac_verify, L459: DATA-PKT-HMAC-VERIFY: 82us
+DEBUG: on_sign_on_data, L301: BOOTSTRAPPING-DATA1-ECDH: 3556us
+DEBUG: on_sign_on_data, L324: BOOTSTRAPPING-DATA1-HKDF: 41us
+DEBUG: sec_boot_send_cert_interest, L224: BOOTSTRAPPING-INT2-PKT-ENCODING: 8us
+DEBUG: sec_boot_send_cert_interest, L234: BOOTSTRAPPING-INT2-ECDSA-SIGN: 3801us
+DEBUG: ndn_data_tlv_decode_hmac_verify, L451: DATA-PKT-DECODING: 4us
+DEBUG: ndn_data_tlv_decode_hmac_verify, L459: DATA-PKT-HMAC-VERIFY: 54us
+DEBUG: on_cert_data, L161: BOOTSTRAPPING-DATA2-PKT-AES-DEC: 39us

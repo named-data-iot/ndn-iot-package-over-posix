@@ -18,9 +18,9 @@
 #include "ndn-lite/encode/interest.h"
 #include "ndn-lite/app-support/pub-sub.h"
 
-#define ENABLE_NDN_LOG_INFO
-#define ENABLE_NDN_LOG_DEBUG
-#define ENABLE_NDN_LOG_ERROR
+#define ENABLE_NDN_LOG_INFO 1
+#define ENABLE_NDN_LOG_DEBUG 1
+#define ENABLE_NDN_LOG_ERROR 1
 
 uint8_t secp256r1_prv_key_str[32] = {
   0xA7, 0x58, 0x4C, 0xAB, 0xD3, 0x82, 0x82, 0x5B, 0x38, 0x9F, 0xA5, 0x45, 0x73, 0x00, 0x0A, 0x32,
