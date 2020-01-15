@@ -52,12 +52,29 @@ def parse_result_per_type():
     parse_result(dir + '/' + str(i) + '.dat')
   df = pd.DataFrame(data)
   print(df)
-
+  overall['other-crypto'].append(df['other-crypto'].mean())
+  overall['other-crypto-std'].append(df['other-crypto'].std())
+  overall['encode-decode'].append(df['encode-decode'].mean())
+  overall['encode-decode-std'].append(df['encode-decode'].std())
+  overall['sign-verify'].append(df['sign-verify'].mean())
+  overall['sign-verify-std'].append(df['sign-verify'].std())
+  overall['enc-dec'].append(df['enc-dec'].mean())
+  overall['enc-dec-std'].append(df['enc-dec'].std())
 
 if __name__ == "__main__":
+  parse_result_per_type()
+  labels = ['pc', 'pi']
+  df = pd.DataFrame(overall, index=labels)
+  print(df)
 
   fig, ax = plt.subplots(figsize=(14, 7))
-
   N = 2
+  width = 0.35
   ind = np.arange(N)
-  p1 = plt.bar(ind, df['sign-verify'].mean(), width, yerr=menStd)
+  p1 = plt.bar(ind, df['sign-verify'], width, yerr=df['sign-verify-std'])
+  p2 = plt.bar(ind, df['other-crypto'], width, bottom=df['sign-verify'], yerr=df['other-crypto-std'])
+  p3 = plt.bar(ind, df['enc-dec'], width, bottom=df['sign-verify']+df['other-crypto'], yerr=df['enc-dec-std'])
+  p4 = plt.bar(ind, df['encode-decode'], width, bottom=df['sign-verify']+df['other-crypto']+df['enc-dec'], yerr=df['encode-decode-std'])
+
+  ax.legend((p1[0], p3[0], p4[0], p2[0]), ('Pkt Sign/Verify', 'Pkt Enc/Dec', 'Pkt Encoding/Decoding', 'Other Crypto'))
+  plt.show()
