@@ -1,0 +1,27 @@
+DEBUG: ps_publish_content, L586: PUB-CONTENT-DATA-AES-ENC: 11us
+DEBUG: ndn_data_tlv_encode_ecdsa_sign, L213: DATA-PKT-ECDSA-SIGN: 2161us
+DEBUG: ndn_data_tlv_encode_ecdsa_sign, L269: DATA-PKT-ENCODING: 14us
+
+DEBUG: ps_publish_content, L586: PUB-CONTENT-DATA-AES-ENC: 19us
+DEBUG: ndn_data_tlv_encode_ecdsa_sign, L213: DATA-PKT-ECDSA-SIGN: 2109us
+DEBUG: ndn_data_tlv_encode_ecdsa_sign, L269: DATA-PKT-ENCODING: 11us
+
+DEBUG: ps_publish_content, L586: PUB-CONTENT-DATA-AES-ENC: 33us
+DEBUG: ndn_data_tlv_encode_ecdsa_sign, L213: DATA-PKT-ECDSA-SIGN: 3011us
+DEBUG: ndn_data_tlv_encode_ecdsa_sign, L269: DATA-PKT-ENCODING: 13us
+
+DEBUG: ps_publish_content, L586: PUB-CONTENT-DATA-AES-ENC: 20us
+DEBUG: ndn_data_tlv_encode_ecdsa_sign, L213: DATA-PKT-ECDSA-SIGN: 2134us
+DEBUG: ndn_data_tlv_encode_ecdsa_sign, L269: DATA-PKT-ENCODING: 10us
+
+DEBUG: ps_publish_content, L586: PUB-CONTENT-DATA-AES-ENC: 18us
+DEBUG: ndn_data_tlv_encode_ecdsa_sign, L213: DATA-PKT-ECDSA-SIGN: 2377us
+DEBUG: ndn_data_tlv_encode_ecdsa_sign, L269: DATA-PKT-ENCODING: 13us
+
+DEBUG: ps_publish_content, L586: PUB-CONTENT-DATA-AES-ENC: 15us
+DEBUG: ndn_data_tlv_encode_ecdsa_sign, L213: DATA-PKT-ECDSA-SIGN: 2052us
+DEBUG: ndn_data_tlv_encode_ecdsa_sign, L269: DATA-PKT-ENCODING: 4us
+
+DEBUG: ps_publish_content, L586: PUB-CONTENT-DATA-AES-ENC: 17us
+DEBUG: ndn_data_tlv_encode_ecdsa_sign, L213: DATA-PKT-ECDSA-SIGN: 2340us
+DEBUG: ndn_data_tlv_encode_ecdsa_sign, L269: DATA-PKT-ENCODING: 19us
