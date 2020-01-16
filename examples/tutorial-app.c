@@ -163,13 +163,7 @@ void
 after_bootstrapping()
 {
   ps_subscribe_to_command(NDN_SD_LED, NULL, 0, light_service, NULL);
-  ps_publish_content(NDN_SD_LED, "a", strlen("a"), buf, 10);
-  ps_publish_content(NDN_SD_LED, "a", strlen("a"), buf, 20);
-  ps_publish_content(NDN_SD_LED, "a", strlen("a"), buf, 40);
-  ps_publish_content(NDN_SD_LED, "a", strlen("a"), buf, 50);
-  ps_publish_content(NDN_SD_LED, "a", strlen("a"), buf, 60);
-  ps_publish_content(NDN_SD_LED, "a", strlen("a"), buf, 80);
-  ps_publish_content(NDN_SD_LED, "a", strlen("a"), buf, 100);
+  ps_publish_content(NDN_SD_LED, "a", strlen("a"), "hello", strlen("hello"));
 }
 
 void SignalHandler(int signum){
