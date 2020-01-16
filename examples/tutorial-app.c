@@ -46,7 +46,7 @@ uint8_t buf[4096];
 // Wether the program is running or not
 bool running;
 // A global var to keep the brightness
-uint8_t light_brightness;
+uint8_t light_brightness = 0;
 
 static ndn_trust_schema_rule_t same_room;
 static ndn_trust_schema_rule_t controller_only;
@@ -146,7 +146,7 @@ light_service(uint8_t service, bool is_cmd,
       light_brightness = new_val;
       if (light_brightness > 0) {
         printf("Successfully set the brightness = %u\n", light_brightness);
-        ps_publish_content(NDN_SD_LED, "state", strlen("state"), &light_brightness, 1);
+        ps_publish_content(NDN_SD_LED, "a", strlen("a"), &light_brightness, 1);
       }
     }
     else {
@@ -163,7 +163,13 @@ void
 after_bootstrapping()
 {
   ps_subscribe_to_command(NDN_SD_LED, NULL, 0, light_service, NULL);
-  ps_publish_content(NDN_SD_LED, "state", strlen("state"), "hello", strlen("hello"));
+  ps_publish_content(NDN_SD_LED, "a", strlen("a"), buf, 10);
+  ps_publish_content(NDN_SD_LED, "a", strlen("a"), buf, 20);
+  ps_publish_content(NDN_SD_LED, "a", strlen("a"), buf, 40);
+  ps_publish_content(NDN_SD_LED, "a", strlen("a"), buf, 50);
+  ps_publish_content(NDN_SD_LED, "a", strlen("a"), buf, 60);
+  ps_publish_content(NDN_SD_LED, "a", strlen("a"), buf, 80);
+  ps_publish_content(NDN_SD_LED, "a", strlen("a"), buf, 100);
 }
 
 void SignalHandler(int signum){

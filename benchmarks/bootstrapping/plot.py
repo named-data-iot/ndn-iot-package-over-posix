@@ -55,11 +55,11 @@ if __name__ == "__main__":
     df = pd.DataFrame(overall, index=catagories)
     print(df)
 
-    fig = plt.figure()
+    fig = plt.figure(figsize=(6, 4))
     ax = fig.add_subplot(111)
     y_pos = np.arange(len(overall.keys()))
     patterns = [ "///" , "..", "xx", "ooo", "\\\\"]
-    height = 0.3
+    height = 0.2
 
     p1 = ax.barh(y_pos - height/2, df.loc[catagories[0]].tolist(), xerr=df.loc[catagories[1]].tolist(), height=height, hatch=patterns[0], edgecolor='gray')
     p2 = ax.barh(y_pos + height/2, df.loc[catagories[2]].tolist(), xerr=df.loc[catagories[3]].tolist(), height=height, hatch=patterns[1], edgecolor='gray')

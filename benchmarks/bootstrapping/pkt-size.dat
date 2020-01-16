@@ -1,0 +1,4 @@
+DEBUG: sec_boot_send_sign_on_interest, L406: BOOTSTRAPPING-INT1-PKT-SIZE: 275 Bytes
+DEBUG: on_sign_on_data, L262: BOOTSTRAPPING-DATA1-PKT-SIZE: 504 Bytes
+DEBUG: sec_boot_send_cert_interest, L247: BOOTSTRAPPING-INT2-PKT-SIZE: 371 Bytes
+DEBUG: on_cert_data, L122: BOOTSTRAPPING-DATA2-PKT-SIZE: 447 Bytes
