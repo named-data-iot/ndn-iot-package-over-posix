@@ -7,9 +7,9 @@ from matplotlib.pyplot import figure
 
 catagories = ['core i7 2.2GHz', 'core i7 2.2GHz std', 'cortex 1.4GHz', 'cortex 1.4GHz std']
 overall = dict()
-overall['encryption\ndecryption'] = []
-overall['pkt sign\nverify'] = []
-overall['encoding\ndecoding'] = []
+overall['encryption&\ndecryption'] = []
+overall['pkt sign&\nsig verify'] = []
+overall['encoding&\ndecoding'] = []
 overall['other crypto\noperations'] = []
 
 def parse_results(dir: str):
@@ -41,12 +41,12 @@ def parse_results(dir: str):
 
     overall['other crypto\noperations'].append(np.mean(result_l1))
     overall['other crypto\noperations'].append(np.std(result_l1))
-    overall['encoding\ndecoding'].append(np.mean(result_l2))
-    overall['encoding\ndecoding'].append(np.std(result_l2))
-    overall['pkt sign\nverify'].append(np.mean(result_l3))
-    overall['pkt sign\nverify'].append(np.std(result_l3))
-    overall['encryption\ndecryption'].append(np.mean(result_l4))
-    overall['encryption\ndecryption'].append(np.std(result_l4))
+    overall['encoding&\ndecoding'].append(np.mean(result_l2))
+    overall['encoding&\ndecoding'].append(np.std(result_l2))
+    overall['pkt sign&\nsig verify'].append(np.mean(result_l3))
+    overall['pkt sign&\nsig verify'].append(np.std(result_l3))
+    overall['encryption&\ndecryption'].append(np.mean(result_l4))
+    overall['encryption&\ndecryption'].append(np.std(result_l4))
 
 if __name__ == "__main__":
     parse_results('corei7-4770HQ-2.2GHz')
