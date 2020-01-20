@@ -30,4 +30,18 @@ foreach(EXAM_NAME IN LISTS LIST_EXAMPLES)
 endforeach()
 unset(LIST_EXAMPLES)
 
+
+# Single-file App
+set(LIST_EXAMPLES
+  "smart-nightlight-hub"
+  "device-motion"
+  "device-illuminance"
+)
+foreach(EXAM_NAME IN LISTS LIST_EXAMPLES)
+  add_executable(${EXAM_NAME} "${DIR_EXAMPLES}/smart-nightlight/${EXAM_NAME}.c")
+  target_link_libraries(${EXAM_NAME} ndn-lite)
+  set_target_properties(${EXAM_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${DIR_EXAMPLES_OUTPUT})
+endforeach()
+unset(LIST_EXAMPLES)
+
 unset(DIR_EXAMPLES_OUTPUT)
