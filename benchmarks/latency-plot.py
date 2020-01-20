@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-labels = ['Bootstrapping', 'Sub: Content Fetching', 'Pub: Command Publish']
+labels = ['Bootstrapping', 'Sub:\nContent Fetching', 'Pub:\nCommand Publish']
 laptop_means = []
 laptop_stds = []
 pi_means = []
@@ -59,13 +59,13 @@ def parse_results():
 parse_results()
 
 x = np.arange(len(labels))  # the label locations
-width = 0.35  # the width of the bars
+width = 0.3  # the width of the bars
 
-fig, ax = plt.subplots(figsize=(6, 4))
+fig, ax = plt.subplots(figsize=(5, 3.5))
 patterns = [ "///" , "..", "xx", "ooo", "\\\\"]
 
-rects1 = ax.bar(x - width/2, laptop_means, width, yerr=laptop_stds, hatch=patterns[0], label='Unix Socket, core i7 2.2GHz', edgecolor='gray')
-rects2 = ax.bar(x + width/2, pi_means, width, yerr=pi_stds, hatch=patterns[1], label='WiFi UDP Multicast, cortex A53 1.4GHz', edgecolor='gray')
+rects1 = ax.bar(x - width/2, laptop_means, width, yerr=laptop_stds, hatch=patterns[0], label='Unix Socket\ncore i7 2.2GHz', edgecolor='gray')
+rects2 = ax.bar(x + width/2, pi_means, width, yerr=pi_stds, hatch=patterns[1], label='WiFi UDP Multicast\ncortex A53 1.4GHz', edgecolor='gray')
 
 # Add some text for labels, title and custom x-axis tick labels, etc.
 ax.set_ylabel('Total Latency (ms)')
@@ -80,7 +80,7 @@ def autolabel(rects):
         height = rect.get_height()
         ax.annotate('{:0.2f}'.format(height),
                     xy=(rect.get_x() + rect.get_width() / 2, height),
-                    xytext=(0, 3),  # 3 points vertical offset
+                    xytext=(2, 3),  # 3 points vertical offset
                     textcoords="offset points",
                     ha='center', va='bottom')
 
@@ -90,5 +90,5 @@ autolabel(rects2)
 
 fig.tight_layout()
 fig.tight_layout()
-fig.savefig('performance.pdf', format='pdf', dpi=1000)
+fig.savefig('operation-latency.pdf', format='pdf', dpi=1000)
 plt.show()

@@ -8,13 +8,13 @@ import re
 
 catagories = ['core i7 2.2GHz', 'core i7 2.2GHz std', 'cortex 1.4GHz', 'cortex 1.4GHz std']
 overall = dict()
-overall['pub-enc'] = []
-overall['pub-sign'] = []
-overall['pub-encoding'] = []
-overall['sub-decoding'] = []
-overall['sub-verify'] = []
-overall['sub-schema'] = []
-overall['sub-dec'] = []
+overall['pub:encryption'] = []
+overall['pub:pkt sign'] = []
+overall['pub:encoding'] = []
+overall['sub:decoding'] = []
+overall['sub:sig verify'] = []
+overall['sub:schema'] = []
+overall['sub:dec'] = []
 
 def parse_results(dir: str):
     for i in ['pub', 'sub']:
@@ -35,21 +35,21 @@ def parse_results(dir: str):
                 else:
                     pass
         if i is 'pub':
-            overall['pub-enc'].append(np.mean(v1))
-            overall['pub-enc'].append(np.std(v1))
-            overall['pub-sign'].append(np.mean(v2))
-            overall['pub-sign'].append(np.std(v2))
-            overall['pub-encoding'].append(np.mean(v3))
-            overall['pub-encoding'].append(np.std(v3))
+            overall['pub:encryption'].append(np.mean(v1))
+            overall['pub:encryption'].append(np.std(v1))
+            overall['pub:pkt sign'].append(np.mean(v2))
+            overall['pub:pkt sign'].append(np.std(v2))
+            overall['pub:encoding'].append(np.mean(v3))
+            overall['pub:encoding'].append(np.std(v3))
         else:
-            overall['sub-decoding'].append(np.mean(v3))
-            overall['sub-decoding'].append(np.std(v3))
-            overall['sub-verify'].append(np.mean(v2))
-            overall['sub-verify'].append(np.std(v2))
-            overall['sub-schema'].append(np.mean(v4))
-            overall['sub-schema'].append(np.std(v4))
-            overall['sub-dec'].append(np.mean(v1))
-            overall['sub-dec'].append(np.std(v1))
+            overall['sub:decoding'].append(np.mean(v3))
+            overall['sub:decoding'].append(np.std(v3))
+            overall['sub:sig verify'].append(np.mean(v2))
+            overall['sub:sig verify'].append(np.std(v2))
+            overall['sub:schema'].append(np.mean(v4))
+            overall['sub:schema'].append(np.std(v4))
+            overall['sub:dec'].append(np.mean(v1))
+            overall['sub:dec'].append(np.std(v1))
 
 if __name__ == "__main__":
     parse_results('corei7-4770HQ-2.2GHz')
@@ -58,11 +58,11 @@ if __name__ == "__main__":
     df = pd.DataFrame(overall, index=catagories)
     print(df)
 
-    fig = plt.figure(figsize=(6, 4))
+    fig = plt.figure(figsize=(6, 3.7))
     ax = fig.add_subplot(111)
     y_pos = np.arange(len(overall.keys()))
     patterns = [ "///" , "..", "xx", "ooo", "\\\\"]
-    height = 0.4
+    height = 0.42
 
     p1 = ax.barh(y_pos - height/2, df.loc[catagories[0]].tolist(), xerr=df.loc[catagories[1]].tolist(), height=height, hatch=patterns[0], edgecolor='gray')
     p2 = ax.barh(y_pos + height/2, df.loc[catagories[2]].tolist(), xerr=df.loc[catagories[3]].tolist(), height=height, hatch=patterns[1], edgecolor='gray')
@@ -73,7 +73,7 @@ if __name__ == "__main__":
             width = rect.get_width()
             ax.annotate('{:0.2f}'.format(width),
                         xy=(width, rect.get_y() + rect.get_height()/2),
-                        xytext=(23, 0),  # 3 points vertical offset
+                        xytext=(25, -4),  # 3 points vertical offset
                         textcoords="offset points",
                         ha='center', va='bottom')
 
@@ -92,5 +92,5 @@ if __name__ == "__main__":
     # plt.rcParams.update({'font.size': myFontSize})
     ax.legend((p1[0], p2[0]), ('corei7 4770HQ 2.2GHz', 'cortex A53 ARMv8 1.4GHz'))
     fig.tight_layout()
-    fig.savefig('performance.pdf', format='pdf', dpi=1000)
+    fig.savefig('micro-bench-pub-sub.pdf', format='pdf', dpi=1000)
     plt.show()

@@ -7,10 +7,10 @@ from matplotlib.pyplot import figure
 
 catagories = ['core i7 2.2GHz', 'core i7 2.2GHz std', 'cortex 1.4GHz', 'cortex 1.4GHz std']
 overall = dict()
-overall['enc-dec'] = []
-overall['sign-verify'] = []
-overall['encode-decode'] = []
-overall['other-crypto'] = []
+overall['encryption\ndecryption'] = []
+overall['pkt sign\nverify'] = []
+overall['encoding\ndecoding'] = []
+overall['other crypto\noperations'] = []
 
 def parse_results(dir: str):
     result_l1 = []
@@ -39,14 +39,14 @@ def parse_results(dir: str):
         result_l3.append(v3) # sign/verify
         result_l4.append(v4) # enc/dec
 
-    overall['other-crypto'].append(np.mean(result_l1))
-    overall['other-crypto'].append(np.std(result_l1))
-    overall['encode-decode'].append(np.mean(result_l2))
-    overall['encode-decode'].append(np.std(result_l2))
-    overall['sign-verify'].append(np.mean(result_l3))
-    overall['sign-verify'].append(np.std(result_l3))
-    overall['enc-dec'].append(np.mean(result_l4))
-    overall['enc-dec'].append(np.std(result_l4))
+    overall['other crypto\noperations'].append(np.mean(result_l1))
+    overall['other crypto\noperations'].append(np.std(result_l1))
+    overall['encoding\ndecoding'].append(np.mean(result_l2))
+    overall['encoding\ndecoding'].append(np.std(result_l2))
+    overall['pkt sign\nverify'].append(np.mean(result_l3))
+    overall['pkt sign\nverify'].append(np.std(result_l3))
+    overall['encryption\ndecryption'].append(np.mean(result_l4))
+    overall['encryption\ndecryption'].append(np.std(result_l4))
 
 if __name__ == "__main__":
     parse_results('corei7-4770HQ-2.2GHz')
@@ -55,11 +55,11 @@ if __name__ == "__main__":
     df = pd.DataFrame(overall, index=catagories)
     print(df)
 
-    fig = plt.figure(figsize=(6, 4))
+    fig = plt.figure(figsize=(6, 3.5))
     ax = fig.add_subplot(111)
     y_pos = np.arange(len(overall.keys()))
     patterns = [ "///" , "..", "xx", "ooo", "\\\\"]
-    height = 0.2
+    height = 0.3
 
     p1 = ax.barh(y_pos - height/2, df.loc[catagories[0]].tolist(), xerr=df.loc[catagories[1]].tolist(), height=height, hatch=patterns[0], edgecolor='gray')
     p2 = ax.barh(y_pos + height/2, df.loc[catagories[2]].tolist(), xerr=df.loc[catagories[3]].tolist(), height=height, hatch=patterns[1], edgecolor='gray')
@@ -99,5 +99,5 @@ if __name__ == "__main__":
     # plt.rcParams.update({'font.size': myFontSize})
     ax.legend((p1[0], p2[0]), ('corei7 4770HQ 2.2GHz', 'cortex A53 ARMv8 1.4GHz'))
     fig.tight_layout()
-    fig.savefig('performance.pdf', format='pdf', dpi=1000)
+    fig.savefig('micro-bench-bootstrapping.pdf', format='pdf', dpi=1000)
     plt.show()
