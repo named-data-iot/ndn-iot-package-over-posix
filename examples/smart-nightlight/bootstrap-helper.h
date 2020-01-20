@@ -63,7 +63,7 @@ static uint8_t bootstrap_buffer[1024];
  *  4. Install KeyID-10002 Key as default AES-128 Key.
  */
 void
-simulate_bootstrap(ndn_face_intf_t* face, name_component_t* identity, uint32_t identity_size)
+simulate_bootstrap(ndn_face_intf_t* face, name_component_t* identity, uint32_t identity_size, uint8_t add_route)
 {
   ndn_encoder_t encoder;
   // simulate bootstrapping process
@@ -118,7 +118,9 @@ simulate_bootstrap(ndn_face_intf_t* face, name_component_t* identity, uint32_t i
   ndn_key_storage_set_self_identity(&self_cert, self_prv);
 
   // register prefix
-  ndn_forwarder_add_route_by_str(face, "/ndn-iot", strlen("/ndn-iot"));
+  if (add_route) {
+    ndn_forwarder_add_route_by_str(face, "/ndn-iot", strlen("/ndn-iot"));
+  }
 
   // offering initial 10002 KEY
   ndn_aes_key_t* init_aes = ndn_key_storage_get_empty_aes_key();

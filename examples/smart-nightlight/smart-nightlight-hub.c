@@ -192,7 +192,7 @@ int main(int argc, char *argv[])
   }
   name_component_t id;
   name_component_from_string(&id, "Hub", strlen("Hub"));
-  simulate_bootstrap(&face->intf, &id, 1);
+  simulate_bootstrap(&face->intf, &id, 1, 1);
 
   // initialize
   initialize();

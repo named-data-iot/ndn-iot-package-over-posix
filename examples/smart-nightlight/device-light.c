@@ -115,7 +115,7 @@ int main(int argc, char *argv[])
   name_component_t id[2];
   name_component_from_string(&id[0], "living", strlen("living"));
   name_component_from_string(&id[1], "motion_sensor9", strlen("motion_sensor9"));
-  simulate_bootstrap(&face->intf, &id, 2);
+  simulate_bootstrap(&face->intf, &id, 2, 0);
 
   running = true;
   while(running) {
