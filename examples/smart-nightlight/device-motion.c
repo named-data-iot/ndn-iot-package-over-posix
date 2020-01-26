@@ -40,7 +40,7 @@ state_t state = {100, 0, 0};
 
 /* Motion Sensor
  *
- * Certificate: /ndn-iot/motion_sensor9/KEY
+ * Certificate: /ndn-iot/living/motion_sensor9/KEY
  * Locator: /ndn-iot/living/motion_sensor9
  * Services: 
  *   Battery:
@@ -49,8 +49,8 @@ state_t state = {100, 0, 0};
  *      uint32_t [1, 100] 
  * 
  * Signing Key:
- *   Battery: /ndn-iot/motion_sensor9/KEY/<keyID>/battery
- *   Motion: /ndn-iot/motion_sensor9/KEY/<keyID>/motion
+ *   Battery: /ndn-iot/BATTERY/motion_sensor9/KEY/<keyID>
+ *   Motion: /ndn-iot/MOTION/motion_sensor9/KEY/<keyID>
  * 
  * Implementation: 
  *   Signing Key:
