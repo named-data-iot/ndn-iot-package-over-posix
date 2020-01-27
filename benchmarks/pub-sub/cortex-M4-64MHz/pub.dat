@@ -1,0 +1,19 @@
+2020-01-25 22:59:53,935 - INFO # DEBUG: ps_publish_command, L700: PUB-COMMAND-DATA-AES-ENC: 275us
+2020-01-25 22:59:54,061 - INFO # DEBUG: ndn_data_tlv_encode_ecdsa_sign, L222: DATA-PKT-ECDSA-SIGN: 119429us
+2020-01-25 22:59:54,067 - INFO # DEBUG: ndn_data_tlv_encode_ecdsa_sign, L278: DATA-PKT-ENCODING: 6618us
+
+2020-01-25 23:00:37,679 - INFO # DEBUG: ps_publish_command, L700: PUB-COMMAND-DATA-AES-ENC: 275us
+2020-01-25 23:00:37,805 - INFO # DEBUG: ndn_data_tlv_encode_ecdsa_sign, L222: DATA-PKT-ECDSA-SIGN: 119437us
+2020-01-25 23:00:37,811 - INFO # DEBUG: ndn_data_tlv_encode_ecdsa_sign, L278: DATA-PKT-ENCODING: 6618us
+
+2020-01-25 23:01:09,251 - INFO # DEBUG: ps_publish_command, L700: PUB-COMMAND-DATA-AES-ENC: 275us
+2020-01-25 23:01:09,377 - INFO # DEBUG: ndn_data_tlv_encode_ecdsa_sign, L222: DATA-PKT-ECDSA-SIGN: 119184us
+2020-01-25 23:01:09,383 - INFO # DEBUG: ndn_data_tlv_encode_ecdsa_sign, L278: DATA-PKT-ENCODING: 6613us
+
+2020-01-25 23:01:53,835 - INFO # DEBUG: ps_publish_command, L700: PUB-COMMAND-DATA-AES-ENC: 275us
+2020-01-25 23:01:53,961 - INFO # DEBUG: ndn_data_tlv_encode_ecdsa_sign, L222: DATA-PKT-ECDSA-SIGN: 119307us
+2020-01-25 23:01:53,966 - INFO # DEBUG: ndn_data_tlv_encode_ecdsa_sign, L278: DATA-PKT-ENCODING: 6619us
+
+2020-01-25 23:02:14,323 - INFO # DEBUG: ps_publish_command, L700: PUB-COMMAND-DATA-AES-ENC: 275us
+2020-01-25 23:02:14,449 - INFO # DEBUG: ndn_data_tlv_encode_ecdsa_sign, L222: DATA-PKT-ECDSA-SIGN: 119299us
+2020-01-25 23:02:14,455 - INFO # DEBUG: ndn_data_tlv_encode_ecdsa_sign, L278: DATA-PKT-ENCODING: 6618us

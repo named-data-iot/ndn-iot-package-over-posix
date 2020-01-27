@@ -1,0 +1,62 @@
+2020-01-25 23:07:49,453 - INFO # DEBUG: main, L319: BOOTSTRAPPING-START-TIME: 297552 us
+2020-01-25 23:07:49,455 - INFO # DEBUG: main, L333: BOOTSTRAPPING-INT1-ECDH-KEYGEN: 107265 us
+2020-01-25 23:07:49,455 - INFO # INFO: main: [BOOTSTRAPPING]: Successfully add route
+2020-01-25 23:07:49,456 - INFO # DEBUG: main, L380: BOOTSTRAPPING-INT1-PKT-ENCODING: 208 us
+2020-01-25 23:07:49,457 - INFO # DEBUG: main, L391: BOOTSTRAPPING-INT1-PKT-ECDSA-SIGN: 126754 us
+2020-01-25 23:07:49,458 - INFO # DEBUG: ndn_l2_send_packet, L59: successfully sent one gnrc packet (netface=7)
+2020-01-25 23:07:49,459 - INFO # DEBUG: ndn_l2_send_packet, L60: forwarder sending: 559 ms
+2020-01-25 23:07:49,460 - INFO # DEBUG: ndn_l2_send_fragments, L105: sent fragment (SEQ=1, ID=2396, size=102, netface=7)
+2020-01-25 23:07:49,461 - INFO # DEBUG: ndn_l2_send_packet, L59: successfully sent one gnrc packet (netface=7)
+2020-01-25 23:07:49,462 - INFO # DEBUG: ndn_l2_send_packet, L60: forwarder sending: 579 ms
+2020-01-25 23:07:49,464 - INFO # DEBUG: ndn_l2_send_fragments, L105: sent fragment (SEQ=2, ID=2396, size=102, netface=7)
+2020-01-25 23:07:49,465 - INFO # DEBUG: ndn_l2_send_packet, L59: successfully sent one gnrc packet (netface=7)
+2020-01-25 23:07:49,466 - INFO # DEBUG: ndn_l2_send_packet, L60: forwarder sending: 599 ms
+2020-01-25 23:07:49,467 - INFO # DEBUG: ndn_l2_send_fragments, L105: sent fragment (SEQ=3, ID=2396, size=75, netface=7)
+2020-01-25 23:07:49,467 - INFO # DEBUG: ndn_l2_send_fragments, L109: forwarder sending: 612 ms
+2020-01-25 23:07:49,468 - INFO # DEBUG: main, L402: BOOTSTRAPPING-INT1-PKT-SIZE: 270 Bytes
+2020-01-25 23:07:49,469 - INFO # INFO: main: [BOOTSTRAPPING]: Send SEC BOOT sign on Interest packet with name
+2020-01-25 23:07:49,470 - INFO # /ndn/sign-on/params-sha256=0xcf75d0f02733f2055ed645434c1fed4f8205f0926b0411c75f1cae79ae68ebf2
+2020-01-25 23:07:49,471 - INFO # DEBUG: ndn_netface_receive, L102: RCV message received from pid 7
+2020-01-25 23:07:49,472 - INFO # DEBUG: ndn_l2_process_packet, L129: l2 fragment received (MF=0, SEQ=0, ID=1606, packet size = 102, iface=7)
+2020-01-25 23:07:49,473 - INFO # DEBUG: ndn_netface_receive, L102: RCV message received from pid 7
+2020-01-25 23:07:49,474 - INFO # DEBUG: ndn_l2_process_packet, L129: l2 fragment received (MF=0, SEQ=1, ID=1606, packet size = 102, iface=7)
+2020-01-25 23:07:49,474 - INFO # DEBUG: ndn_netface_receive, L102: RCV message received from pid 7
+2020-01-25 23:07:49,476 - INFO # DEBUG: ndn_l2_process_packet, L129: l2 fragment received (MF=0, SEQ=2, ID=1606, packet size = 102, iface=7)
+2020-01-25 23:07:49,477 - INFO # DEBUG: ndn_netface_receive, L102: RCV message received from pid 7
+2020-01-25 23:07:49,479 - INFO # DEBUG: ndn_l2_process_packet, L129: l2 fragment received (MF=1, SEQ=3, ID=1606, packet size = 53, iface=7)
+2020-01-25 23:07:49,480 - INFO # DEBUG: ndn_l2_process_packet, L139: forwarder receiving: 706 ms
+2020-01-25 23:07:49,481 - INFO # DEBUG: ndn_data_tlv_decode_hmac_verify, L455: DATA-PKT-DECODING: 64us
+2020-01-25 23:07:49,482 - INFO # DEBUG: ndn_data_tlv_decode_hmac_verify, L463: DATA-PKT-HMAC-VERIFY: 7044us
+2020-01-25 23:07:49,482 - INFO # DEBUG: on_data_1, L130: BOOTSTRAPPING-DATA1-PKT-SIZE: 347 Bytes
+2020-01-25 23:07:49,483 - INFO # INFO: on_data_1: [BOOTSTRAPPING]: Receive Sign On Data packet with name
+2020-01-25 23:07:49,484 - INFO # /ndn/sign-on/params-sha256=0xcf75d0f02733f2055ed645434c1fed4f8205f0926b0411c75f1cae79ae68ebf2
+2020-01-25 23:07:49,485 - INFO # DEBUG: on_data_1, L165: BOOTSTRAPPING-DATA1-ECDH: 107176 us
+2020-01-25 23:07:49,486 - INFO # DEBUG: on_data_1, L184: BOOTSTRAPPING-DATA1-HKDF: 1211 us
+2020-01-25 23:07:49,486 - INFO # DEBUG: on_data_1, L239: BOOTSTRAPPING-INT2-PKT-ENCODING: 226 us
+2020-01-25 23:07:49,487 - INFO # DEBUG: on_data_1, L250: BOOTSTRAPPING-INT2-ECDSA-SIGN: 126861 us
+2020-01-25 23:07:49,488 - INFO # DEBUG: ndn_l2_send_packet, L59: successfully sent one gnrc packet (netface=7)
+2020-01-25 23:07:49,489 - INFO # DEBUG: ndn_l2_send_packet, L60: forwarder sending: 1005 ms
+2020-01-25 23:07:49,490 - INFO # DEBUG: ndn_l2_send_fragments, L105: sent fragment (SEQ=1, ID=17B6, size=102, netface=7)
+2020-01-25 23:07:49,491 - INFO # DEBUG: ndn_l2_send_packet, L59: successfully sent one gnrc packet (netface=7)
+2020-01-25 23:07:49,491 - INFO # DEBUG: ndn_l2_send_packet, L60: forwarder sending: 1025 ms
+2020-01-25 23:07:49,492 - INFO # DEBUG: ndn_l2_send_fragments, L105: sent fragment (SEQ=2, ID=17B6, size=88, netface=7)
+2020-01-25 23:07:49,493 - INFO # DEBUG: ndn_l2_send_fragments, L109: forwarder sending: 1038 ms
+2020-01-25 23:07:49,494 - INFO # DEBUG: on_data_1, L262: BOOTSTRAPPING-INT2-PKT-SIZE: 184 Bytes
+2020-01-25 23:07:49,495 - INFO # INFO: on_data_1: [BOOTSTRAPPING]: Send SEC BOOT cert Interest packet with name
+2020-01-25 23:07:49,496 - INFO # /ndn-iot/cert/params-sha256=0x3cb94729b382b5e04ed40b708d137bed7ca301ded4334723530800442d41355f
+2020-01-25 23:07:49,497 - INFO # DEBUG: ndn_netface_receive, L102: RCV message received from pid 7
+2020-01-25 23:07:49,498 - INFO # DEBUG: ndn_l2_process_packet, L129: l2 fragment received (MF=0, SEQ=0, ID=1ee6, packet size = 102, iface=7)
+2020-01-25 23:07:49,499 - INFO # DEBUG: ndn_netface_receive, L102: RCV message received from pid 7
+2020-01-25 23:07:49,500 - INFO # DEBUG: ndn_l2_process_packet, L129: l2 fragment received (MF=0, SEQ=1, ID=1ee6, packet size = 102, iface=7)
+2020-01-25 23:07:49,501 - INFO # DEBUG: ndn_netface_receive, L102: RCV message received from pid 7
+2020-01-25 23:07:49,502 - INFO # DEBUG: ndn_l2_process_packet, L129: l2 fragment received (MF=0, SEQ=2, ID=1ee6, packet size = 102, iface=7)
+2020-01-25 23:07:49,503 - INFO # DEBUG: ndn_netface_receive, L102: RCV message received from pid 7
+2020-01-25 23:07:49,504 - INFO # DEBUG: ndn_l2_process_packet, L129: l2 fragment received (MF=1, SEQ=3, ID=1ee6, packet size = 101, iface=7)
+2020-01-25 23:07:49,505 - INFO # DEBUG: ndn_l2_process_packet, L139: forwarder receiving: 1137 ms
+2020-01-25 23:07:49,509 - INFO # DEBUG: ndn_data_tlv_decode_hmac_verify, L455: DATA-PKT-DECODING: 70us
+2020-01-25 23:07:49,516 - INFO # DEBUG: ndn_data_tlv_decode_hmac_verify, L463: DATA-PKT-HMAC-VERIFY: 7127us
+2020-01-25 23:07:49,522 - INFO # DEBUG: on_data_2, L69: BOOTSTRAPPING-DATA2-PKT-SIZE: 395 Bytes
+2020-01-25 23:07:49,529 - INFO # INFO: on_data_2: [BOOTSTRAPPING]: Receive Sign On Certificate Data packet with name
+2020-01-25 23:07:49,538 - INFO # /ndn-iot/cert/params-sha256=0x3cb94729b382b5e04ed40b708d137bed7ca301ded4334723530800442d41355f
+2020-01-25 23:07:49,546 - INFO # DEBUG: on_data_2, L107: BOOTSTRAPPING-DATA2-PKT-AES-DEC: 1939 us
+2020-01-25 23:07:49,551 - INFO # DEBUG: on_data_2, L116: BOOTSTRAPPING-END-TIME: 1270744 us

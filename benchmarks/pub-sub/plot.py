@@ -24,7 +24,7 @@ def parse_results(dir: str):
         v4 = []
         with open(F'{dir}/{i}.dat') as file:
             for line in file:
-                if 'PUB-CONTENT-DATA-AES-ENC' in line or 'SUB-NEW-DATA-AES-DEC' in line:
+                if 'PUB-CONTENT-DATA-AES-ENC' in line or 'SUB-NEW-DATA-AES-DEC' in line or 'PUB-COMMAND-DATA-AES-ENC' in line :
                     v1.append(int(line.strip().split(':')[-1][:-2]))
                 elif 'DATA-PKT-ECDSA-SIGN' in line or 'DATA-PKT-ECDSA-VERIFY' in line:
                     v2.append(int(line.strip().split(':')[-1][:-2]))
