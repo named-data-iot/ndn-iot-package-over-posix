@@ -8,6 +8,8 @@ pi_means = []
 pi_stds = []
 aws_means = []
 aws_stds = []
+nrf_means = []
+nrf_stds = []
 
 def parse_results():
     tmp = []
@@ -73,32 +75,55 @@ def parse_results():
     aws_means.append(np.mean(tmp))
     aws_stds.append(np.std(tmp))
 
+    tmp = []
+    with open('bootstrapping/latency/nrf.dat') as file:
+        for line in file:
+            tmp.append(int(line.strip()[:-2]))
+    nrf_means.append(np.mean(tmp))
+    nrf_stds.append(np.std(tmp))
+
+    tmp = []
+    with open('pub-sub/latency/nrf-fetch-content.dat') as file:
+        for line in file:
+            tmp.append(int(line.strip()[:-2]))
+    nrf_means.append(np.mean(tmp))
+    nrf_stds.append(np.std(tmp))
+
+    tmp = []
+    with open('pub-sub/latency/nrf-issue-cmd.dat') as file:
+        for line in file:
+            tmp.append(int(line.strip()[:-2]))
+    nrf_means.append(np.mean(tmp))
+    nrf_stds.append(np.std(tmp))
+
     print(pi_means)
     print(pi_stds)
     print(laptop_means)
     print(laptop_stds)
     print(aws_means)
     print(aws_stds)
-
+    print(nrf_means)
+    print(nrf_stds)
 
 parse_results()
 
 x = np.arange(len(labels))  # the label locations
-width = 0.3  # the width of the bars
+width = 0.2  # the width of the bars
 
-fig, ax = plt.subplots(figsize=(6, 4))
+fig, ax = plt.subplots(figsize=(7, 5))
 patterns = [ "///" , "..", "xx", "ooo", "\\\\"]
 
-rects1 = ax.bar(x - width, laptop_means, width, yerr=laptop_stds, hatch=patterns[0], label='NDN-LITE on Unix Socket\nApp host:core i7 2.2GHz', edgecolor='gray')
-rects2 = ax.bar(x, pi_means, width, yerr=pi_stds, hatch=patterns[1], label='NDN-LITE on WiFi UDP Multicast\nDevice:cortex A53 1.4GHz', edgecolor='gray')
-rects3 = ax.bar(x + width, aws_means, width, yerr=aws_stds, hatch=patterns[2], label='AWS IoT on WiFi TLS\nDevice:core i7 2.2GHz', edgecolor='gray')
+
+rects3 = ax.bar(x - 3*width/2, aws_means, width, yerr=aws_stds, hatch=patterns[2], label='AWS IoT on WiFi TLS\nDevice:core i7 2.2GHz', edgecolor='gray')
+rects1 = ax.bar(x - width/2, laptop_means, width, yerr=laptop_stds, hatch=patterns[0], label='NDN-LITE on Unix Socket\nApp host:core i7 2.2GHz', edgecolor='gray')
+rects2 = ax.bar(x + width/2, pi_means, width, yerr=pi_stds, hatch=patterns[1], label='NDN-LITE on WiFi UDP Multicast\nDevice:cortex A53 1.4GHz', edgecolor='gray')
+rects4 = ax.bar(x + 3*width/2, nrf_means, width, yerr=nrf_stds, hatch=patterns[3], label='NDN-LITE on IEEE 802.15.4\nDevice:cortex M4 64MHz', edgecolor='gray')
 
 # Add some text for labels, title and custom x-axis tick labels, etc.
 ax.set_ylabel('Total Latency (ms)')
 ax.set_xticks(x)
 ax.set_xticklabels(labels)
 ax.legend()
-
 
 def autolabel(rects):
     """Attach a text label above each bar in *rects*, displaying its height."""
@@ -114,6 +139,7 @@ def autolabel(rects):
 autolabel(rects1)
 autolabel(rects2)
 autolabel(rects3)
+autolabel(rects4)
 
 fig.tight_layout()
 fig.tight_layout()
