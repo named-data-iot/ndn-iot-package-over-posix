@@ -56,16 +56,23 @@ uint32_t delayMinutes = 0;
  *   4. lastStatus = 1 indicates lastStatus = "on", while 0 indicating "off".
  *
  */
-void on_illuminance_publish(uint8_t service, bool is_cmd, const name_component_t* identifiers, uint32_t identifiers_size,
-               const uint8_t* suffix, uint32_t suffix_len, const uint8_t* content, uint32_t content_len,
+void on_illuminance_publish(uint8_t service, bool is_cmd, const ps_identifier_t* identifier, ps_content_t content,
                void* userdata)
 {
   NDN_LOG_DEBUG("state.motionStopTime = %lu ms, status.lastStatus = %d", state.motionStopTime, state.lastStatus);
-  uint32_t illuminance = *(uint32_t*)content;
+  uint32_t illuminance = *(uint32_t*)content.payload;
+
+  ps_content_t cmd_content = {
+    .content_id_len = strlen(uint8_t),
+    .payload_len = sizeof(uint8_t)
+  };
+
   if (state.lastStatus && illuminance > 50) {
     uint8_t command_id = 112;
     /* turnning off all lights if possible, let user policy decide which acutally to be turned on */
-    ps_publish_command(NDN_SD_LED, &command_id, sizeof(command_id), NULL, 0, &command_id, sizeof(command_id)); 
+    cmd_content.content_id = &command_id;
+    cmd_content.payload = &command_id;
+    ps_publish_command(NDN_SD_LED, NULL, cmd_content);
     state.lastStatus = 0;
   }
   else if (state.motionStopTime) {
@@ -76,7 +83,9 @@ void on_illuminance_publish(uint8_t service, bool is_cmd, const name_component_t
         NDN_LOG_DEBUG("turning off lights");
         uint8_t command_id = 112;
         /* turnning off all lights if possible, let user policy decide which acutally to be turned on */
-        ps_publish_command(NDN_SD_LED, &command_id, sizeof(command_id), NULL, 0, &command_id, sizeof(command_id));
+        cmd_content.content_id = &command_id;
+        cmd_content.payload = &command_id;
+        ps_publish_command(NDN_SD_LED, NULL, cmd_content);
         state.lastStatus = 0;
        }
     }
@@ -84,7 +93,9 @@ void on_illuminance_publish(uint8_t service, bool is_cmd, const name_component_t
   else if (state.lastStatus != 1 && illuminance < 30) {
     uint8_t command_id = 111;
     /* turnning on all lights if possible, let user policy decide which acutally to be turned on */
-    ps_publish_command(NDN_SD_LED, &command_id, sizeof(command_id), NULL, 0, &command_id, sizeof(command_id));
+    cmd_content.content_id = &command_id;
+    cmd_content.payload = &command_id;
+    ps_publish_command(NDN_SD_LED, NULL, cmd_content);
     state.lastStatus = 1;
   }
 }
@@ -99,25 +110,36 @@ void turnOffMotion()
         NDN_LOG_DEBUG("turning off lights");
         uint8_t command_id = 112;
         /* turnning off all lights if possible, let user policy decide which acutally to be turned on */
-        ps_publish_command(NDN_SD_LED, &command_id, sizeof(command_id), NULL, 0, &command_id, sizeof(command_id));
+        ps_content_t cmd_content = {
+          .content_id = &command_id,
+          .content_id_len = sizeof(command_id),
+          .payload = &command_id,
+          .payload_len = sizeof(command_id)
+        };
+        ps_publish_command(NDN_SD_LED, NULL, cmd_content);
         state.lastStatus = 0;
       }
   }
 }
 
-void on_motion_publish(uint8_t service, bool is_cmd, const name_component_t* identifiers, uint32_t identifiers_size,
-               const uint8_t* suffix, uint32_t suffix_len, const uint8_t* content, uint32_t content_len,
+void on_motion_publish(uint8_t service, bool is_cmd, const ps_identifier_t* identifier, ps_content_t content,
                void* userdata)
 {
   NDN_LOG_DEBUG("motion Data received\n");
   /* if above the threshold */
   uint32_t threshold = 50;
-  uint32_t value = *(uint32_t*)content;
+  uint32_t value = *(uint32_t*)content.payload;
   if (value > threshold) {
     NDN_LOG_DEBUG("turnnig on lights due to motion\n");
     uint8_t command_id = 111;
     /* turnning on all lights if possible, let user policy decide which acutally to be turned on */
-    ps_publish_command(NDN_SD_LED, &command_id, sizeof(command_id), NULL, 0, &value, sizeof(value));
+    ps_content_t cmd_content = {
+      .content_id = &command_id,
+      .content_id_len = sizeof(command_id),
+      .payload = &value,
+      .payload_len = sizeof(value)
+    };
+    ps_publish_command(NDN_SD_LED, NULL, cmd_content);
     state.lastStatus = 1; /* on */
     state.motionStopTime = 0; /* should work like null */ 
   }
@@ -167,8 +189,8 @@ void initialize()
     }
   }
 
-  ps_subscribe_to_content(NDN_SD_MOTION, NULL, 0, 5000, on_motion_publish, NULL);
-  ps_subscribe_to_content(NDN_SD_ILLUMINANCE, NULL, 0, 5000, on_illuminance_publish, NULL);
+  ps_subscribe_to_content(NDN_SD_MOTION, NULL, 5000, on_motion_publish, NULL);
+  ps_subscribe_to_content(NDN_SD_ILLUMINANCE, NULL, 5000, on_illuminance_publish, NULL);
   ps_after_bootstrapping();
 }
 

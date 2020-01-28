@@ -39,14 +39,13 @@ uint32_t anchor_bytes_size;
 bool running;
 uint8_t buffer[4096];
 
-void on_publish(uint8_t service, bool is_cmd, const name_component_t* identifiers, uint32_t identifiers_size,
-               const uint8_t* suffix, uint32_t suffix_len, const uint8_t* content, uint32_t content_len,
+void on_publish(uint8_t service, bool is_cmd, const ps_identifier_t* identifier, ps_content_t content,
                void* userdata)
 {
   if (is_cmd)
-    printf("\n\nNew Command publish!! Content: %llu\n\n", *(uint64_t*)content);
+    printf("\n\nNew Command publish!! Content: %llu\n\n", *(uint64_t*)content.payload);
   else
-    printf("\n\nNew Content publish!! Content: %llu\n\n", *(uint64_t*)content);
+    printf("\n\nNew Content publish!! Content: %llu\n\n", *(uint64_t*)content.payload);
 }
 
 void
@@ -109,8 +108,8 @@ int main(int argc, char *argv[])
   simulate_bootstrap();
 
   // sub
-  ps_subscribe_to_content(NDN_SD_TEMP, NULL, 0, 5000, on_publish, NULL);
-  ps_subscribe_to_command(20, NULL, 0, on_publish, NULL);
+  ps_subscribe_to_content(NDN_SD_TEMP, NULL, 5000, on_publish, NULL);
+  ps_subscribe_to_command(20, NULL, on_publish, NULL);
 
   ps_after_bootstrapping();
   ndn_forwarder_process();
@@ -123,10 +122,22 @@ int main(int argc, char *argv[])
   while(running) {
     ndn_forwarder_process();
 
-    ps_publish_content(20, (uint8_t*)content_id, strlen(content_id), &content, sizeof(content));
+    ps_content_t data_content = {
+      .content_id = (uint8_t*)content_id,
+      .content_id_len = strlen(content_id),
+      .payload = &content,
+      .payload_len = sizeof(content)
+    };
+    ps_publish_content(20, data_content);
     content++;
 
-    ps_publish_command(NDN_SD_TEMP, &command_id, sizeof(command_id), NULL, 0, &content, sizeof(content));
+    ps_content_t cmd_content = {
+      .content_id = (uint8_t*)command_id,
+      .content_id_len = strlen(command_id),
+      .payload = &content,
+      .payload_len = sizeof(content)
+    };
+    ps_publish_command(NDN_SD_TEMP, NULL, cmd_content);
     content++;
 
     usleep(1000000);

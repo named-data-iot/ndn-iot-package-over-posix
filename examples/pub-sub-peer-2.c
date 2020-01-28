@@ -35,14 +35,13 @@ uint32_t anchor_bytes_size;
 bool running;
 uint8_t buffer[4096];
 
-void on_publish(uint8_t service, bool is_cmd, const name_component_t* identifiers, uint32_t identifiers_size,
-               const uint8_t* suffix, uint32_t suffix_len, const uint8_t* content, uint32_t content_len,
+void on_publish(uint8_t service, bool is_cmd, const ps_identifier_t* identifier, ps_content_t content,
                void* userdata)
 {
   if (is_cmd)
-    printf("\n\nNew Command publish!! Content: %llu\n\n", *(uint64_t*)content);
+    printf("\n\nNew Command publish!! Content: %llu\n\n", *(uint64_t*)content.payload);
   else
-    printf("\n\nNew Content publish!! Content: %llu\n\n", *(uint64_t*)content);
+    printf("\n\nNew Content publish!! Content: %llu\n\n", *(uint64_t*)content.payload);
 }
 
 void
@@ -104,13 +103,14 @@ int main(int argc, char *argv[])
   simulate_bootstrap();
 
   // sub
-  name_component_t id[2];
+  ps_identifier_t id = {.identifiers_size = 2};
   char* id_1 = "bedroom";
-  name_component_from_string(&id[0], id_1, strlen(id_1));
+  name_component_from_string(&id.identifiers[0], id_1, strlen(id_1));
   char* id_2 = "peer-1";
-  name_component_from_string(&id[1], id_2, strlen(id_2));
-  ps_subscribe_to_content(20, id, 2, 5000, on_publish, NULL);
-  ps_subscribe_to_command(NDN_SD_TEMP, NULL, 0, on_publish, NULL);
+  name_component_from_string(&id.identifiers[1], id_2, strlen(id_2));
+
+  ps_subscribe_to_content(20, &id, 5000, on_publish, NULL);
+  ps_subscribe_to_command(NDN_SD_TEMP, NULL, on_publish, NULL);
 
   ps_after_bootstrapping();
   ndn_forwarder_process();
@@ -123,12 +123,24 @@ int main(int argc, char *argv[])
     ndn_forwarder_process();
 
     // pub content
-    ps_publish_content(NDN_SD_TEMP, (uint8_t*)content_id, strlen(content_id), &content, 8);
+    ps_content_t data_content = {
+      .content_id = (uint8_t*)content_id,
+      .content_id_len = strlen(content_id),
+      .payload = &content,
+      .payload_len = 8
+    };
+    ps_publish_content(NDN_SD_TEMP, data_content);
 
     content++;
 
     // pub command
-    ps_publish_command(20, &command_id, sizeof(command_id), id, 2,  &content, 8);
+    ps_content_t cmd_content = {
+      .content_id = (uint8_t*)command_id,
+      .content_id_len = strlen(command_id),
+      .payload = &content,
+      .payload_len = 8
+    };
+    ps_publish_command(20, &id, cmd_content);
 
     content++;
 

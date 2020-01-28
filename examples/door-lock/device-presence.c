@@ -29,11 +29,20 @@ void service_data_publishing(void *self, size_t param_length, void *param)
     /* publish presence state */
     printf("Publish presence: %d\n", state);
     fflush(stdout);
+
+    ps_content_t content = {
+      .payload = (uint8_t*)&state,
+      .payload_len = sizeof(state)
+    };
     if(state != 0){
-      ps_publish_content(NDN_SD_PRESENCE, (uint8_t*)"present", strlen("present"), (uint8_t*)&state, sizeof(state));
+      content.content_id = (uint8_t*)"present";
+      content.content_id_len = strlen("present");
     }else{
-      ps_publish_content(NDN_SD_PRESENCE, (uint8_t*)"absent", strlen("absent"), (uint8_t*)&state, sizeof(state));
+      content.content_id = (uint8_t*)"absent";
+      content.content_id_len = strlen("absent");
     }
+
+    ps_publish_content(NDN_SD_PRESENCE, content);
   }
 
   ndn_msgqueue_post(NULL, service_data_publishing, 0, NULL);

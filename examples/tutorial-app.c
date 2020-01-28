@@ -112,9 +112,7 @@ parseArgs(int argc, char *argv[])
 
 void
 light_service(uint8_t service, bool is_cmd,
-              const name_component_t* identifiers, uint32_t identifiers_size,
-              uint8_t* suffix, uint32_t suffix_len,
-              const uint8_t* content, uint32_t content_len,
+              const ps_identifier_t* identifier, ps_content_t content,
               void* userdata)
 {
   uint8_t *param, *name, new_val;
@@ -123,11 +121,11 @@ light_service(uint8_t service, bool is_cmd,
   printf("RECEIVED NEW COMMAND\n");
 
   // Execute the function
-  if (content) {
+  if (content.payload) {
     // new_val = *real_payload;
     char content_str[128] = {0};
-    memcpy(content_str, content, content_len);
-    content_str[content_len] = '\0';
+    memcpy(content_str, content.payload, content.payload_len);
+    content_str[content.payload_len] = '\0';
     new_val = atoi(content_str);
   }
   else {
@@ -146,7 +144,14 @@ light_service(uint8_t service, bool is_cmd,
       light_brightness = new_val;
       if (light_brightness > 0) {
         printf("Successfully set the brightness = %u\n", light_brightness);
-        ps_publish_content(NDN_SD_LED, "a", strlen("a"), &light_brightness, 1);
+
+        ps_content_t data_content = {
+          .content_id = "a",
+          .content_id_len = strlen("a"),
+          .payload = &light_brightness,
+          .payload_len = 1
+        };
+        ps_publish_content(NDN_SD_LED, data_content);
       }
     }
     else {
@@ -162,8 +167,15 @@ light_service(uint8_t service, bool is_cmd,
 void
 after_bootstrapping()
 {
-  ps_subscribe_to_command(NDN_SD_LED, NULL, 0, light_service, NULL);
-  ps_publish_content(NDN_SD_LED, "a", strlen("a"), "hello", strlen("hello"));
+  ps_subscribe_to_command(NDN_SD_LED, NULL, light_service, NULL);
+
+  ps_content_t data_content = {
+    .content_id = "a",
+    .content_id_len = strlen("a"),
+    .payload = "hello",
+    .payload_len = strlen("hello")
+  };
+  ps_publish_content(NDN_SD_LED, data_content);
 }
 
 void SignalHandler(int signum){

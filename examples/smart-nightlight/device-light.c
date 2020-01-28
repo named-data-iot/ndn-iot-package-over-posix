@@ -60,13 +60,23 @@ state_t state = {111, 201};
 
 void service_data_publishing()
 {
+  ps_content_t data_content = {
+    .content_id = "state",
+    .content_id_len = strlen("state"),
+    .payload = (uint8_t*)&state.last_switch,
+    .payload_len = sizeof(state.last_switch)
+  };
+
   /* publish switich state */
   NDN_LOG_DEBUG("publishing switich state, now is %d", state.last_switch);
-  ps_publish_content(NDN_SD_LED, "state", strlen("state"), (uint8_t*)&state.last_switch, sizeof(state.last_switch));
+  ps_publish_content(NDN_SD_LED, data_content);
+
+  data_content.payload = (uint8_t*)&state.last_color;
+  data_content.payload_len = sizeof(state.last_color);
 
   /* publish color motion */
   NDN_LOG_DEBUG("publishing color state, now is %d", state.last_color);
-  ps_publish_content(NDN_SD_COLOR, "state", strlen("state"), (uint8_t*)&state.last_color, sizeof(state.last_color));
+  ps_publish_content(NDN_SD_COLOR, data_content);
 }
 
 
@@ -91,7 +101,7 @@ void on_switich_command(uint8_t service, bool is_cmd, const name_component_t* id
 void initialize()
 {
   /* subscribe to ON and OFF */
-  ps_subscribe_to_command(NDN_SD_MOTION, NULL, 0, on_motion_command, NULL);
+  ps_subscribe_to_command(NDN_SD_MOTION, NULL, on_motion_command, NULL);
 }
 
 

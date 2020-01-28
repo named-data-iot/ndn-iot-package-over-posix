@@ -67,11 +67,21 @@ void service_data_publishing()
   uint64_t now = ndn_time_now_ms();
   uint64_t elapsed = now - state.timestamp;
   uint32_t battery = 100 - elapsed / 600;
+
+  ps_content_t data_content = {
+    .content_id = "content-id",
+    .content_id_len = strlen("content-id"),
+    .payload = (uint8_t*)&battery,
+    .payload_len = sizeof(battery)
+  };
+  
   if (battery < state.last_battery) {
     state.last_battery = battery;
     state.timestamp = now;
     NDN_LOG_DEBUG("battery info changes, now is %u percent\n", battery);
-    ps_publish_content(NDN_SD_BATTERY, "content-id", strlen("content-id"), (uint8_t*)&battery, sizeof(battery));
+    data_content.payload = (uint8_t*)&battery;
+    data_content.payload_len = sizeof(battery);
+    ps_publish_content(NDN_SD_BATTERY, data_content);
   }
   
 
@@ -82,7 +92,9 @@ void service_data_publishing()
   if (illuminance - state.last_illuminance > 10) {
     NDN_LOG_DEBUG("illuminance info changes, now is %d percent\n", illuminance);
     state.last_illuminance = illuminance;
-    ps_publish_content(NDN_SD_ILLUMINANCE, "content-id", strlen("content-id"), (uint8_t*)&illuminance, sizeof(illuminance));
+    data_content.payload = (uint8_t*)&illuminance;
+    data_content.payload_len = sizeof(illuminance);
+    ps_publish_content(NDN_SD_ILLUMINANCE, data_content);
   }
 }
 
@@ -125,7 +137,7 @@ void initialize()
   }
 
   /* subscribe to ON and OFF */
-  // ps_subscribe_to_command(NDN_SD_ILLUMINANCE, NULL, 0, on_illuminance_command, NULL);
+  // ps_subscribe_to_command(NDN_SD_ILLUMINANCE, NULL, on_illuminance_command, NULL);
 }
 
 

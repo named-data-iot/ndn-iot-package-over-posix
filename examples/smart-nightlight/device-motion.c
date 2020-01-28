@@ -62,6 +62,13 @@ state_t state = {100, 0, 0};
 
 void service_data_publishing()
 {
+  ps_content_t data_content = {
+    .content_id = "content-id",
+    .content_id_len = strlen("content-id"),
+    .payload = (uint8_t*)&battery,
+    .payload_len = sizeof(battery)
+  };
+
   /* simulate the battery usage */
   usleep(1000000);
   uint64_t now = ndn_time_now_ms();
@@ -71,7 +78,9 @@ void service_data_publishing()
     state.last_battery =  battery;
     state.timestamp = now;
     NDN_LOG_DEBUG("battery info changes, now is %u percent\n", battery);
-    ps_publish_content(NDN_SD_BATTERY, "content-id", strlen("content-id"), (uint8_t*)&battery, sizeof(battery));
+    data_content.payload = (uint8_t*)&battery;
+    data_content.payload_len = sizeof(battery);
+    ps_publish_content(NDN_SD_BATTERY, data_content);
   }
   
   /* simulate the motion */
@@ -80,13 +89,14 @@ void service_data_publishing()
   uint32_t motion = dice / 3;
   if (motion - state.last_motion > 10) {
     NDN_LOG_DEBUG("motion info changes, now is %d percent\n", motion);
+    data_content.payload = (uint8_t*)&motion;
+    data_content.payload_len = sizeof(motion);
     ps_publish_content(NDN_SD_MOTION, "content-id", strlen("content-id"), (uint8_t*)&motion, sizeof(motion));
   }
 }
 
 
-void on_motion_command(uint8_t service, bool is_cmd, const name_component_t* identifiers, uint32_t identifiers_size,
-                       const uint8_t* suffix, uint32_t suffix_len, const uint8_t* content, uint32_t content_len,
+void on_motion_command(uint8_t service, bool is_cmd, const ps_identifier_t* identifier, ps_content_t content,
                        void* userdata)
 {
   NDN_LOG_DEBUG("on motion command");
@@ -123,7 +133,7 @@ void initialize()
   }
 
   /* subscribe to ON and OFF */
-  //ps_subscribe_to_command(NDN_SD_MOTION, NULL, 0, on_motion_command, NULL);
+  //ps_subscribe_to_command(NDN_SD_MOTION, NULL, on_motion_command, NULL);
 }
 
 

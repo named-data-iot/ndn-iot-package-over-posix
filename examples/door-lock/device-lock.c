@@ -18,13 +18,11 @@ bool running;
 uint8_t buffer[4096];
 int state;
 
-void on_lock_command(uint8_t service, bool is_cmd, const name_component_t* identifiers, uint32_t identifiers_size,
-                     const uint8_t* suffix, uint32_t suffix_len, const uint8_t* content, uint32_t content_len,
-                     void* userdata)
+void on_lock_command(uint8_t service, bool is_cmd, const ps_identifier_t* identifier, ps_content_t content, void* userdata)
 {
-  NDN_LOG_DEBUG((suffix[0] == NDN_CMD_LOCK) ? "on command\n" : "on unlock command\n");
+  NDN_LOG_DEBUG((content.content_id[0] == NDN_CMD_LOCK) ? "on command\n" : "on unlock command\n");
   /* change the lock state */
-  state = suffix[0] == NDN_CMD_LOCK;
+  state = content.content_id[0] == NDN_CMD_LOCK;
   // service_data_publishing();
 }
 
@@ -38,7 +36,7 @@ int main(){
   sd_add_or_update_self_service(NDN_SD_LOCK, true, 1);
   ndn_sd_after_bootstrapping(&face->intf);
 
-  ps_subscribe_to_command(NDN_SD_LOCK, NULL, 0, on_lock_command, NULL);
+  ps_subscribe_to_command(NDN_SD_LOCK, NULL, on_lock_command, NULL);
   printf("Started.\n");
 
   running = true;

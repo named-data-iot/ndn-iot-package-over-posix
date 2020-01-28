@@ -17,26 +17,34 @@ ndn_unix_face_t *face;
 bool running;
 uint8_t buffer[4096];
 
-void presence(uint8_t service, bool is_cmd, const name_component_t* identifiers, uint32_t identifiers_size,
-              const uint8_t* suffix, uint32_t suffix_len, const uint8_t* content, uint32_t content_len,
-              void* userdata)
+void presence(uint8_t service, bool is_cmd, const ps_identifier_t* identifier, ps_content_t content, void* userdata)
 {
   if (is_cmd){
     return;
   }
-  if(content_len >= 7 && strcmp((char*)content, "present") == 0){
+
+  ps_content_t cmd_content = {
+    .payload = NULL,
+    .payload_len = 0
+  };
+
+  if(content.payload_len >= 7 && strcmp((char*)content.payload, "present") == 0){
     if(unlock){
       // TODO: How to keep all records of locks. SD is not usable.
       printf("Unlock.\n");
       uint8_t command_id = NDN_CMD_UNLOCK;
-      ps_publish_command(NDN_SD_LOCK, &command_id, sizeof(command_id), NULL, 0, &command_id, 0);
+      cmd_content.content_id = &command_id;
+      cmd_content.content_id_len = sizeof(command_id);
+      ps_publish_command(NDN_SD_LOCK, NULL, cmd_content);
     }
     // TODO: No response to verify whether the command is successful.
   }else{
     printf("Lock.\n");
     // TODO: How to query how many people are present. Query is not supported by pub-sub.
     uint8_t command_id = NDN_CMD_LOCK;
-    ps_publish_command(NDN_SD_LOCK, &command_id, sizeof(command_id), NULL, 0, &command_id, 0);
+    cmd_content.content_id = &command_id;
+    cmd_content.content_id_len = sizeof(command_id);
+    ps_publish_command(NDN_SD_LOCK, NULL, cmd_content);
   }
 }
 
@@ -47,7 +55,7 @@ int main(){
   name_component_from_string(&id, "Hub", strlen("Hub"));
   simulate_bootstrap(&face->intf, &id, 1, 1);
 
-  ps_subscribe_to_content(NDN_SD_PRESENCE, NULL, 0, 5000, presence, NULL);
+  ps_subscribe_to_content(NDN_SD_PRESENCE, NULL, 5000, presence, NULL);
   // ndn_sd_after_bootstrapping(&face->intf);
   // sd_add_interested_service(NDN_SD_LOCK);
 
