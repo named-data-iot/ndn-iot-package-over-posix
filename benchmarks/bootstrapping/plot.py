@@ -1,4 +1,5 @@
 import pandas as pd
+import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.lines import Line2D
@@ -60,7 +61,7 @@ if __name__ == "__main__":
     ax = fig.add_subplot(111)
     y_pos = np.arange(len(overall.keys()))
     patterns = [ "///" , "..", "xx", "ooo", "\\\\"]
-    height = 0.3
+    height = 0.25
 
     p1 = ax.barh(y_pos - height, df.loc[catagories[0]].tolist(), xerr=df.loc[catagories[1]].tolist(), height=height, hatch=patterns[0], edgecolor='gray')
     p2 = ax.barh(y_pos, df.loc[catagories[2]].tolist(), xerr=df.loc[catagories[3]].tolist(), height=height, hatch=patterns[1], edgecolor='gray')
@@ -92,15 +93,20 @@ if __name__ == "__main__":
 
     ax.spines['right'].set_visible(False)
     ax.spines['top'].set_visible(False)
-    ax.set_xlim(-10, ax.get_xlim()[1])
     ax.set_yticks(y_pos)
     ax.set_yticklabels(overall.keys())
     ax.invert_yaxis()  # labels read top-to-bottom
+    ax.set_xscale('log')
+    ax.set_xticks([0.1, 1, 20, 100, 300])
+    ax.get_xaxis().set_major_formatter(matplotlib.ticker.ScalarFormatter())
     ax.set_xlabel('Time Elapse (ms)')
     # y_labels = ax.get_yticklabels()
     # plt.setp(y_labels, rotation=30, horizontalalignment='right')
     # plt.rcParams.update({'font.size': myFontSize})
-    ax.legend((p1[0], p2[0], p3[0]), ('corei7 4770HQ 2.2GHz', 'cortex A53 ARMv8 1.4GHz', 'cortex M4 64MHz'))
+    ax.legend((p1[0], p2[0], p3[0]), ('core i7 2.2GHz', 'cortex A53 1.4GHz', 'cortex M4 64MHz'),
+              ncol=3,
+              bbox_to_anchor=(0, 1),
+              loc='lower left', fontsize='small')
     fig.tight_layout()
     fig.savefig('micro-bench-bootstrapping.pdf', format='pdf', dpi=1000)
     plt.show()

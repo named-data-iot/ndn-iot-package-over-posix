@@ -1,0 +1,39 @@
+2020-01-27 13:50:03,183 - INFO # DEBUG: ndn_sig_verifier_verify_data, L254: DATA-PKT-DECODING: 71 us
+2020-01-27 13:50:03,195 - INFO # DEBUG: ndn_sig_verifier_verify_data, L291: DATA-PKT-ECDSA-VERIFY: 127508 us
+2020-01-27 13:50:03,204 - INFO # INFO: _on_new_content_verify_success: New published content successfully pass signature verification.
+2020-01-27 13:50:03,209 - INFO # /ndn-iot/0x14/DATA/living/motion_sensor9/content-id/t=lu
+2020-01-27 13:50:03,217 - INFO # DEBUG: _on_new_content_verify_success, L213: SUB-NEW-DATA-AES-DEC: 1351us
+2020-01-27 13:50:03,228 - INFO # DEBUG: _on_new_content_verify_success, L242: key locator is /ndn-iot/0x14/DATA/living/motion_sensor9/KEY/T10x110xca
+2020-01-27 13:50:03,235 - INFO # DEBUG: _on_new_content_verify_success, L247: SUB-NEW-DATA-SCHEMA-VERIFY: 11054us
+
+2020-01-27 13:50:39,215 - INFO # DEBUG: ndn_sig_verifier_verify_data, L254: DATA-PKT-DECODING: 72 us
+2020-01-27 13:50:39,224 - INFO # DEBUG: ndn_sig_verifier_verify_data, L291: DATA-PKT-ECDSA-VERIFY: 127509 us
+2020-01-27 13:50:39,233 - INFO # INFO: _on_new_content_verify_success: New published content successfully pass signature verification.
+2020-01-27 13:50:39,238 - INFO # /ndn-iot/0x14/DATA/living/motion_sensor9/content-id/t=lu
+2020-01-27 13:50:39,246 - INFO # DEBUG: _on_new_content_verify_success, L213: SUB-NEW-DATA-AES-DEC: 1350us
+2020-01-27 13:50:39,258 - INFO # DEBUG: _on_new_content_verify_success, L242: key locator is /ndn-iot/0x14/DATA/living/motion_sensor9/KEY/T10x110xca
+2020-01-27 13:50:39,264 - INFO # DEBUG: _on_new_content_verify_success, L247: SUB-NEW-DATA-SCHEMA-VERIFY: 11054us
+
+2020-01-27 13:51:08,631 - INFO # DEBUG: ndn_sig_verifier_verify_data, L254: DATA-PKT-DECODING: 72 us
+2020-01-27 13:51:08,643 - INFO # DEBUG: ndn_sig_verifier_verify_data, L291: DATA-PKT-ECDSA-VERIFY: 127508 us
+2020-01-27 13:51:08,652 - INFO # INFO: _on_new_content_verify_success: New published content successfully pass signature verification.
+2020-01-27 13:51:08,657 - INFO # /ndn-iot/0x14/DATA/living/motion_sensor9/content-id/t=lu
+2020-01-27 13:51:08,665 - INFO # DEBUG: _on_new_content_verify_success, L213: SUB-NEW-DATA-AES-DEC: 1350us
+2020-01-27 13:51:08,676 - INFO # DEBUG: _on_new_content_verify_success, L242: key locator is /ndn-iot/0x14/DATA/living/motion_sensor9/KEY/T10x110xca
+2020-01-27 13:51:08,683 - INFO # DEBUG: _on_new_content_verify_success, L247: SUB-NEW-DATA-SCHEMA-VERIFY: 11054us
+
+2020-01-27 13:51:33,066 - INFO # DEBUG: ndn_sig_verifier_verify_data, L254: DATA-PKT-DECODING: 72 us
+2020-01-27 13:51:33,078 - INFO # DEBUG: ndn_sig_verifier_verify_data, L291: DATA-PKT-ECDSA-VERIFY: 127509 us
+2020-01-27 13:51:33,087 - INFO # INFO: _on_new_content_verify_success: New published content successfully pass signature verification.
+2020-01-27 13:51:33,092 - INFO # /ndn-iot/0x14/DATA/living/motion_sensor9/content-id/t=lu
+2020-01-27 13:51:33,100 - INFO # DEBUG: _on_new_content_verify_success, L213: SUB-NEW-DATA-AES-DEC: 1350us
+2020-01-27 13:51:33,111 - INFO # DEBUG: _on_new_content_verify_success, L242: key locator is /ndn-iot/0x14/DATA/living/motion_sensor9/KEY/T10x110xca
+2020-01-27 13:51:33,118 - INFO # DEBUG: _on_new_content_verify_success, L247: SUB-NEW-DATA-SCHEMA-VERIFY: 11054us
+
+2020-01-27 13:52:12,921 - INFO # DEBUG: ndn_sig_verifier_verify_data, L254: DATA-PKT-DECODING: 72 us
+2020-01-27 13:52:12,933 - INFO # DEBUG: ndn_sig_verifier_verify_data, L291: DATA-PKT-ECDSA-VERIFY: 127508 us
+2020-01-27 13:52:12,942 - INFO # INFO: _on_new_content_verify_success: New published content successfully pass signature verification.
+2020-01-27 13:52:12,947 - INFO # /ndn-iot/0x14/DATA/living/motion_sensor9/content-id/t=lu
+2020-01-27 13:52:12,955 - INFO # DEBUG: _on_new_content_verify_success, L213: SUB-NEW-DATA-AES-DEC: 1350us
+2020-01-27 13:52:12,966 - INFO # DEBUG: _on_new_content_verify_success, L242: key locator is /ndn-iot/0x14/DATA/living/motion_sensor9/KEY/T10x110xca
+2020-01-27 13:52:12,973 - INFO # DEBUG: _on_new_content_verify_success, L247: SUB-NEW-DATA-SCHEMA-VERIFY: 11053us
