@@ -35,13 +35,14 @@ uint32_t anchor_bytes_size;
 bool running;
 uint8_t buffer[4096];
 
-void on_publish(uint8_t service, bool is_cmd, const ps_identifier_t* identifier, ps_content_t content,
-               void* userdata)
+void on_command_publish(const ps_event_context_t* context, const ps_event_t* event, void* userdata)
 {
-  if (is_cmd)
-    printf("\n\nNew Command publish!! Content: %llu\n\n", *(uint64_t*)content.payload);
-  else
-    printf("\n\nNew Content publish!! Content: %llu\n\n", *(uint64_t*)content.payload);
+  printf("\n\nNew Command publish!! Content: %llu\n\n", *(uint64_t*)event->payload);
+}
+
+void on_content_publish(const ps_event_context_t* context, const ps_event_t* event, void* userdata)
+{
+    printf("\n\nNew Content publish!! Content: %llu\n\n", *(uint64_t*)event->payload);
 }
 
 void
@@ -102,15 +103,8 @@ int main(int argc, char *argv[])
   face = ndn_unix_face_construct(NDN_NFD_DEFAULT_ADDR, true);
   simulate_bootstrap();
 
-  // sub
-  ps_identifier_t id = {.identifiers_size = 2};
-  char* id_1 = "bedroom";
-  name_component_from_string(&id.identifiers[0], id_1, strlen(id_1));
-  char* id_2 = "peer-1";
-  name_component_from_string(&id.identifiers[1], id_2, strlen(id_2));
-
-  ps_subscribe_to_content(20, &id, 5000, on_publish, NULL);
-  ps_subscribe_to_command(NDN_SD_TEMP, NULL, on_publish, NULL);
+  ps_subscribe_to_content(20, "/bedroom/peer-1", 5000, on_content_publish, NULL);
+  ps_subscribe_to_command(NDN_SD_TEMP, "", on_command_publish, NULL);
 
   ps_after_bootstrapping();
   ndn_forwarder_process();
@@ -123,24 +117,24 @@ int main(int argc, char *argv[])
     ndn_forwarder_process();
 
     // pub content
-    ps_content_t data_content = {
-      .content_id = (uint8_t*)content_id,
-      .content_id_len = strlen(content_id),
+    ps_event_t content_event = {
+      .data_id = (uint8_t*)content_id,
+      .data_id_len = strlen(content_id),
       .payload = &content,
       .payload_len = 8
     };
-    ps_publish_content(NDN_SD_TEMP, data_content);
+    ps_publish_content(NDN_SD_TEMP, &content_event);
 
     content++;
 
     // pub command
-    ps_content_t cmd_content = {
-      .content_id = (uint8_t*)command_id,
-      .content_id_len = strlen(command_id),
+    ps_event_t cmd_event = {
+      .data_id = (uint8_t*)command_id,
+      .data_id_len = strlen(command_id),
       .payload = &content,
       .payload_len = 8
     };
-    ps_publish_command(20, &id, cmd_content);
+    ps_publish_command(20, "/bedroom/peer-1", &cmd_event);
 
     content++;
 

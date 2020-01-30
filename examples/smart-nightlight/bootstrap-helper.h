@@ -19,6 +19,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <ndn-lite.h>
+#include "ndn-lite/app-support/security-bootstrapping.h"
 #include "ndn-lite/encode/name.h"
 #include "ndn-lite/encode/data.h"
 #include "ndn-lite/encode/interest.h"
@@ -60,7 +61,7 @@ static uint8_t bootstrap_buffer[1024];
  *  1. Setting TrustAnchor as /ndn-iot/controller/KEY/123/self/456
  *  2. Install identity certificate named /ndn-iot/<identity>/KEY/234/home/567
  *  3. Add route /ndn-iot to the given <face>
- *  4. Install KeyID-10002 Key as default AES-128 Key.
+ *  4. Install KeyID-SEC_BOOT_AES_KEY_ID Key as default AES-128 Key.
  */
 void
 simulate_bootstrap(ndn_face_intf_t* face, name_component_t* identity, uint32_t identity_size, uint8_t add_route)
@@ -122,10 +123,10 @@ simulate_bootstrap(ndn_face_intf_t* face, name_component_t* identity, uint32_t i
     ndn_forwarder_add_route_by_str(face, "/ndn-iot", strlen("/ndn-iot"));
   }
 
-  // offering initial 10002 KEY
+  // offering initial SEC_BOOT_AES_KEY_ID KEY
   ndn_aes_key_t* init_aes = ndn_key_storage_get_empty_aes_key();
   ndn_aes_load_key(init_aes, aes_key, sizeof(aes_key));
-  init_aes->key_id = 10002;
+  init_aes->key_id = SEC_BOOT_AES_KEY_ID;
 
   // set trusted key
   NDN_LOG_INFO("bootstrap complete...");

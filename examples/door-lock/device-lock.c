@@ -36,7 +36,7 @@ int main(){
   sd_add_or_update_self_service(NDN_SD_LOCK, true, 1);
   ndn_sd_after_bootstrapping(&face->intf);
 
-  ps_subscribe_to_command(NDN_SD_LOCK, NULL, on_lock_command, NULL);
+  ps_subscribe_to_command(NDN_SD_LOCK, "", on_lock_command, NULL);
   printf("Started.\n");
 
   running = true;

@@ -39,13 +39,14 @@ uint32_t anchor_bytes_size;
 bool running;
 uint8_t buffer[4096];
 
-void on_publish(uint8_t service, bool is_cmd, const ps_identifier_t* identifier, ps_content_t content,
-               void* userdata)
+void on_command_publish(const ps_event_context_t* context, const ps_event_t* event, void* userdata)
 {
-  if (is_cmd)
-    printf("\n\nNew Command publish!! Content: %llu\n\n", *(uint64_t*)content.payload);
-  else
-    printf("\n\nNew Content publish!! Content: %llu\n\n", *(uint64_t*)content.payload);
+  printf("\n\nNew Command publish!! Content: %llu\n\n", *(uint64_t*)event->payload);
+}
+
+void on_content_publish(const ps_event_context_t* context, const ps_event_t* event, void* userdata)
+{
+    printf("\n\nNew Content publish!! Content: %llu\n\n", *(uint64_t*)event->payload);
 }
 
 void
@@ -108,8 +109,8 @@ int main(int argc, char *argv[])
   simulate_bootstrap();
 
   // sub
-  ps_subscribe_to_content(NDN_SD_TEMP, NULL, 5000, on_publish, NULL);
-  ps_subscribe_to_command(20, NULL, on_publish, NULL);
+  ps_subscribe_to_content(NDN_SD_TEMP, "", 5000, on_content_publish, NULL);
+  ps_subscribe_to_command(20, "", on_command_publish, NULL);
 
   ps_after_bootstrapping();
   ndn_forwarder_process();
@@ -122,22 +123,22 @@ int main(int argc, char *argv[])
   while(running) {
     ndn_forwarder_process();
 
-    ps_content_t data_content = {
-      .content_id = (uint8_t*)content_id,
-      .content_id_len = strlen(content_id),
+    ps_event_t content_event = {
+      .data_id = (uint8_t*)content_id,
+      .data_id_len = strlen(content_id),
       .payload = &content,
       .payload_len = sizeof(content)
     };
-    ps_publish_content(20, data_content);
+    ps_publish_content(20, &content_event);
     content++;
 
-    ps_content_t cmd_content = {
-      .content_id = (uint8_t*)command_id,
-      .content_id_len = strlen(command_id),
+    ps_event_t cmd_event = {
+      .data_id = (uint8_t*)command_id,
+      .data_id_len = strlen(command_id),
       .payload = &content,
       .payload_len = sizeof(content)
     };
-    ps_publish_command(NDN_SD_TEMP, NULL, cmd_content);
+    ps_publish_command(NDN_SD_TEMP, "", &cmd_event);
     content++;
 
     usleep(1000000);

@@ -51,8 +51,10 @@ uint8_t light_brightness = 0;
 static ndn_trust_schema_rule_t same_room;
 static ndn_trust_schema_rule_t controller_only;
 
+#define NDN_SD_CONTACT 50
+
 int
-load_bootstrapping_info()
+load_bootstrapping_config(int argc, char *argv[])
 {
   FILE * fp;
   char buf[255];
@@ -111,85 +113,33 @@ load_bootstrapping_info()
 }
 
 void
-on_light_command(const ps_event_context_t* context, const ps_event_t* event, void* userdata)
+cap_switch_cmd_cb(ps_event_context_t* context, ps_event_t* event, void* userdata)
 {
-  printf("RECEIVED NEW COMMAND\n");
-  printf("Command id: %s\n", event->data_id);
-  printf("Command payload: %s\n", event->payload);
-  printf("Scope: %s\n", context->scope);
-
-  int new_val;
-  // Execute the function
-  if (event->payload) {
-    // new_val = *real_payload;
-    char content_str[128] = {0};
-    memcpy(content_str, event->payload, event->payload_len);
-    content_str[event->payload_len] = '\0';
-    new_val = atoi(content_str);
-  }
-  else {
-    new_val = 0xFF;
-  }
-  if (new_val != 0xFF) {
-    if ((new_val > 0) != (light_brightness > 0)) {
-      if (new_val > 0) {
-        printf("Switch on the light.\n");
-      }
-      else {
-        printf("Turn off the light.\n");
-      }
-    }
-    if (new_val < 10) {
-      light_brightness = new_val;
-      if (light_brightness > 0) {
-        printf("Successfully set the brightness = %u\n", light_brightness);
-
-        ps_event_t data_content = {
-          .data_id = "a",
-          .data_id_len = strlen("a"),
-          .payload = &light_brightness,
-          .payload_len = 1
-        };
-        ps_publish_content(NDN_SD_LED, &data_content);
-      }
-    }
-    else {
-      light_brightness = 10;
-      printf("Exceeding range. Set the brightness = %u\n", light_brightness);
-    }
-  }
-  else {
-    printf("Query the brightness = %u\n", light_brightness);
+  if (memcmp(event->data_id, "ON", strlen("ON")) == 0) {
+    // turn on the device
   }
 }
 
 void
 after_bootstrapping()
 {
-  ps_subscribe_to_command(NDN_SD_LED, "", on_light_command, NULL);
-  ps_event_t event = {
+  ps_subscribe_to_command(NDN_SD_CONTACT, "", cap_switch_cmd_cb, NULL);
+
+  ps_event_t data_content = {
     .data_id = "a",
     .data_id_len = strlen("a"),
     .payload = "hello",
     .payload_len = strlen("hello")
   };
-  ps_publish_content(NDN_SD_LED, &event);
-}
-
-void SignalHandler(int signum){
-  running = false;
+  ps_publish_content(NDN_SD_LED, data_content);
 }
 
 int
 main(int argc, char *argv[])
 {
-  signal(SIGINT, SignalHandler);
-  signal(SIGTERM, SignalHandler);
-  signal(SIGQUIT, SignalHandler);
-
-  // PARSE COMMAND LINE PARAMETERS
-  int ret = NDN_SUCCESS;
-  if ((ret = load_bootstrapping_info()) != 0) {
+  // Load bootstrapping config file
+  int ret;
+  if ((ret = load_bootstrapping_config(argc, argv)) != 0) {
     return ret;
   }
   ndn_lite_startup();
@@ -201,6 +151,17 @@ main(int argc, char *argv[])
   // in_addr_t multicast_ip = inet_addr("224.0.23.170");
   // face = ndn_udp_multicast_face_construct(INADDR_ANY, multicast_ip, multicast_port);
 
+  // LOAD PRE-INSTALLED PRV KEY AND PUB KEY
+  ndn_ecc_prv_t* ecc_secp256r1_prv_key;
+  ndn_ecc_pub_t* ecc_secp256r1_pub_key;
+  ndn_key_storage_get_empty_ecc_key(&ecc_secp256r1_pub_key, &ecc_secp256r1_prv_key);
+  ndn_ecc_prv_init(ecc_secp256r1_prv_key, secp256r1_prv_key_bytes, sizeof(secp256r1_prv_key_bytes),
+                   NDN_ECDSA_CURVE_SECP256R1, 1);
+  ndn_ecc_pub_init(ecc_secp256r1_pub_key, secp256r1_pub_key_bytes, sizeof(secp256r1_pub_key_bytes),
+                   NDN_ECDSA_CURVE_SECP256R1, 1);
+  ndn_hmac_key_t* hmac_key = ndn_key_storage_get_empty_hmac_key();
+  ndn_hmac_key_init(hmac_key, hmac_key_bytes, sizeof(hmac_key_bytes), 2);
+
   // LOAD SERVICES PROVIDED BY SELF DEVICE
   uint8_t capability[1];
   capability[0] = NDN_SD_LED;
@@ -211,17 +172,9 @@ main(int argc, char *argv[])
   // ndn_ac_register_access_request(NDN_SD_TEMP);
 
   // START BOOTSTRAPPING
-  ndn_bootstrapping_info_t booststrapping_info = {
-    .pre_installed_prv_key_bytes = secp256r1_prv_key_bytes,
-    .pre_installed_pub_key_bytes = secp256r1_pub_key_bytes,
-    .pre_shared_hmac_key_bytes = hmac_key_bytes,
-  };
-  ndn_device_info_t device_info = {
-    .device_identifier = device_identifier,
-    .service_list = capability,
-    .service_list_size = sizeof(capability),
-  };
-  ndn_security_bootstrapping(&face->intf, &booststrapping_info, &device_info, after_bootstrapping);
+  ndn_security_bootstrapping(&face->intf, ecc_secp256r1_prv_key, hmac_key,
+                             device_identifier, strlen(device_identifier),
+                             capability, sizeof(capability), after_bootstrapping);
 
   // START MAIN LOOP
   running = true;

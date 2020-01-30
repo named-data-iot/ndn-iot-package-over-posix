@@ -20,7 +20,7 @@ set(LIST_EXAMPLES
   "ndn-putchunks"
   "file-transfer-client"
   "file-transfer-server"
-  "bootstrap"
+#  "bootstrap"
   "iot-light"
 )
 foreach(EXAM_NAME IN LISTS LIST_EXAMPLES)
@@ -45,9 +45,9 @@ endforeach()
 unset(LIST_EXAMPLES)
 
 set(LIST_EXAMPLES
-  "lock-it-when-i-leave"
-  "device-presence"
-  "device-lock"
+  #"lock-it-when-i-leave"
+  #"device-presence"
+  #"device-lock"
 )
 foreach(EXAM_NAME IN LISTS LIST_EXAMPLES)
   add_executable(${EXAM_NAME} "${DIR_EXAMPLES}/door-lock/${EXAM_NAME}.c")

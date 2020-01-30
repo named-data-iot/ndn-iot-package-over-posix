@@ -205,7 +205,7 @@ int main(int argc, char *argv[])
    * 1. Setting TrustAnchor /ndn-iot/controller/KEY/123/self/456
    * 2. Install identity certificate named /ndn-iot/Hub/KEY/234/home/567
    * 3. Add route /ndn-iot to the given UDP face
-   * 4. Install KeyID-10002 Key as default AES-128 Key.
+   * 4. Install KeyID-SEC_BOOT_AES_KEY_ID Key as default AES-128 Key.
    */
   ndn_udp_face_t* face = ndn_udp_unicast_face_construct(INADDR_ANY, 6666, inet_addr("127.0.0.1"), 2333);
 
