@@ -114,8 +114,8 @@ void
 on_light_command(const ps_event_context_t* context, const ps_event_t* event, void* userdata)
 {
   printf("RECEIVED NEW COMMAND\n");
-  printf("Command id: %s\n", event->data_id);
-  printf("Command payload: %s\n", event->payload);
+  printf("Command id: %.*s\n", event->data_id_len, event->data_id);
+  printf("Command payload: %.*s\n", event->payload_len, event->payload);
   printf("Scope: %s\n", context->scope);
 
   int new_val;
@@ -143,7 +143,6 @@ on_light_command(const ps_event_context_t* context, const ps_event_t* event, voi
       light_brightness = new_val;
       if (light_brightness > 0) {
         printf("Successfully set the brightness = %u\n", light_brightness);
-
         ps_event_t data_content = {
           .data_id = "a",
           .data_id_len = strlen("a"),
