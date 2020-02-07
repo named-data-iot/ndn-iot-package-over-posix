@@ -110,14 +110,14 @@ parse_results()
 x = np.arange(len(labels))  # the label locations
 width = 0.2  # the width of the bars
 
-fig, ax = plt.subplots(figsize=(7, 5))
-patterns = [ "///" , "..", "xx", "ooo", "\\\\"]
+fig, ax = plt.subplots(figsize=(6, 4.5))
+patterns = [ "//" , "..", "xx", "oo", "\\\\"]
 
 
-rects3 = ax.bar(x - 3*width/2, aws_means, width, yerr=aws_stds, hatch=patterns[2], label='AWS IoT on WiFi TLS\nDevice:core i7 2.2GHz', edgecolor='gray')
-rects1 = ax.bar(x - width/2, laptop_means, width, yerr=laptop_stds, hatch=patterns[0], label='NDN-LITE on Unix Socket\nApp host:core i7 2.2GHz', edgecolor='gray')
-rects2 = ax.bar(x + width/2, pi_means, width, yerr=pi_stds, hatch=patterns[1], label='NDN-LITE on WiFi UDP Multicast\nDevice:cortex A53 1.4GHz', edgecolor='gray')
-rects4 = ax.bar(x + 3*width/2, nrf_means, width, yerr=nrf_stds, hatch=patterns[3], label='NDN-LITE on IEEE 802.15.4\nDevice:cortex M4 64MHz', edgecolor='gray')
+rects3 = ax.bar(x - 3*width/2, aws_means, width, yerr=aws_stds, hatch=patterns[2], label='AWS IoT Device, WiFi TLS\nDevice:core i7 2.2GHz', edgecolor='black')
+rects1 = ax.bar(x - width/2, laptop_means, width, yerr=laptop_stds, hatch=patterns[0], label='NDN-LITE App, Unix Socket\nApp host:core i7 2.2GHz', edgecolor='black')
+rects2 = ax.bar(x + width/2, pi_means, width, yerr=pi_stds, hatch=patterns[1], label='NDN-LITE Device, WiFi Multicast\nDevice:cortex A53 1.4GHz', edgecolor='black')
+rects4 = ax.bar(x + 3*width/2, nrf_means, width, yerr=nrf_stds, hatch=patterns[3], label='NDN-LITE Device, IEEE 802.15.4\nDevice:cortex M4 64MHz', edgecolor='black')
 
 # Add some text for labels, title and custom x-axis tick labels, etc.
 ax.set_ylabel('Total Latency (ms)')
@@ -141,7 +141,6 @@ autolabel(rects2)
 autolabel(rects3)
 autolabel(rects4)
 
-fig.tight_layout()
 fig.tight_layout()
 fig.savefig('operation-latency.pdf', format='pdf', dpi=1000)
 plt.show()
