@@ -114,10 +114,10 @@ fig, ax = plt.subplots(figsize=(6, 4.5))
 patterns = [ "//" , "..", "xx", "oo", "\\\\"]
 
 
-rects3 = ax.bar(x - 3*width/2, aws_means, width, yerr=aws_stds, hatch=patterns[2], label='AWS IoT Device, WiFi TLS\nDevice:core i7 2.2GHz', edgecolor='black')
-rects1 = ax.bar(x - width/2, laptop_means, width, yerr=laptop_stds, hatch=patterns[0], label='NDN-LITE App, Unix Socket\nApp host:core i7 2.2GHz', edgecolor='black')
-rects2 = ax.bar(x + width/2, pi_means, width, yerr=pi_stds, hatch=patterns[1], label='NDN-LITE Device, WiFi Multicast\nDevice:cortex A53 1.4GHz', edgecolor='black')
-rects4 = ax.bar(x + 3*width/2, nrf_means, width, yerr=nrf_stds, hatch=patterns[3], label='NDN-LITE Device, IEEE 802.15.4\nDevice:cortex M4 64MHz', edgecolor='black')
+rects3 = ax.bar(x - width, aws_means, width, yerr=aws_stds, hatch=patterns[0], label='AWS IoT Device, WiFi TLS\nDevice:cortex A53 1.4GHz', edgecolor='black')
+# rects1 = ax.bar(x - width/2, laptop_means, width, yerr=laptop_stds, hatch=patterns[0], label='Sovereign App, Unix Socket\nApp host:core i7 2.2GHz', edgecolor='black')
+rects2 = ax.bar(x, pi_means, width, yerr=pi_stds, hatch=patterns[1], label='Sovereign Device, WiFi Multicast\nDevice:cortex A53 1.4GHz', edgecolor='black')
+rects4 = ax.bar(x + width, nrf_means, width, yerr=nrf_stds, hatch=patterns[2], label='Sovereign Device, IEEE 802.15.4\nDevice:cortex M4 64MHz', edgecolor='black')
 
 # Add some text for labels, title and custom x-axis tick labels, etc.
 ax.set_ylabel('Total Latency (ms)')
@@ -136,7 +136,7 @@ def autolabel(rects):
                     ha='center', va='bottom')
 
 
-autolabel(rects1)
+# autolabel(rects1)
 autolabel(rects2)
 autolabel(rects3)
 autolabel(rects4)
