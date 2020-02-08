@@ -4,7 +4,6 @@ set(DIR_MICRO_ECC "${DIR_DEFAULT_BACKEND}/sec-lib/micro-ecc")
 set(DIR_TINYCRYPT "${DIR_DEFAULT_BACKEND}/sec-lib/tinycrypt")
 target_sources(ndn-lite PUBLIC
   ${DIR_SECURITY}/ndn-lite-aes.h
-  ${DIR_SECURITY}/ndn-lite-crypto-key.h
   ${DIR_SECURITY}/ndn-lite-ecc.h
   ${DIR_SECURITY}/ndn-lite-hmac.h
   ${DIR_SECURITY}/ndn-lite-rng.h
