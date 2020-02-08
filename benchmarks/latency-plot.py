@@ -1,5 +1,10 @@
 import matplotlib.pyplot as plt
+import matplotlib
 import numpy as np
+
+font = {'family' : 'DejaVu Sans',
+        'size'   : 10}
+matplotlib.rc('font', **font)
 
 labels = ['Bootstrapping', 'Sub:\nContent Delievery', 'Pub:\nCommand Delivery']
 laptop_means = []
