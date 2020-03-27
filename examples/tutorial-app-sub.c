@@ -7,6 +7,12 @@
  *
  * See AUTHORS.md for complete list of NDN IOT PKG authors and contributors.
  */
+
+#define ENABLE_NDN_LOG_INFO 1
+#define ENABLE_NDN_LOG_DEBUG 1
+#define ENABLE_NDN_LOG_ERROR 1
+
+
 #include <stdio.h>
 #include <netdb.h>
 #include <unistd.h>
@@ -162,28 +168,26 @@ on_light_command(const ps_event_context_t* context, const ps_event_t* event, voi
   }
 }
 
-void periodic_publish(size_t param_size, uint8_t* param_value) {
-  static ndn_time_ms_t last;
+void
+on_light_data(const ps_event_context_t* context, const ps_event_t* event, void* userdata)
+{
+  printf("RECEIVED NEW DATA\n");
+  printf("Data id: %.*s\n", event->data_id_len, event->data_id);
+  printf("Data payload: %.*s\n", event->payload_len, event->payload);
+  printf("Scope: %s\n", context->scope);
+}
+void
+after_bootstrapping()
+{
+  ps_subscribe_to_command(NDN_SD_LED, "", on_light_command, NULL);
   ps_event_t event = {
     .data_id = "a",
     .data_id_len = strlen("a"),
     .payload = "hello",
     .payload_len = strlen("hello")
   };
-
-  if (ndn_time_now_ms() - last >= 4000) {
-    ps_publish_content(NDN_SD_LED, &event);
-    last = ndn_time_now_ms();
-  }
-  ndn_msgqueue_post(NULL, periodic_publish, 0, NULL);
-}
-
-void
-after_bootstrapping()
-{
-  ps_subscribe_to_command(NDN_SD_LED, "", on_light_command, NULL);
-  uint64_t interval = 4000;
-  periodic_publish(sizeof(interval), &interval);
+  ps_subscribe_to_content(NDN_SD_LED, "", 4000, on_light_data, NULL);
+  ps_after_bootstrapping();
 }
 
 void SignalHandler(int signum){
