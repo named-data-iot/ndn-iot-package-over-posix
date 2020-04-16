@@ -41,7 +41,7 @@ This requires two devices (e.g., two laptops, or one laptop one RaspberryPi) con
 We first generate the shared secret and a new pair of ECC keys on the device side:
 ```
 cd build
-./bin/examples/tutorial-gen-new-shared-info
+./examples/tutorial-gen-new-shared-info
 ```
 Then we use the `QR_encoder.py` to encode the public information into a QR code image.
 ```
