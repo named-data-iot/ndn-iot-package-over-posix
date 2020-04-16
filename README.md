@@ -65,7 +65,7 @@ b. click `bootstrap` button which will trigger a blocking packet listen.
 Device:
 ```
 cd build
-./bin/examples/tutorial-app
+./examples/tutorial-app
 ```
 **Note**: In this example, the ``tutorial-app`` and controller should on the same host. If you want them played on different hosts, pleast modify the face setting in source code with UDP face using API [here](https://github.com/named-data-iot/ndn-iot-package-over-posix/blob/master/adaptation/udp/udp-face.h), and on the controller side, set up the face to the ``tutorial-app`` using [nfdc](http://named-data.net/doc/NFD/current/manpages/nfdc-face.html) command.
 
