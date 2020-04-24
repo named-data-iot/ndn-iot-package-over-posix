@@ -15,14 +15,14 @@ set(LIST_EXAMPLES
 #  "access-control-controller"
   "nfd-basic-consumer"
   "nfd-basic-producer"
-  "pub-sub-peer-1"
-  "pub-sub-peer-2"
+#  "pub-sub-peer-1"
+#  "pub-sub-peer-2"
   "deamon-producer"
   "ndn-putchunks"
   "file-transfer-client"
   "file-transfer-server"
 #  "bootstrap"
-  "iot-light"
+#  "iot-light"
 )
 foreach(EXAM_NAME IN LISTS LIST_EXAMPLES)
   add_executable(${EXAM_NAME} "${DIR_EXAMPLES}/${EXAM_NAME}.c")
