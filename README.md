@@ -41,7 +41,7 @@ This requires two devices (e.g., two laptops, or one laptop one RaspberryPi) con
 We first generate the shared secret and a new pair of ECC keys on the device side:
 ```
 cd build
-./bin/examples/tutorial-gen-new-shared-info
+./examples/tutorial-gen-new-shared-info
 ```
 Then we use the `QR_encoder.py` to encode the public information into a QR code image.
 ```
@@ -65,8 +65,10 @@ b. click `bootstrap` button which will trigger a blocking packet listen.
 Device:
 ```
 cd build
-./bin/examples/tutorial-app
+./examples/tutorial-app
 ```
+**Note**: In this example, the ``tutorial-app`` and controller should on the same host. If you want them played on different hosts, pleast modify the face setting in source code with UDP face using API [here](https://github.com/named-data-iot/ndn-iot-package-over-posix/blob/master/adaptation/udp/udp-face.h), and on the controller side, set up the face to the ``tutorial-app`` using [nfdc](http://named-data.net/doc/NFD/current/manpages/nfdc-face.html) command.
+
 ### 4 Play with the examples: Service Discovery
 Device:
 After the bootstrapping process, the device program will automatically broadcast its services to the system, where the controller will hear the information.
