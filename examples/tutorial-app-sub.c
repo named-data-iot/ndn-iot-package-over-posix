@@ -27,6 +27,7 @@
 #include "ndn-lite/app-support/access-control.h"
 #include "ndn-lite/app-support/security-bootstrapping.h"
 #include "ndn-lite/app-support/ndn-sig-verifier.h"
+#include "ndn-lite/app-support/policy.h"
 #include "ndn-lite/app-support/pub-sub.h"
 #include "ndn-lite/encode/key-storage.h"
 #include "ndn-lite/encode/ndn-rule-storage.h"
@@ -63,7 +64,7 @@ load_bootstrapping_info()
   FILE * fp;
   char buf[255];
   char* buf_ptr;
-  fp = fopen("tutorial_shared_info.txt", "r");
+  fp = fopen("../devices/tutorial_shared_info-24777.txt", "r");
   if (fp == NULL) exit(1);
   size_t i = 0;
   for (size_t lineindex = 0; lineindex < 4; lineindex++) {
@@ -186,7 +187,8 @@ after_bootstrapping()
     .payload = "hello",
     .payload_len = strlen("hello")
   };
-  ps_subscribe_to_content(NDN_SD_LED, "", 4000, on_light_data, NULL);
+  //ps_subscribe_to_content(NDN_SD_LED, "", 4000, on_light_data, NULL);
+  policy_start();
   ps_after_bootstrapping();
 }
 
@@ -220,9 +222,9 @@ main(int argc, char *argv[])
   capability[0] = NDN_SD_LED;
 
   // SET UP SERVICE DISCOVERY
-  sd_add_or_update_self_service(NDN_SD_LED, true, 1); // state code 1 means normal
-  ndn_ac_register_encryption_key_request(NDN_SD_LED);
-  // ndn_ac_register_access_request(NDN_SD_TEMP);
+  //sd_add_or_update_self_service(NDN_SD_LED, true, 1); // state code 1 means normal
+  //ndn_ac_register_encryption_key_request(NDN_SD_LED);
+  ndn_ac_register_access_request(NDN_SD_LED);
 
   // START BOOTSTRAPPING
   ndn_bootstrapping_info_t booststrapping_info = {
@@ -241,7 +243,7 @@ main(int argc, char *argv[])
   running = true;
   while(running) {
     ndn_forwarder_process();
-    usleep(10000);
+    usleep(200);
   }
 
   // DESTROY FACE

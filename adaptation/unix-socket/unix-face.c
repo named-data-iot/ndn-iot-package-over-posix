@@ -171,7 +171,6 @@ ndn_unix_face_send(ndn_face_intf_t* self, const uint8_t* packet, uint32_t size){
   ssize_t ret;
   ret = send(ptr->sock, packet, size, 0);
   if(ret != size){
-    //printf("ERROR: Send error %d\n", errno);
     return NDN_UNIX_FACE_SOCKET_ERROR;
   }else{
     return NDN_SUCCESS;
@@ -286,6 +285,7 @@ ndn_unix_face_recv(void *self, size_t param_len, void *param){
               sizeof(ptr->buf) - ptr->offset,
               0);
   if(size > 0){
+    printf("Some packets recved\n");
     // Some packets recved
     size += ptr->offset;
     for(buf = ptr->buf; buf < ptr->buf + size; buf += cur_size){
@@ -297,6 +297,7 @@ ndn_unix_face_recv(void *self, size_t param_len, void *param){
       if(buf + cur_size > ptr->buf + size){
         break;
       }
+      printf("forwarder receive success\n");
       ndn_forwarder_receive(&ptr->intf, buf, cur_size);
     }
     if(buf < ptr->buf + size){
