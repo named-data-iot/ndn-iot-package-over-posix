@@ -38,6 +38,7 @@ Run `./unittest` in the `build` folder.
 This requires two devices (e.g., two laptops, or one laptop one RaspberryPi) connected through WiFi ad-hoc or WiFi AP mode whose UDP multicast has been enabled.
 
 ### 1 Generate a QR code for the controller to scan
+**Note**: In `/device` folder there're few pre-generated shared secret and you can directly leverage them and skip this procedure
 We first generate the shared secret and a new pair of ECC keys on the device side:
 ```
 cd build
