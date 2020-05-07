@@ -164,109 +164,12 @@ on_light_command(const ps_event_context_t* context, const ps_event_t* event, voi
 
 void periodic_publish(size_t param_size, uint8_t* param_value) {
   static ndn_time_ms_t last;
-  // ps_event_t event = {
-  //   .data_id = "a",
-  //   .data_id_len = strlen("a"),
-  //   .payload = "hello",
-  //   .payload_len = strlen("hello")
-  // };
-
-
-
-/**
- * TLV_Type_Policy
- * TLV_Length_Policy
- *      TLV_Type_DataRule
- *      TLV_Length_DataRule
- *      TLV_Value_DataRule
- * 
- *      TLV_Type_KeyRule
- *      TLV_Length_KeyRule
- *      TLV_Value_KeyRule
- * 
- */
-
-  uint8_t buffer[200];
-  ndn_encoder_t encoder;
-
-
-  // encode datarule
-  encoder_init(&encoder, buffer, sizeof(buffer));
-  encoder_append_type(&encoder, TLV_POLICY_DATARULE);
-  const char* data_string = "(<>)(<>)<DATA>(<>)(<>)<>*";
-  encoder_append_length(&encoder, strlen(data_string) + 1);
-  encoder_append_raw_buffer_value(&encoder, data_string, strlen(data_string) + 1);
-
-  // encode keyrule
-  encoder_append_type(&encoder, TLV_POLICY_KEYRULE);
-  const char* key_string = "\\0\\1\\2\\3<KEY><>";
-  encoder_append_length(&encoder, strlen(key_string) + 1);
-  encoder_append_raw_buffer_value(&encoder, key_string, strlen(key_string) + 1);
-
-
-  // ps_event_t event = {
-  //   .data_id = "a",
-  //   .data_id_len = strlen("a"),
-  //   .payload = "dfcgvhbjk",
-  //   .payload_len = strlen("dfcgvhbjk")
-  // };
-
-  int ret_val = -1;
-  uint32_t probe_1, probe_2;;
-  ndn_decoder_t decoder;
-  ndn_trust_schema_rule_t rule;
-  decoder_init(&decoder, buffer, sizeof(buffer));
-  ret_val = decoder_get_type(&decoder, &probe_1);
-  if (ret_val != NDN_SUCCESS || probe_1 != TLV_POLICY_DATARULE) {
-    printf("policy datarule type not correct, probe_1 = %d\n", probe_1);
-  }
-
-  ret_val = decoder_get_length(&decoder, &probe_1);
-  if (ret_val != NDN_SUCCESS) {
-    printf("policy datarule length not correct\n");  
-  }
-
-  uint8_t datarule[40], keyrule[40];
-  ret_val = decoder_get_raw_buffer_value(&decoder, datarule, probe_1);
-
-
-  ret_val = decoder_get_type(&decoder, &probe_2);
-  ret_val = decoder_get_length(&decoder, &probe_2);
-  ret_val = decoder_get_raw_buffer_value(&decoder, keyrule, probe_2);
-
-
-  ret_val = ndn_trust_schema_rule_from_strings(&rule, (char*)datarule, probe_1, (char*)keyrule, probe_2);
-  if (ret_val != NDN_SUCCESS) {
-    printf("constuct, error code is %d\n", ret_val); 
-  }
-
-  // update or create the "default" rule
-  ndn_trust_schema_rule_t* query = ndn_rule_storage_get_rule("default");
-  if (query) {
-      ret_val = ndn_trust_schema_pattern_from_string(&query->data_pattern, (char*)datarule, probe_1);
-      ret_val = ndn_trust_schema_pattern_from_string(&query->data_pattern, (char*)keyrule, probe_2);
-      if (ret_val != 0) {
-         printf("pattern, construct, error code is %d\n", ret_val); 
-        //return ret_val;
-      }
-  }
-
-  else {
-    ret_val = ndn_rule_storage_add_rule("default", &rule);
-    if (ret_val != 0) {
-      printf("add, error code is %d\n", ret_val); 
-      //return ret_val;
-    }
-  }
-
   ps_event_t event = {
     .data_id = "a",
     .data_id_len = strlen("a"),
-    .payload = buffer,
-    .payload_len = encoder.offset
+    .payload = "hello",
+    .payload_len = strlen("hello")
   };
-
-
 
   if (ndn_time_now_ms() - last >= 400000) {
     ps_publish_content(NDN_SD_LED, &event);
@@ -278,9 +181,8 @@ void periodic_publish(size_t param_size, uint8_t* param_value) {
 void
 after_bootstrapping()
 {
- // ps_subscribe_to_command(NDN_SD_LED, "", on_light_command, NULL);
-  uint64_t interval = 4000;
-  periodic_publish(sizeof(interval), &interval);
+  ps_subscribe_to_command(NDN_SD_LED, "", on_light_command, NULL);
+  periodic_publish(0, NULL);
 }
 
 void SignalHandler(int signum){
