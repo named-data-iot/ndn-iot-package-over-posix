@@ -180,15 +180,7 @@ on_light_data(const ps_event_context_t* context, const ps_event_t* event, void* 
 void
 after_bootstrapping()
 {
-  ps_subscribe_to_command(NDN_SD_LED, "", on_light_command, NULL);
-  ps_event_t event = {
-    .data_id = "a",
-    .data_id_len = strlen("a"),
-    .payload = "hello",
-    .payload_len = strlen("hello")
-  };
-  //ps_subscribe_to_content(NDN_SD_LED, "", 4000, on_light_data, NULL);
-  policy_start();
+  ps_subscribe_to_content(NDN_SD_LED, "", 4000, on_light_data, NULL);
   ps_after_bootstrapping();
 }
 
@@ -219,11 +211,14 @@ main(int argc, char *argv[])
 
   // LOAD SERVICES PROVIDED BY SELF DEVICE
   uint8_t capability[1];
-  capability[0] = NDN_SD_LED;
+  capability[0] = NDN_SD_TEMP;
+  //capability[1] = NDN_SD_TEMP;
 
   // SET UP SERVICE DISCOVERY
   //sd_add_or_update_self_service(NDN_SD_LED, true, 1); // state code 1 means normal
+  sd_add_or_update_self_service(NDN_SD_TEMP, true, 1); 
   //ndn_ac_register_encryption_key_request(NDN_SD_LED);
+  //ndn_ac_register_encryption_key_request(NDN_SD_TEMP);
   ndn_ac_register_access_request(NDN_SD_LED);
 
   // START BOOTSTRAPPING
