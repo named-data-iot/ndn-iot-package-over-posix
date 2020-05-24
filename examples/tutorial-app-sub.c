@@ -180,6 +180,7 @@ on_light_data(const ps_event_context_t* context, const ps_event_t* event, void* 
 void
 after_bootstrapping()
 {
+  ndn_time_delay(30);
   ps_subscribe_to_content(NDN_SD_LED, "", 4000, on_light_data, NULL);
   ps_after_bootstrapping();
 }
