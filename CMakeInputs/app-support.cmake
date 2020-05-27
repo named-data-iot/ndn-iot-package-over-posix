@@ -6,6 +6,7 @@ target_sources(ndn-lite PUBLIC
   ${DIR_APP_SUPPORT}/ndn-sig-verifier.h
   ${DIR_APP_SUPPORT}/pub-sub.h
   ${DIR_APP_SUPPORT}/policy.h
+  ${DIR_APP_SUPPORT}/policy.h
   ${DIR_APP_SUPPORT}/ndn-trust-schema.h
 )
 target_sources(ndn-lite PRIVATE
@@ -15,6 +16,7 @@ target_sources(ndn-lite PRIVATE
   ${DIR_APP_SUPPORT}/ndn-sig-verifier.c
   ${DIR_APP_SUPPORT}/pub-sub.c
   ${DIR_APP_SUPPORT}/policy.c
+  ${DIR_APP_SUPPORT}/repo.c
   ${DIR_APP_SUPPORT}/ndn-trust-schema.c
 )
 unset(DIR_APP_SUPPORT)

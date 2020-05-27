@@ -23,6 +23,7 @@ set(LIST_EXAMPLES
 #  "file-transfer-server"
 #  "bootstrap"
 #  "iot-light"
+   "test-repo"
 )
 foreach(EXAM_NAME IN LISTS LIST_EXAMPLES)
   add_executable(${EXAM_NAME} "${DIR_EXAMPLES}/${EXAM_NAME}.c")

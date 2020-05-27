@@ -297,7 +297,6 @@ ndn_unix_face_recv(void *self, size_t param_len, void *param){
       if(buf + cur_size > ptr->buf + size){
         break;
       }
-      printf("forwarder receive success\n");
       ndn_forwarder_receive(&ptr->intf, buf, cur_size);
     }
     if(buf < ptr->buf + size){
