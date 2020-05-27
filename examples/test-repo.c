@@ -47,11 +47,6 @@ ndn_unix_face_t *face;
 uint8_t buf[4096];
 // Wether the program is running or not
 bool running;
-// A global var to keep the brightness
-uint8_t light_brightness = 0;
-
-static ndn_trust_schema_rule_t same_room;
-static ndn_trust_schema_rule_t controller_only;
 
 int
 load_bootstrapping_info()
