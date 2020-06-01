@@ -297,7 +297,9 @@ ndn_unix_face_recv(void *self, size_t param_len, void *param){
       if(buf + cur_size > ptr->buf + size){
         break;
       }
-      ndn_forwarder_receive(&ptr->intf, buf, cur_size);
+      int ret = ndn_forwarder_receive(&ptr->intf, buf, cur_size);
+      if (ret != NDN_SUCCESS)
+          printf("forwarder receive fail, error code = %d\n", ret);
     }
     if(buf < ptr->buf + size){
       // TODO: Too large packets will block the receive.
