@@ -1,11 +1,8 @@
 dist: bionic
 language: c
 compiler: gcc
-before_install:
-  - sudo apt-get update
-  - sudo apt install -y libcunit1 cmake
 script:
-  - cd ndn-lite-tests && mkdir build && cd build
-  - cmake -DCMAKE_BUILD_TYPE=Debug ..
+  - mkdir build && cd build
+  - cmake -DCMAKE_BUILD_TYPE=E=Release ..
   - make -j2
   - ./unittest

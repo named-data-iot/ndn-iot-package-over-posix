@@ -1,4 +1,26 @@
-set(DIR_UNITTESTS "${PROJECT_SOURCE_DIR}/ndn-riot-tests")
+set(DIR_UNITTESTS "${PROJECT_SOURCE_DIR}/ndn-lite-tests/unit-tests")
+
+# Include CUnit
+target_sources(unittest PRIVATE
+  "${DIR_UNITTESTS}/CUnit/TestDB.h"
+  "${DIR_UNITTESTS}/CUnit/TestDB.c"
+  "${DIR_UNITTESTS}/CUnit/TestRun.h"
+  "${DIR_UNITTESTS}/CUnit/TestRun.c"
+  "${DIR_UNITTESTS}/CUnit/MyMem.h"
+  "${DIR_UNITTESTS}/CUnit/MyMem.c"
+  "${DIR_UNITTESTS}/CUnit/Util.h"
+  "${DIR_UNITTESTS}/CUnit/Util.c"
+  "${DIR_UNITTESTS}/CUnit/CUError.h"
+  "${DIR_UNITTESTS}/CUnit/CUError.c"
+  "${DIR_UNITTESTS}/CUnit/CUnit_intl.h"
+  "${DIR_UNITTESTS}/CUnit/CUnit.h"
+  "${DIR_UNITTESTS}/CUnit/Basic.h"
+  "${DIR_UNITTESTS}/CUnit/Basic.c"
+  "${DIR_UNITTESTS}/CUnit/Automated.h"
+  "${DIR_UNITTESTS}/CUnit/Automated.c"
+  "${DIR_UNITTESTS}/CUnit/Console.h"
+  "${DIR_UNITTESTS}/CUnit/Console.c"
+)
 
 # Main files
 target_sources(unittest PRIVATE
@@ -11,16 +33,16 @@ target_sources(unittest PRIVATE
 
 # Well-named tests
 set(LIST_TESTS
-#  "access-control"
+  # "access-control"
   "data"
   "encoder-decoder"
   "forwarder"
-  "fragmentation-support"
+  # "fragmentation-support"
   "interest"
   "metainfo"
   "name-encode-decode"
   "random"
-# "service-discovery"
+  # "service-discovery"
   "signature"
   "util"
 )
@@ -68,4 +90,27 @@ target_sources(unittest PRIVATE
   "${DIR_UNITTESTS}/schematized-trust/trust-schema-tests.c"
   "${DIR_UNITTESTS}/schematized-trust/trust-schema-tests-def.h"
   "${DIR_UNITTESTS}/schematized-trust/trust-schema-tests-def.c"
+)
+
+set(LIST_TESTS
+  "fragmentation-support"
+)
+foreach(TESTNAME IN LISTS LIST_TESTS)
+  target_sources(unittest PRIVATE
+    "${DIR_UNITTESTS}/${TESTNAME}/${TESTNAME}-tests.h"
+    "${DIR_UNITTESTS}/${TESTNAME}/${TESTNAME}-tests.c"
+  )
+endforeach()
+unset(LIST_TESTS)
+
+target_sources(unittest PRIVATE
+  "${DIR_UNITTESTS}/fib/fib-tests.h"
+  "${DIR_UNITTESTS}/fib/fib-tests.c"
+)
+
+target_sources(unittest PRIVATE
+  "${DIR_UNITTESTS}/forwarder-with-fragmentation-support/dummy-face-with-mtu.h"
+  "${DIR_UNITTESTS}/forwarder-with-fragmentation-support/dummy-face-with-mtu.c"
+  "${DIR_UNITTESTS}/forwarder-with-fragmentation-support/forwarder-fragmentation-tests.h"
+  "${DIR_UNITTESTS}/forwarder-with-fragmentation-support/forwarder-fragmentation-tests.c"
 )
