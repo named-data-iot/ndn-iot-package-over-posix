@@ -1,9 +1,6 @@
 [submodule "ndn-lite"]
 	path = ndn-lite
 	url = https://github.com/named-data-iot/ndn-lite.git
-[submodule "ndn-riot-tests"]
-  path = ndn-riot-tests
-  url = https://github.com/named-data-iot/ndn-riot-tests.git
 [submodule "ndn-lite-tests"]
 	path = ndn-lite-tests
 	url = https://github.com/named-data-iot/ndn-lite-tests
