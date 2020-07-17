@@ -5,22 +5,21 @@ Prepare a NDN environment
 --------------
 
 #. `Get Started with ndn-cxx`_
+    .. _`Get Started with ndn-cxx`: https://named-data.net/doc/ndn-cxx/current/INSTALL.html
 #. `Get Started with NFD`_
-    Notice: Please build from source
-
-#. Start your NFD 
-
+    .. _`Get Started with NFD`: https://named-data.net/doc/NFD/current/INSTALL.html
+#. Start your NFD:
     .. code-block:: bash
         $ nfd-start
 
+Notice: Please build ndn-cxx and NFD from source.
 
-.. _`Get Started with ndn-cxx`: https://named-data.net/doc/ndn-cxx/current/INSTALL.html
-.. _`Get Started with NFD`: https://named-data.net/doc/NFD/current/INSTALL.html
 
 Set up the IoT system controller
 --------------
 
-Download and _ndn-iot-controller: http://github.com/named-data-iot/ndn-iot-controller
+Download and ndn-iot-controller_:
+.. _ndn-iot-controller_: http://github.com/named-data-iot/ndn-iot-controller
 
 .. code-block:: bash
     $ cd /path/to/controller
