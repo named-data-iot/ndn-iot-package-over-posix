@@ -6,13 +6,15 @@ Prepare a NDN environment
 
 #. `Get Started with ndn-cxx`_
 #. `Get Started with NFD`_
-#. Start your NFD:
-    .. code-block:: bash
-
-        $ nfd-start
 
 .. _Get Started with ndn-cxx: https://named-data.net/doc/ndn-cxx/current/INSTALL.html
 .. _Get Started with NFD: https://named-data.net/doc/NFD/current/INSTALL.html
+
+Start your NFD:
+
+.. code-block:: bash
+
+    $ nfd-start
 
 Notice: Please build ndn-cxx and NFD from source.
 
@@ -20,7 +22,7 @@ Notice: Please build ndn-cxx and NFD from source.
 Set up the IoT system controller
 --------------
 
-Download and ndn-iot-controller_:
+Download and execute ndn-iot-controller_:
 
 .. code-block:: bash
 
@@ -32,8 +34,10 @@ Download and ndn-iot-controller_:
 Install dependencies (if you're using macOS or brew):
 
 .. code-block:: bash
+
     $ brew install zbar leveldb
-    
+
+
 Set up development environment:
 
 .. code-block:: bash
@@ -46,6 +50,8 @@ Run the controller server:
 .. code-block:: bash
 
     $ ./venv/bin/python app.py
+
+
 
 Share QR Code and bootstrap Device
 -------------
