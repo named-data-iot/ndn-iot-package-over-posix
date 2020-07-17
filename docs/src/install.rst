@@ -14,6 +14,7 @@ Download the latest version with git:
 Create a new directory and configure with cmake:
 
 .. code-block:: bash
+
     $ mkdir build
     $ cd build
     $ cmake -DCMAKE_BUILD_TYPE=Release ..
@@ -23,6 +24,7 @@ Build
 build all examples and unittests:
 
 .. code-block:: bash
+
     $ make -j2
 
 Optionally, you can check if current APIs comptiable with each other by running all tests
