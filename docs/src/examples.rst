@@ -4,16 +4,18 @@ Quickstart Examples
 Prepare a NDN environment
 --------------
 
-#. _`Get Started with ndn-cxx`: https://named-data.net/doc/ndn-cxx/current/INSTALL.html
-#. _`Get Started with NFD`: https://named-data.net/doc/NFD/current/INSTALL.html
-
+#. `Get Started with ndn-cxx`_
+#. `Get Started with NFD`_
     Notice: Please build from source
-    
+
 #. Start your NFD 
 
     .. code-block:: bash
         $ nfd-start
 
+
+.. _`Get Started with ndn-cxx`: https://named-data.net/doc/ndn-cxx/current/INSTALL.html
+.. _`Get Started with NFD`: https://named-data.net/doc/NFD/current/INSTALL.html
 
 Set up the IoT system controller
 --------------
