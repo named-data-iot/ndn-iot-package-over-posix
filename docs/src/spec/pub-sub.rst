@@ -1,5 +1,5 @@
 Publish/Subscribe System
-=======
+=============================
 
 The Publish/Subscribe system constitute the core of package. 
 Principally, every application data exchanges should be wrapped into the Pub/Sub.
@@ -8,13 +8,13 @@ Topic
 ------------
 Topic definition is foundation of building any Pub/Sub system.
 In this package, Topic is defined as series of name components connected by ``/``.
-Based on longest prefix match, a topic can also be a *child topic8, or *parent topic* of another topic.
+Based on longest prefix match, a topic can also be a *child topic*, or *parent topic* of another topic.
 For example:
 
     +-------------+---------------+------------------+
     | Topic       | Child Topic   |  Parent Topic    |
     +=============+===============+==================+
-    | /A          | /A/B          | /                |
+    | /A          | /A/B;         | /                |
     |             | /A/B/C        |                  |
     +-------------+---------------+------------------+
     | /A/B        | /A/B/C        | /                |
@@ -30,12 +30,12 @@ In current design, topic hierachy has two level: *room* and *individual device*.
     +-------------+-----------------------------+------------------+
     | Topic       | Child Topic                 |  Parent Topic    |
     +=============+=============================+==================+
-    | /living     | /living/device-398          | /                |
+    | /living     | /living/device-398;         | /                |
     |             | /living/device-24777        |                  |
     +-------------+-----------------------------+------------------+
 
 Subscriber and Publisher
----------------
+-----------------------------
 In this package, any instance that can send data to *topics* is publisher, and any instance that can receive data from *topics* is subscriber.
 A device instance can be publisher and subscriber at the same time.
 
@@ -48,7 +48,7 @@ With a hierachical topic layout, subscrption to any topic is equilavent to subsc
     +------------------------+-----------------------------+
     | Subscribe to Topic     | Equilavent to Subscribing to|
     +========================+=============================+
-    | /A                     | /A/B                        |
+    | /A                     | /A/B;                       |
     |                        | /A/B/C                      |
     +------------------------+-----------------------------+
 
@@ -57,13 +57,13 @@ Publishing to any topic is equilavent to publishing to the topic itself and also
     +------------------------+-----------------------------+
     | Publish to Topic       | Equilavent to Publishing on |
     +========================+=============================+
-    | /A/B                   | /A/B                        |
-    |                        | /A                          |
+    | /A/B                   | /A/B;                       |
+    |                        | /A;                         |
     |                        | /                           |
     +------------------------+-----------------------------+
 
 API Reference
----------------
+-------------------
 
 API for Pub/Sub should at least three pieces:
 #. Topic targeted
@@ -127,4 +127,3 @@ Similarly, other APIs are provided as follows. *Content* and *Command* are treat
     */
     void
     ps_publish_command(uint8_t service, const char* scope, const ps_event_t* event);
-
