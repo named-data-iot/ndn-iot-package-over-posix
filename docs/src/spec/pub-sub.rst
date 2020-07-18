@@ -116,8 +116,6 @@ Similarly, other APIs are provided as follows. *Content* and *Command* are treat
     /** publish data
     * This function will publish data to a content repo.
     * Data format: /home-prefix/service/DATA/my-identifiers/timestamp
-    * @TODO: for now I added a timestamp after Data name. Need more discussion, e.g., use nonce? sequence?
-    * @TODO: for now I used a default freshness period of the data. Need more discussion, e.g., user-specified?
     */
     void
     ps_publish_content(uint8_t service, const ps_event_t* event);
