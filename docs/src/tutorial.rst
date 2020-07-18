@@ -57,7 +57,7 @@ Some pre-defined services are in ``/<project-root>/ndn-lite/ndn-services.h``. Yo
     //ndn_ac_register_access_request(NDN_SD_LED);
 
 
-Bootstrappiing and Callbacks
+Bootstrapping and Callbacks
 --------------
 Before bootstrapping device onto controller, pre-shared crypto keys and identifiers should be loaded and wrap into the sign-on request. 
 

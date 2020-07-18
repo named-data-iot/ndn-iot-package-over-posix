@@ -1,4 +1,4 @@
-Download and and Build
+Download and Build
 ===============
 
 Download
