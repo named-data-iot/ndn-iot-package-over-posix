@@ -1,4 +1,4 @@
-Design Drafts of the NDN-Lite Forwarder
+Design Drafts of the NDN-Lite Forwarder (**Discarded**)
 =======================================
 
 Occasional Dead Nonce List
