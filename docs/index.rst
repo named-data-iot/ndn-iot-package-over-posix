@@ -10,11 +10,12 @@ Welcome to ndn-iot-package-over-posix's documentation!
    :maxdepth: 2
    :caption: Contents:
 
-   src/spec/pub-sub.rst
    src/readme.rst
    src/install.rst
    src/examples.rst
    src/tutorial.rst
+   src/spec/pub-sub.rst
+   src/spec/trust-policy.rst
    src/authors.rst
    src/future.rst
 
