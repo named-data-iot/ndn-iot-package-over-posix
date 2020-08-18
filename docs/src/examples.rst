@@ -1,6 +1,11 @@
 Quickstart Examples
 ========
 
+The ndn-lite-docker-image_ has NFD and IoT System Controller pre-installed. 
+If it's used as your development environment, please skip to `Share QR Code and bootstrap Device`_.
+
+.. _ndn-lite-docker-image: install.html#docker-image
+
 Prepare a NDN environment
 --------------
 
