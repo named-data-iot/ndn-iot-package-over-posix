@@ -71,7 +71,11 @@ There're some pre-generated QR codes in folder ``/<project-root>/devices``. Hard
     | tutorial-app-sub     | device-24777.png           |
     +----------------------+----------------------------+
 
-Open controller's UI in browser at ``127.0.0.1:6060``, then click ``Device Bootstrapping`` button, a blank for uploading QR code should show up.
+Open controller's UI in browser at ``127.0.0.1:6060``, then click ``Device Bootstrapping`` button, a blank for uploading QR code should show up, as shown in the following picture.
+
+.. image:: images/bootstrap.png
+  :width: 800
+  :alt: The Bootstrap UI
 
 We upload ``device-398.png`` to the blank, and click ``bootstrap`` button, which enable controller waiting for bootstrapping request in the following 5 seconds.
 
@@ -91,9 +95,15 @@ This ``device-398`` has two functions:
 Play with Example Command
 --------------
 
-Click ``Service Invocation`` button, you shall see a form asking for interested service and command parameters.
+Click ``Invoke Service`` button, you shall see a form asking for interested service and command parameters:
+
+.. image:: images/issuecommand.png
+  :width: 600
+  :alt: Service invocation
+
 Given now only one device has been bootstrapped, only one ``service`` can be selected. 
-Input any integer between 0 and 100 and send command, in the terminal which runs tutoriala-app, device side result should show.
+Then, select ``Issue Command``.
+Input any ``command`` id and input an integer between 0 and 100 as the ``parameter``. This command is supposed to send LED brightness to the device. Send command by clicking ``express interest to invoke service``, in the terminal which runs tutoriala-app, device side result should show.
 
 
 Fetch a Published Content
