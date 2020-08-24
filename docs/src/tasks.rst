@@ -1,13 +1,7 @@
 Tasks
 ============
 
-#. `Get Started with ndn-cxx`_
-#. `Get Started with NFD`_
-
-.. _Get Started with ndn-cxx: https://named-data.net/doc/ndn-cxx/current/INSTALL.html
-.. _Get Started with NFD: https://named-data.net/doc/NFD/current/INSTALL.html
-
-You can try simple development tasks with this package.
+After getting familar with the package by going through tutorial, you can try simple development tasks with this package.
 
 Task 1: if-smoke-then-alarm (if smoke,  then alarm)
 --------------
