@@ -1,7 +1,7 @@
 Quickstart Examples
 ========
 
-The ndn-lite-docker-image_ has NFD and IoT System Controller pre-installed. 
+The ndn-lite-docker-image_ has NFD and IoT System Controller pre-installed. It is **highely recommanded** to use it to save time.
 If it's used as your development environment, please skip to `Share QR Code and bootstrap Device`_.
 
 .. _ndn-lite-docker-image: install.html#docker-image
@@ -89,8 +89,16 @@ Now run the corresponding device program inside this 5-second bootstrapping wind
 In this process, controller may ask for ``sudo``, please give our access.
 
 This ``device-398`` has two functions:
+
 #. Subscribe to LED command and adjust illuminance value based on command content
 #. Publish a string ``hello`` to a pre-defined topic every 400000ms
+
+**Note:** When you stop a running ndn-lite application and want to restart, you have to re-bootstrap the device. Before that, please **delete the device from the controller**. To do so, please use the "device list" page in controller and hit ``remove``. As shown in the image below.
+Failure to do so will crash the application with ``TLV Type (should be TLV_AC_KEYID) not correct`` error.
+
+.. image:: images/delete_device.png
+  :width: 800
+  :alt: The device list UI
 
 Play with Example Command
 --------------

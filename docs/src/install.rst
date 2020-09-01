@@ -1,6 +1,38 @@
 Download and Build
 ===============
 
+Docker image
+------------
+
+A `docker image`_ with compiled ndn-iot-package-over-linux package can be used as the base development environment. 
+
+The image is based on Ubuntu. It contains all dependencies for this package, including dependencies for the `Quickstart Examples`_.
+It is **highly recommanded** to use this image to save time for preparing the development environment.
+
+.. _Quickstart Examples: examples.html
+.. _docker image: https://github.com/shsssc/ndn-lite-docker-image
+
+To use the image, you can download the latest version using git:
+
+.. code-block:: bash
+
+    $ git clone https://github.com/shsssc/ndn-lite-docker-image
+    $ cd ndn-lite-docker-image
+
+To build the image:
+
+.. code-block:: bash
+
+    $ docker build --tag ndnlite:0.1 .
+
+To use the image for development:
+
+.. code-block:: bash
+
+    $ docker run -d -p6060:6060 --name ndnlite-container ndnlite:0.1 #start the container with iot-controller on http://localhost:6060
+    $ docker exec -it ndnlite-container /bin/bash #run shell in the container
+
+
 Download
 -------
 
@@ -52,33 +84,3 @@ Compile the documentation with Sphinx:
     $ cd docs && pip3 install -r requirements.txt
     $ make html
     $ open _build/html/index.html
-
-Docker image
-------------
-
-A `docker image`_ with compiled ndn-iot-package-over-linux package can be used as the base development environment.
-
-The image is based on Ubuntu. It contains all dependencies for this package, including dependencies for the `Quickstart Examples`_.
-
-.. _Quickstart Examples: examples.html
-.. _docker image: https://github.com/shsssc/ndn-lite-docker-image
-
-To use the image, you can download the latest version using git:
-
-.. code-block:: bash
-
-    $ git clone https://github.com/shsssc/ndn-lite-docker-image
-    $ cd ndn-lite-docker-image
-
-To build the image:
-
-.. code-block:: bash
-
-    $ docker build --tag ndnlite:0.1 .
-
-To use the image for development:
-
-.. code-block:: bash
-
-    $ docker run -d -p6060:6060 --name ndnlite-container ndnlite:0.1 #start the container with iot-controller on http://localhost:6060
-    $ docker exec -it ndnlite-container /bin/bash #run shell in the container
