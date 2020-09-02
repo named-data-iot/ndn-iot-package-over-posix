@@ -3,23 +3,41 @@ Tasks
 
 After getting familar with the package by going through tutorial, you can try simple development tasks with this package.
 
+Each of the task is a home automation senario where your application read result from one sensor and give commands to another device accrodingly.
+To facilitize the testing of your application, we provide `ndn-lite-mock-utils`_ to generate mock devices needed.
+
+.. _ndn-lite-mock-utils: https://github.com/shsssc/ndn-lite-mock-utils/blob/master/devices/
+
+To generate a mocked smoke detector and a mocked alarm, you can use:
+
+.. code-block:: bash
+
+    $ make TASK=if-smoke-then-alarm
+
+And then the binary of the devices together with their credentials are ready to use in the same directory.
+The newly generated ``command_receiver`` can be used as the alarm, and ``sensor`` can be used as the smoke detector.
+
+You can see the `code and documentation`_ of this library for more details.
+
+.. _code and documentation: https://github.com/shsssc/ndn-lite-mock-utils/blob/master/devices/
+
+**Note:** to prevent credential conflict, please **remove all devices from the iot-controller (especially tutorial-app and tutorial-app-sub)** as instructed in `Quickstart Examples`_ before you start these tasks.
+
+Also, please use ``device-63884`` credentials in the ``/devices`` directory of the ndn-iot-package-over-posix for your automation applciation.
+
+.. _Quickstart Examples: examples.html#share-qr-code-and-bootstrap-device
+
 Task 1: if-smoke-then-alarm (if smoke,  then alarm)
 --------------
 Try to develop a ``if-smoke-then-alarm automation`` logic.
 This application should subscribe content from a ``smoke`` topic, and publish command to ``alarm`` topic.
 Data published by smoke detector can be binary: ``0 -- no smoke, 1 -- smoke``.
-Unfortunately, you have to implement the smoke detector and alarm by yourself.
-We have some `helper functions`_ that you may interest in.
-
-.. _helper functions: https://github.com/shsssc/ndn-lite-mock-utils 
 
 Task 2: its-too-hot (if temp > 80, then air conditioning on)
 --------------
 Try to develop an home automation that control your air conditioner.
 This application should subscribe content from some temperature sensors, and publish command to ``air conditioner`` service.
 Whenever current temperature is above 80 degree, this application should try to turn the air conditioner.
-You may need to implement temperature sensor and air conditioner's logic in addition to the application logic described above.
-But with our previously mentioned helpers, this should be easy.
 
 Task 3: turn-off-when-i-leave (if no motion > 5 minute, turn off light)
 -------------
