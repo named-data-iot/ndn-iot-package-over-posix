@@ -7,7 +7,7 @@ Initialization
 --------------
 The device instance is initialized by loading pre-shared secrets. 
 As you can see from the definition of ``load_bootstrapping_info``, it will read some hard coded ``.txt`` file, which will give the initial crypto keys and device identifiers.
-``ndn_lite_startup`` is an essential function in initialization and should not be removed.
+``ndn_lite_startup`` is an essential function to initialize various in-library states (e.g., key storage, service list) and platform-specific configurations.
 
 .. code-block:: c
 
@@ -38,10 +38,17 @@ Otherwise, you can specify a multicast face ``udp4://224.0.23.170:56363`` for da
 
 Load, Advertise and Register Services
 --------------
+Our package abstracts devices/applications (noted as instance below) into services - that is, what home service the device/application is associated with. 
+This allows us to build applications that can work with any device that supports a given associated home service. 
+Services, from instances' prespective, are categorized into *access-requested* that device instance subscribes to that service thus need access key, and *encryption-requested* that means device instance will need a encryption key to publish data into that service.
+
 In this package, before running into the main loop, one should specify the services to be used.
-When entering the event loop, device instance will advertise registered services to the system and ask controller for keys.
-Services, from device's prespective, are categorized into *access-requested*, which device instance subscribes to that service thus need access key, and *encryption-requested*, which means device instance will need a encryption key to publish data into that service.
-In ``tutorial-app.c``, device instance need to advertise service ``NDN_SD_LED`` and request encryption key for it.
+By calling ``sd_add_or_update_self_service()``, instance will advertise given services to the IoT controller when entering the main loop so that IoT controller knows who is providing which service. 
+If an instance is interested in publishing messages in certain services, it should call ``ndn_ac_register_encryption_key_request()`` to request encryption key for that service.
+If an instance is interested in receiving messages from certain services, access keys should be requested by calling ``ndn_ac_register_access_key_request()``.
+Requesting encryption or access keys should be prior to any ``ps_publish_to()`` or ``ps_subscribe_to()`` calls so that the latter two have necessary keys to correctly execute.
+
+**Note: It is the instances who actually publish commands/content, not services. Services are only the abstractions of instances.** 
 
 Some pre-defined services are in ``/<project-root>/ndn-lite/ndn-services.h``. You can define your own services in similar approaches.
 
