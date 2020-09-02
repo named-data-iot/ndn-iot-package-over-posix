@@ -93,7 +93,7 @@ This ``device-398`` has two functions:
 #. Subscribe to LED command and adjust illuminance value based on command content
 #. Publish a string ``hello`` to a pre-defined topic every 400000ms
 
-**Note:** When you stop a running ndn-lite application and want to restart, you have to re-bootstrap the device. Before that, please **delete the device from the controller**. To do so, please use the "device list" page in controller and hit ``remove``. As shown in the image below.
+**Note:** When you stop a running ndn-lite application or disconnected a device and want to reconnect, you have to re-bootstrap the device. Before that, please **delete the device from the controller**. To do so, please use the "device list" page in controller and hit ``remove``. As shown in the image below.
 Failure to do so will crash the application with ``TLV Type (should be TLV_AC_KEYID) not correct`` error.
 
 .. image:: images/delete_device.png
