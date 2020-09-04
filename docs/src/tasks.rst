@@ -30,8 +30,11 @@ Also, please use ``device-63884`` credentials in the ``/devices`` directory of t
 Task 1: if-smoke-then-alarm (if smoke,  then alarm)
 --------------
 Try to develop a ``if-smoke-then-alarm automation`` logic.
-This application should subscribe content from a ``smoke`` topic, and publish command to ``alarm`` topic.
+There should be a smoke detector that publishes content to ``smoke`` service, and a alarm that subscribes to ``alarm`` service. 
 Data published by smoke detector can be binary: ``0 -- no smoke, 1 -- smoke``.
+This application should subscribe content from a ``smoke`` topic, and publish command to ``alarm`` topic.
+Payload carried in command can be binary, too: ``0 -- alarm off, 1 -- alarm on``.
+Three identities are invovled in total.
 
 Task 2: its-too-hot (if temp > 80, then air conditioning on)
 --------------
