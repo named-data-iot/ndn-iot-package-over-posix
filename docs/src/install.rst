@@ -1,6 +1,9 @@
 Download and Build
 ===============
 
+We use docker container for development environment.
+If you're on macOS, you can also use the Non-Docker build approach.
+
 Docker image
 ------------
 
@@ -32,9 +35,8 @@ To use the image for development:
     $ docker run -d -p6060:6060 --name ndnlite-container ndnlite:0.1 #start the container with iot-controller on http://localhost:6060
     $ docker exec -it ndnlite-container /bin/bash #run shell in the container
 
-
-Download
--------
+Non Docker Build (macOS)
+-------------
 
 Download the latest version with git:
 
@@ -51,8 +53,6 @@ Create a new directory and configure with cmake:
     $ cd build
     $ cmake -DCMAKE_BUILD_TYPE=Release ..
 
-Build
--------
 build all examples and unittests:
 
 .. code-block:: bash
@@ -66,16 +66,8 @@ Optionally, you can check if current APIs comptiable with each other by running 
     $ ./unittest
 
 
-
 Instruction for developers
 --------------------------
-
-Optionally, you can check if current APIs comptiable with each other by running all tests:
-
-.. code-block:: bash
-
-    $ ./unittest
-
 
 Compile the documentation with Sphinx:
 
