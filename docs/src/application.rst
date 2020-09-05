@@ -15,13 +15,13 @@ This application subscribe to "TEMP" service with locator "/livingroom" and publ
 Two Device Programs and one Application are invovled:
 
     +----------------------------+----------------------------+--------------------+
-    | Device Program/Appliaction | Pre-generated QR Code      | Role               |
+    | Device Program/Application | Pre-generated QR Code      | Role               |
     +============================+============================+====================+
-    | tutorial-app               | device-398.png             | LED Light          |
+    | tutorial-app.c             | device-398.png             | LED Light          |
     +----------------------------+----------------------------+--------------------+
-    | tutorial-app-sub           | device-24777.png           | Temperature Sensor |
+    | tutorial-app-sub.c         | device-24777.png           | Temperature Sensor |
     +----------------------------+----------------------------+--------------------+
-    | app-template               | device-63884.png           | if-hot-then-light  |
+    | app-template.c             | device-63884.png           | if-hot-then-light  |
     +----------------------------+----------------------------+--------------------+
 
 When you play this demo application, bootstrap identities in three terminals in the order: device-398, device-24777, device-63884, so Device Program and Application can request keys on actually existing service.
