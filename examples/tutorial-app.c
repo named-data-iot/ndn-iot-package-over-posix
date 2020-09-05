@@ -57,7 +57,7 @@ load_bootstrapping_info()
   FILE * fp;
   char buf[255];
   char* buf_ptr;
-  fp = fopen("../devices/tutorial_shared_info-24777.txt", "r");
+  fp = fopen("../devices/tutorial_shared_info-398.txt", "r");
   if (fp == NULL) exit(1);
   size_t i = 0;
   for (size_t lineindex = 0; lineindex < 4; lineindex++) {
@@ -165,10 +165,10 @@ on_light_command(const ps_event_context_t* context, const ps_event_t* event, voi
 void periodic_publish(size_t param_size, uint8_t* param_value) {
   static ndn_time_ms_t last;
   ps_event_t event = {
-    .data_id = "a",
-    .data_id_len = strlen("a"),
-    .payload = "hello",
-    .payload_len = strlen("hello")
+    .data_id = "hello",
+    .data_id_len = strlen("hello"),
+    .payload = "liveness",
+    .payload_len = strlen("liveness")
   };
 
   if (ndn_time_now_ms() - last >= 400000) {
@@ -181,7 +181,7 @@ void periodic_publish(size_t param_size, uint8_t* param_value) {
 void
 after_bootstrapping()
 {
-  ps_subscribe_to_command(NDN_SD_LED, "", on_light_command, NULL);
+  ps_subscribe_to_command(NDN_SD_LED, "/livingroom", on_light_command, NULL);
   periodic_publish(0, NULL);
   // enable this when you subscribe to content
   //ps_after_bootstrapping();

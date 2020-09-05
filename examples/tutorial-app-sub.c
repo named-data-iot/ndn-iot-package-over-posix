@@ -64,7 +64,7 @@ load_bootstrapping_info()
   FILE * fp;
   char buf[255];
   char* buf_ptr;
-  fp = fopen("../devices/tutorial_shared_info-63884.txt", "r");
+  fp = fopen("../devices/tutorial_shared_info-24777.txt", "r");
   if (fp == NULL) exit(1);
   size_t i = 0;
   for (size_t lineindex = 0; lineindex < 4; lineindex++) {
@@ -115,58 +115,6 @@ load_bootstrapping_info()
   }
   printf("\n");
   return 0;
-}
-
-void
-on_light_command(const ps_event_context_t* context, const ps_event_t* event, void* userdata)
-{
-  printf("RECEIVED NEW COMMAND\n");
-  printf("Command id: %.*s\n", event->data_id_len, event->data_id);
-  printf("Command payload: %.*s\n", event->payload_len, event->payload);
-  printf("Scope: %s\n", context->scope);
-
-  int new_val;
-  // Execute the function
-  if (event->payload) {
-    // new_val = *real_payload;
-    char content_str[128] = {0};
-    memcpy(content_str, event->payload, event->payload_len);
-    content_str[event->payload_len] = '\0';
-    new_val = atoi(content_str);
-  }
-  else {
-    new_val = 0xFF;
-  }
-  if (new_val != 0xFF) {
-    if ((new_val > 0) != (light_brightness > 0)) {
-      if (new_val > 0) {
-        printf("Switch on the light.\n");
-      }
-      else {
-        printf("Turn off the light.\n");
-      }
-    }
-    if (new_val < 10) {
-      light_brightness = new_val;
-      if (light_brightness > 0) {
-        printf("Successfully set the brightness = %u\n", light_brightness);
-        ps_event_t data_content = {
-          .data_id = "a",
-          .data_id_len = strlen("a"),
-          .payload = &light_brightness,
-          .payload_len = 1
-        };
-        ps_publish_content(NDN_SD_LED, &data_content);
-      }
-    }
-    else {
-      light_brightness = 10;
-      printf("Exceeding range. Set the brightness = %u\n", light_brightness);
-    }
-  }
-  else {
-    printf("Query the brightness = %u\n", light_brightness);
-  }
 }
 
 void

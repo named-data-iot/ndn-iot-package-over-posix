@@ -54,7 +54,7 @@ load_bootstrapping_info()
   FILE * fp;
   char buf[255];
   char* buf_ptr;
-  fp = fopen("../devices/tutorial_shared_info-398.txt", "r");
+  fp = fopen("../devices/tutorial_shared_info-63884.txt", "r");
   if (fp == NULL) exit(1);
   size_t i = 0;
   for (size_t lineindex = 0; lineindex < 4; lineindex++) {
@@ -112,12 +112,25 @@ on_temp_content(const ps_event_context_t* context, const ps_event_t* event, void
 {
   printf("RECEIVED NEW DATA\n");
   printf("Data id: %.*s\n", event->data_id_len, event->data_id);
-  printf("Data payload: %.*s\n", event->payload_len, event->payload);
+  printf("Data payload: %d\n", event->payload_len, event->payload);
   printf("Scope: %s\n", context->scope);
-  
-  /* modify logc here */
-  ps_event_t command_event = *event;
-  ps_publish_command(NDN_SD_LED, "/", &command_event);
+
+  uint8_t temp = *event->payload;
+  if (temp < 80) {
+    printf("Below 80 degree, no need to turn on light\n");
+    return;
+  }
+  else {
+    uint8_t light_brightness = 30;
+    ps_event_t command_event = {
+      .data_id = "on",
+      .data_id_len = strlen("on"),
+      .payload = "30",
+      .payload_len = strlen("30")
+    };
+    printf("above 80 degree, no need to turn on light to brightness 30\n");
+    ps_publish_command(NDN_SD_LED, "/livingroom", &command_event);
+  }
 }
 
 void
