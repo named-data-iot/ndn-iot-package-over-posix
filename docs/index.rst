@@ -16,6 +16,7 @@ Welcome to ndn-iot-package-over-posix's documentation!
    src/examples.rst
    src/tutorial.rst
    src/shared-secrets-gen.rst
+   src/application.rst
    src/tasks.rst
    src/spec/pub-sub.rst
    src/spec/trust-policy.rst

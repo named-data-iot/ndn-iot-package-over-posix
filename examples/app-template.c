@@ -116,19 +116,18 @@ on_temp_content(const ps_event_context_t* context, const ps_event_t* event, void
   printf("Scope: %s\n", context->scope);
 
   uint8_t temp = *event->payload;
-  if (temp < 80) {
+  if (temp <= 80) {
     printf("Below 80 degree, no need to turn on light\n");
     return;
   }
   else {
-    uint8_t light_brightness = 30;
     ps_event_t command_event = {
       .data_id = "on",
       .data_id_len = strlen("on"),
-      .payload = "30",
-      .payload_len = strlen("30")
+      .payload = "3",
+      .payload_len = strlen("3")
     };
-    printf("above 80 degree, no need to turn on light to brightness 30\n");
+    printf("above 80 degree, no need to turn on light to brightness 30 percent\n");
     ps_publish_command(NDN_SD_LED, "/livingroom", &command_event);
   }
 }

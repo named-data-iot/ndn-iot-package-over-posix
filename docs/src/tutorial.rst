@@ -168,7 +168,7 @@ Symmetrically, there's a content subscription callback in ``tutorial-app-sub.c``
         printf("Scope: %s\n", context->scope);
     }
 
-Now you can play with ``tutorial-app`` and ``tutorial-app-sub`` to see how the Pub/Sub pair works.
+Now you can play with ``tutorial-app`` and ``tutorial-app-sub`` in two terminals to see how the Pub/Sub pair works.
 
 Note that ``tutorial-app`` should be online first so that ``tutorial-app-sub`` can request keys on an actual existing service.
 Because the "LED" service won't exist until former Device Program register it to the IoT controller.

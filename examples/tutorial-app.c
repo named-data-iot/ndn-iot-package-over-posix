@@ -143,13 +143,6 @@ on_light_command(const ps_event_context_t* context, const ps_event_t* event, voi
       light_brightness = new_val;
       if (light_brightness > 0) {
         printf("Successfully set the brightness = %u\n", light_brightness);
-        ps_event_t data_content = {
-          .data_id = "a",
-          .data_id_len = strlen("a"),
-          .payload = &light_brightness,
-          .payload_len = 1
-        };
-        ps_publish_content(NDN_SD_LED, &data_content);
       }
     }
     else {
@@ -181,7 +174,7 @@ void periodic_publish(size_t param_size, uint8_t* param_value) {
 void
 after_bootstrapping()
 {
-  ps_subscribe_to_command(NDN_SD_LED, "/livingroom", on_light_command, NULL);
+  ps_subscribe_to_command(NDN_SD_LED, "", on_light_command, NULL);
   periodic_publish(0, NULL);
   // enable this when you subscribe to content
   //ps_after_bootstrapping();

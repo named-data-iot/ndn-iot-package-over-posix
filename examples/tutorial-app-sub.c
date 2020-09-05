@@ -128,7 +128,7 @@ on_light_data(const ps_event_context_t* context, const ps_event_t* event, void* 
 
 void periodic_publish_temp(size_t param_size, uint8_t* param_value) {
   static ndn_time_ms_t last;
-  uint8_t temp = 80;
+  uint8_t temp = 90;
   ps_event_t event = {
     .data_id = "hello",
     .data_id_len = strlen("hello"),
