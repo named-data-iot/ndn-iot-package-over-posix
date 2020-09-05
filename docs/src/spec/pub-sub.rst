@@ -1,3 +1,5 @@
+.. _pubsub-label:
+
 Publish/Subscribe System
 =============================
 
