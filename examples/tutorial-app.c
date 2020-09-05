@@ -183,6 +183,8 @@ after_bootstrapping()
 {
   ps_subscribe_to_command(NDN_SD_LED, "", on_light_command, NULL);
   periodic_publish(0, NULL);
+  // enable this when you subscribe to content
+  //ps_after_bootstrapping();
 }
 
 void SignalHandler(int signum){

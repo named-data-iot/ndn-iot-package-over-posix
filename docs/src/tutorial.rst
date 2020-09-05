@@ -2,6 +2,7 @@ Tutorial
 ============
 
 After playing with quickstart examples, now we go through ``tutorial-app.c`` by lines to see the details.
+This is a typical LED Device Program that subscribes to command and publishes some hello messages in "LED" service. 
 
 Initialization
 --------------
@@ -94,6 +95,8 @@ In the quickstart examples, the behavior is subscribes to the LED command and pe
     {
         ps_subscribe_to_command(NDN_SD_LED, "", on_light_command, NULL);
         periodic_publish(0, NULL);
+        // enable this when you subscribe to content
+        //ps_after_bootstrapping();
     }
 
 ``on_light_command`` defines the logic upon receiving the command. You can use this as a template when writing command callbacks.
@@ -165,3 +168,7 @@ Symmetrically, there's a content subscription callback in ``tutorial-app-sub.c``
         printf("Scope: %s\n", context->scope);
     }
 
+Now you can play with ``tutorial-app`` and ``tutorial-app-sub`` to see how the Pub/Sub pair works.
+
+Note that ``tutorial-app`` should be online first so that ``tutorial-app-sub`` can request keys on an actual existing service.
+Because the "LED" service won't exist until former Device Program register it to the IoT controller.
