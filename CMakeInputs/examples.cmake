@@ -5,6 +5,7 @@ set(LIST_EXAMPLES
   "tutorial-gen-new-shared-info"
   "tutorial-app"
   "tutorial-app-sub"
+  "app-template"
 #  "ndn-lite-sd-peer"
 #  "udp-basic-producer"
 #  "udp-basic-consumer"

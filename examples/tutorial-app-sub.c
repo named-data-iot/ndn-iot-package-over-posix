@@ -64,7 +64,7 @@ load_bootstrapping_info()
   FILE * fp;
   char buf[255];
   char* buf_ptr;
-  fp = fopen("../devices/tutorial_shared_info-24777.txt", "r");
+  fp = fopen("../devices/tutorial_shared_info-63884.txt", "r");
   if (fp == NULL) exit(1);
   size_t i = 0;
   for (size_t lineindex = 0; lineindex < 4; lineindex++) {
@@ -177,11 +177,30 @@ on_light_data(const ps_event_context_t* context, const ps_event_t* event, void* 
   printf("Data payload: %.*s\n", event->payload_len, event->payload);
   printf("Scope: %s\n", context->scope);
 }
+
+void periodic_publish_temp(size_t param_size, uint8_t* param_value) {
+  static ndn_time_ms_t last;
+  uint8_t temp = 80;
+  ps_event_t event = {
+    .data_id = "hello",
+    .data_id_len = strlen("hello"),
+    .payload = &temp,
+    .payload_len = sizeof(temp) 
+  };
+
+  if (ndn_time_now_ms() - last >= 400000) {
+    ps_publish_content(NDN_SD_TEMP, &event);
+    last = ndn_time_now_ms();
+  }
+  ndn_msgqueue_post(NULL, periodic_publish_temp, 0, NULL);
+}
+
 void
 after_bootstrapping()
 {
   ndn_time_delay(30);
   ps_subscribe_to_content(NDN_SD_LED, "", 4000, on_light_data, NULL);
+  periodic_publish_temp(0, NULL);
   ps_after_bootstrapping();
 }
 
@@ -219,7 +238,7 @@ main(int argc, char *argv[])
   //sd_add_or_update_self_service(NDN_SD_LED, true, 1); // state code 1 means normal
   sd_add_or_update_self_service(NDN_SD_TEMP, true, 1); 
   //ndn_ac_register_encryption_key_request(NDN_SD_LED);
-  //ndn_ac_register_encryption_key_request(NDN_SD_TEMP);
+  ndn_ac_register_encryption_key_request(NDN_SD_TEMP);
   ndn_ac_register_access_request(NDN_SD_LED);
 
   // START BOOTSTRAPPING

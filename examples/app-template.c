@@ -48,16 +48,13 @@ bool running;
 // A global var to keep the brightness
 uint8_t light_brightness = 0;
 
-static ndn_trust_schema_rule_t same_room;
-static ndn_trust_schema_rule_t controller_only;
-
 int
 load_bootstrapping_info()
 {
   FILE * fp;
   char buf[255];
   char* buf_ptr;
-  fp = fopen("../devices/tutorial_shared_info-24777.txt", "r");
+  fp = fopen("../devices/tutorial_shared_info-398.txt", "r");
   if (fp == NULL) exit(1);
   size_t i = 0;
   for (size_t lineindex = 0; lineindex < 4; lineindex++) {
@@ -111,80 +108,24 @@ load_bootstrapping_info()
 }
 
 void
-on_light_command(const ps_event_context_t* context, const ps_event_t* event, void* userdata)
+on_temp_content(const ps_event_context_t* context, const ps_event_t* event, void* userdata)
 {
-  printf("RECEIVED NEW COMMAND\n");
-  printf("Command id: %.*s\n", event->data_id_len, event->data_id);
-  printf("Command payload: %.*s\n", event->payload_len, event->payload);
+  printf("RECEIVED NEW DATA\n");
+  printf("Data id: %.*s\n", event->data_id_len, event->data_id);
+  printf("Data payload: %.*s\n", event->payload_len, event->payload);
   printf("Scope: %s\n", context->scope);
-
-  int new_val;
-  // Execute the function
-  if (event->payload) {
-    // new_val = *real_payload;
-    char content_str[128] = {0};
-    memcpy(content_str, event->payload, event->payload_len);
-    content_str[event->payload_len] = '\0';
-    new_val = atoi(content_str);
-  }
-  else {
-    new_val = 0xFF;
-  }
-  if (new_val != 0xFF) {
-    if ((new_val > 0) != (light_brightness > 0)) {
-      if (new_val > 0) {
-        printf("Switch on the light.\n");
-      }
-      else {
-        printf("Turn off the light.\n");
-      }
-    }
-    if (new_val < 10) {
-      light_brightness = new_val;
-      if (light_brightness > 0) {
-        printf("Successfully set the brightness = %u\n", light_brightness);
-        ps_event_t data_content = {
-          .data_id = "a",
-          .data_id_len = strlen("a"),
-          .payload = &light_brightness,
-          .payload_len = 1
-        };
-        ps_publish_content(NDN_SD_LED, &data_content);
-      }
-    }
-    else {
-      light_brightness = 10;
-      printf("Exceeding range. Set the brightness = %u\n", light_brightness);
-    }
-  }
-  else {
-    printf("Query the brightness = %u\n", light_brightness);
-  }
-}
-
-void periodic_publish(size_t param_size, uint8_t* param_value) {
-  static ndn_time_ms_t last;
-  ps_event_t event = {
-    .data_id = "a",
-    .data_id_len = strlen("a"),
-    .payload = "hello",
-    .payload_len = strlen("hello")
-  };
-
-  if (ndn_time_now_ms() - last >= 400000) {
-    ps_publish_content(NDN_SD_LED, &event);
-    last = ndn_time_now_ms();
-  }
-  ndn_msgqueue_post(NULL, periodic_publish, 0, NULL);
+  
+  /* modify logc here */
+  ps_event_t command_event = *event;
+  ps_publish_command(NDN_SD_LED, "/", &command_event);
 }
 
 void
 after_bootstrapping()
 {
-  ps_subscribe_to_command(NDN_SD_LED, "", on_light_command, NULL);
-  periodic_publish(0, NULL);
-  // enable this when you subscribe to content
-  //ps_after_bootstrapping();
+  ndn_time_delay(30);
+  ps_subscribe_to_content(NDN_SD_TEMP, "", 4000, on_temp_content, NULL);
+  ps_after_bootstrapping();
 }
 
 void SignalHandler(int signum){
@@ -219,7 +160,7 @@ main(int argc, char *argv[])
   // SET UP SERVICE DISCOVERY
   sd_add_or_update_self_service(NDN_SD_LED, true, 1); // state code 1 means normal
   ndn_ac_register_encryption_key_request(NDN_SD_LED);
-  //ndn_ac_register_access_request(NDN_SD_LED);
+  ndn_ac_register_access_request(NDN_SD_TEMP);
 
   // START BOOTSTRAPPING
   ndn_bootstrapping_info_t booststrapping_info = {
