@@ -6,8 +6,10 @@ If it's used as your development environment, please skip to `Share QR Code and 
 
 .. _ndn-lite-docker-image: install.html#docker-image
 
-Prepare a NDN environment
+Preparation
 --------------
+If you're using Docker image, no more preparation is needed and please skip to `Share QR Code and bootstrap Device`_.
+If you're not using Docker image and start your build on macOS, additional software are required. 
 
 #. `Get Started with ndn-cxx`_
 #. `Get Started with NFD`_
@@ -22,10 +24,6 @@ Start your NFD:
     $ nfd-start
 
 Notice: Please build ndn-cxx and NFD from source.
-
-
-Set up the IoT system controller
---------------
 
 Download and execute ndn-iot-controller_:
 
@@ -61,7 +59,13 @@ Run the controller server:
 Share QR Code and bootstrap Device
 -------------
 
-There're some pre-generated QR codes in folder ``/<project-root>/devices``. Hard-coded bindings between device program and QR code are:
+Devices in smart homes, need to be boostrapped by a IoT controller to obtain credentials.
+Thus the IoT controller should have some shared secrets between it and devices to validate bootstrap request.
+The shared secrets, in our project, are in two formats: a txt file that be loaded by device program, and a QR code that be uploaded to IoT controller by users.
+Three pairs of pre-generated shared secrets are in folder ``/<project-root>/devices``.
+Device programs in ``/<project-root>/examples`` will use two of them.
+
+Hard-coded bindings between example device program and QR code are:
 
     +----------------------+----------------------------+
     | Device Program       | Pre-generated QR Code      | 
@@ -70,6 +74,10 @@ There're some pre-generated QR codes in folder ``/<project-root>/devices``. Hard
     +----------------------+----------------------------+
     | tutorial-app-sub     | device-24777.png           |
     +----------------------+----------------------------+
+
+Additionally, you can generate shared secrets by following instructions :ref:`shared-secrets-label`.
+
+Now it's time bring your devices online.
 
 Open controller's UI in browser at ``127.0.0.1:6060``, then click ``Device Bootstrapping`` button, a blank for uploading QR code should show up, as shown in the following picture.
 
