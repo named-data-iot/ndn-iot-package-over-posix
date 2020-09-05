@@ -7,7 +7,7 @@ Application also use shared secrets like Device Programs.
 It's weird that application identity is still named as "device".
 We'll support different naming conventions in future.
 
-Here, we present a template application: if-hot-then-light.
+Here, we present a template application: ``if-hot-then-light``.
 
 This template appliction implements the logic: if temperature in livingroom is above 80 degree, turn on the light in the livingroom and set the brightness to 30 precent.
 This application subscribe to "TEMP" service with locator "/livingroom" and publish command on "LED" service with locator "/livingroom". 
@@ -16,7 +16,7 @@ Two Device Programs and one Application are invovled:
 
     +----------------------------+----------------------------+--------------------+
     | Device Program/Appliaction | Pre-generated QR Code      | Role               |
-    +============================+============================+--------------------+
+    +============================+============================+====================+
     | tutorial-app               | device-398.png             | LED Light          |
     +----------------------------+----------------------------+--------------------+
     | tutorial-app-sub           | device-24777.png           | Temperature Sensor |
