@@ -11,6 +11,7 @@ Welcome to ndn-iot-package-over-posix's documentation!
    :caption: Contents:
 
    src/readme.rst
+   src/overview.rst
    src/install.rst
    src/examples.rst
    src/tutorial.rst
