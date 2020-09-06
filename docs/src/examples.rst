@@ -59,7 +59,7 @@ Run the controller server:
 Share QR Code and bootstrap Device
 -------------
 
-**Top posting: If you feel difficulties in finding those pre-generated QR code, you can simply download from our repo_.**
+**Top posting: If you feel difficulties in finding those pre-generated QR code, you can simply download from our** repo_
 
 .. _repo: https://github.com/named-data-iot/ndn-iot-package-over-posix/tree/master/devices
 
