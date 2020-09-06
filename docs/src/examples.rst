@@ -59,6 +59,19 @@ Run the controller server:
 Share QR Code and bootstrap Device
 -------------
 
+**Top posting: If you feel difficulties in finding those pre-generated QR code, you can simply download from our repo_.**
+
+.. _repo: https://github.com/named-data-iot/ndn-iot-package-over-posix/tree/master/devices
+
+<project-root> is the ``ndn-iot-package-over-posix`` directory.
+If you're already inside the container, you need
+
+.. code-block:: bash
+
+    $  cd ndn-iot-package-over-posix
+
+to go into the project root.
+
 Devices in smart homes, need to be boostrapped by a IoT controller to obtain credentials.
 Thus the IoT controller should have some shared secrets between it and devices to validate bootstrap request.
 The shared secrets, in our project, are in two formats: a txt file that be loaded by device program, and a QR code that be uploaded to IoT controller by users.
