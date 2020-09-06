@@ -64,7 +64,7 @@ Share QR Code and bootstrap Device
 .. _repo: https://github.com/named-data-iot/ndn-iot-package-over-posix/tree/master/devices
 
 <project-root> is the ``ndn-iot-package-over-posix`` directory.
-If you're already inside the container, you need
+If you're already in container's root path, you need
 
 .. code-block:: bash
 
