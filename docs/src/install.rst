@@ -53,17 +53,12 @@ Create a new directory and configure with cmake:
     $ cd build
     $ cmake -DCMAKE_BUILD_TYPE=Release ..
 
-build all examples and unittests:
+build all examples:
 
 .. code-block:: bash
 
     $ make -j2
 
-Optionally, you can check if current APIs comptiable with each other by running all tests
-
-.. code-block:: bash
-
-    $ ./unittest
 
 
 Instruction for developers
