@@ -16,6 +16,8 @@
   #include <stdlib.h>
 #endif
 
+int read(int randomData, void* dest, size_t size);
+
 int
 ndn_lite_posix_rng(uint8_t *dest, unsigned size)
 {

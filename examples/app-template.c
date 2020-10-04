@@ -122,9 +122,9 @@ on_temp_content(const ps_event_context_t* context, const ps_event_t* event, void
   }
   else {
     ps_event_t command_event = {
-      .data_id = "on",
+      .data_id = (uint8_t*)"on",
       .data_id_len = strlen("on"),
-      .payload = "3",
+      .payload = (uint8_t*)"3",
       .payload_len = strlen("3")
     };
     printf("above 80 degree, no need to turn on light to brightness 30 percent\n");

@@ -18,6 +18,7 @@ build/
 ._*
 Thumbs.db
 xcode/
+.vscode
 
 shared_info.png
 

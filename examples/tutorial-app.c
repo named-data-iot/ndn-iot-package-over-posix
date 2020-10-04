@@ -155,12 +155,12 @@ on_light_command(const ps_event_context_t* context, const ps_event_t* event, voi
   }
 }
 
-void periodic_publish(size_t param_size, uint8_t* param_value) {
+void periodic_publish(void* self, size_t param_size, void* param_value) {
   static ndn_time_ms_t last;
   ps_event_t event = {
-    .data_id = "hello",
+    .data_id = (uint8_t*)"hello",
     .data_id_len = strlen("hello"),
-    .payload = "liveness",
+    .payload = (uint8_t*)"liveness",
     .payload_len = strlen("liveness")
   };
 
@@ -175,7 +175,7 @@ void
 after_bootstrapping()
 {
   ps_subscribe_to_command(NDN_SD_LED, "", on_light_command, NULL);
-  periodic_publish(0, NULL);
+  periodic_publish(NULL, 0, NULL);
   // enable this when you subscribe to content
   //ps_after_bootstrapping();
 }

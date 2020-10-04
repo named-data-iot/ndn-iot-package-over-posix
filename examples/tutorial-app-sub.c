@@ -126,11 +126,12 @@ on_light_data(const ps_event_context_t* context, const ps_event_t* event, void* 
   printf("Scope: %s\n", context->scope);
 }
 
-void periodic_publish_temp(size_t param_size, uint8_t* param_value) {
+void periodic_publish_temp(void* self, size_t param_size, void* param_value) {
+  (void)self;
   static ndn_time_ms_t last;
   uint8_t temp = 90;
   ps_event_t event = {
-    .data_id = "hello",
+    .data_id = (uint8_t*)"hello",
     .data_id_len = strlen("hello"),
     .payload = &temp,
     .payload_len = sizeof(temp) 
@@ -148,7 +149,7 @@ after_bootstrapping()
 {
   ndn_time_delay(30);
   ps_subscribe_to_content(NDN_SD_LED, "", 4000, on_light_data, NULL);
-  periodic_publish_temp(0, NULL);
+  periodic_publish_temp(NULL, 0, NULL);
   ps_after_bootstrapping();
 }
 

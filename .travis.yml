@@ -2,7 +2,7 @@ dist: bionic
 language: c
 compiler: gcc
 script:
-  - mkdir build && cd build
-  - cmake -DCMAKE_BUILD_TYPE=E=Release ..
-  - make -j2
+  - cd ndn-lite/tests && mkdir build && cd build
+  - cmake -DCMAKE_BUILD_TYPE=Debug ..
+  - make
   - ./unittest
