@@ -25,9 +25,6 @@
 #include "ndn-lite/encode/key-storage.h"
 #include "ndn-lite/encode/ndn-rule-storage.h"
 
-//To solve the fgets problem
-char* temp_p;
-
 // DEVICE manufacture-created private key
 uint8_t secp256r1_prv_key_bytes[32] = {0};
 
@@ -55,6 +52,7 @@ int
 load_bootstrapping_info()
 {
   FILE * fp;
+  char* temp_p;     //To receive the return value of fgets
   char buf[255];
   char* buf_ptr;
   fp = fopen("../devices/tutorial_shared_info-63884.txt", "r");
@@ -63,7 +61,8 @@ load_bootstrapping_info()
   for (size_t lineindex = 0; lineindex < 4; lineindex++) {
     memset(buf, 0, sizeof(buf));
     buf_ptr = buf;
-    temp_p = fgets(buf, sizeof(buf), fp);       //temp_p is used to solve the fgets problem while doing make
+    temp_p = fgets(buf, sizeof(buf), fp);
+    if(temp_p == NULL) exit(1);     //Exit if fgets failed
     if (lineindex == 0) {
       for (i = 0; i < 32; i++) {
         sscanf(buf_ptr, "%2hhx", &secp256r1_prv_key_bytes[i]);
