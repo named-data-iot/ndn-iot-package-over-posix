@@ -201,7 +201,7 @@ ndn_udp_multicast_face_construct(
 static void
 ndn_udp_face_recv(void *self, size_t param_len, void *param){
   struct sockaddr_in client_addr;
-  socklen_t addr_len;
+  socklen_t addr_len = sizeof(client_addr);
   ssize_t size;
   int ret;
   ndn_udp_face_t* ptr = (ndn_udp_face_t*)self;
